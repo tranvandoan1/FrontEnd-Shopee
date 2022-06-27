@@ -1,0 +1,29 @@
+/* .container{
+    display: flex;
+}
+.left{
+    width: 20%;
+}
+.left>ul,.right>ul{
+    height: 100vh;
+}
+.right{
+    width: 80%;
+} */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Helvetica, Arial, sans-serif ;
+}
+#components-layout-demo-fixed-sider .logo {
+    height: 32px;
+    margin: 16px;
+    background: rgba(255, 255, 255, 0.2);
+  }
+  .site-layout .site-layout-background {
+    background: #fff;
+  }

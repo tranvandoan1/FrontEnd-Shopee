@@ -1,0 +1,66 @@
+@keyframes show_cart {
+    from {
+        opacity: 0;
+        transform: translateY(45%);
+    }
+    to {
+        transform: translateY(0%);
+        opacity: 1;
+    }
+}
+
+@keyframes slider {
+    from {
+        opacity: 0;
+        transform: scale(.8, .8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1, 1);
+    }
+}
+
+@keyframes prFilter {
+    from {
+        opacity: 0;
+        transform: scale(.8, .8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1, 1);
+    }
+}
+
+@keyframes sp1 {
+    from {
+        opacity: 0;
+        width: 0px;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes animotion {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes status {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 1;
+    }
+}

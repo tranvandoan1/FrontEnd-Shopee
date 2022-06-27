@@ -1,0 +1,18 @@
+.flow,.chat{
+    background: none;
+    border: 1px solid rgb(235, 235, 235);
+    border-radius: 3px;
+    color: white;
+    text-transform: capitalize;
+    font-size: 1rem;
+    margin: 0 5px;
+    cursor: pointer;
+}
+.menu_child{
+    box-shadow: 0 0 5px rgb(198, 198, 198);
+    padding: 5px 20px;
+    background-color: #fff;
+}
+.menu_child>ul>li{
+    list-style: none;
+}

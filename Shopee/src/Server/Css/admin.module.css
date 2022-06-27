@@ -1,0 +1,13 @@
+.logo {
+  padding: 20px 10px;
+  border-bottom: 1px solid gainsboro;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.header {
+  background-color: #fff;
+  margin-bottom: 10px;
+  text-align: right;
+  padding: 0 20px;
+}

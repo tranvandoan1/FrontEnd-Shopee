@@ -1,0 +1,18 @@
+.image_title {
+  font-size: 16px;
+  margin-right: 20px;
+}
+.uploadImage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 80px;
+}
+.close {
+  position: absolute;
+  right: -8px;
+  top: -8px;
+  color: red;
+  cursor: pointer;
+}
