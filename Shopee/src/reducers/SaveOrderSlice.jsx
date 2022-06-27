@@ -43,8 +43,6 @@ const saveOrderSlice = createSlice({
       state.value = action.payload;
     });
     builder.addCase(uploadSaveOrder.fulfilled, (state, action) => {
-      console.log(action.payload, "vào rồi");
-
       state.value = action.payload;
     });
     builder.addCase(removeSaveOrder.fulfilled, (state, action) => {

@@ -13,17 +13,20 @@ export const HeaderNavbar = (props) => {
   const saveorderOfUser = saveorder?.filter(
     (item) => item.user_id == user?._id
   );
+  saveorderOfUser?.reverse();
   useEffect(async () => {
     dispatch(getSaveOrder());
   }, []);
 
   useEffect(() => {
     var sticky = $("#navbar").offsetTop;
-    window.onscroll = async function () {
-      window.pageYOffset >= sticky
-        ? $("#navbar").classList.add("sticky")
-        : $("#navbar").classList.remove("sticky");
-    };
+    if (sticky) {
+      window.onscroll = async function () {
+        window.pageYOffset >= sticky
+          ? $("#navbar").classList.add("sticky")
+          : $("#navbar").classList.remove("sticky");
+      };
+    }
   }, []);
 
   const logOut = () => {
