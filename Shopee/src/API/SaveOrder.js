@@ -9,11 +9,6 @@ const SaveOrderAPI = {
     const url = `/saveoders/${id}`;
     return axiosClient.get(url);
   },
-
-  upload(id, data) {
-    const url = `/saveoders/${id}`;
-    return axiosClient.put(url, data);
-  },
 };
 export default SaveOrderAPI;
 export const add = (data) => {
@@ -24,4 +19,8 @@ export const add = (data) => {
 export const remove = (id) => {
   const url = `/saveoders/${id}`;
   return axiosClient.delete(url);
+};
+export const upload = (id, data) => {
+  const url = `/saveoders/${id}`;
+  return axiosClient.put(url, data);
 };

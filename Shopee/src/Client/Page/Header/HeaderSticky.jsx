@@ -4,24 +4,23 @@ import SaveOrderAPI from "../../../API/SaveOrder";
 import { Link } from "react-router-dom";
 import { $ } from "../../../Unti";
 import { useDispatch, useSelector } from "react-redux";
-import { getSaveOrder } from "../../../reducers/SaveOrder";
-import { getProduct } from "../../../reducers/Products";
+import { getSaveOrder } from "../../../reducers/SaveOrderSlice";
 export const HeaderSticky = (props) => {
   const user = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
   const dispatch = useDispatch();
   const saveorder = useSelector((data) => data.saveorder.value);
-  const saveorderOfUser = saveorder?.filter((item) => item.user_id == user._id);
-  useEffect(async () => {
+  const saveorderOfUser = saveorder?.filter((item) => item.user_id == user?._id);
+  useEffect(() => {
     dispatch(getSaveOrder());
   }, []);
 
   useEffect(() => {
-    var sticky = $("#navbar").offsetTop;
-    window.onscroll = async function () {
-      window.pageYOffset >= sticky
-        ? $("#navbar").classList.add("sticky")
-        : $("#navbar").classList.remove("sticky");
-    };
+    // var sticky = $("#navbar").offsetTop;
+    // window.onscroll = async function () {
+    //   window.pageYOffset >= sticky
+    //     ? $("#navbar").classList.add("sticky")
+    //     : $("#navbar").classList.remove("sticky");
+    // };
   }, []);
 
   const logOut = () => {
@@ -58,7 +57,6 @@ export const HeaderSticky = (props) => {
       );
     }
   }
-
 
   return (
     <React.Fragment>
@@ -122,9 +120,7 @@ export const HeaderSticky = (props) => {
             <div className="login-logout">{checkLognIn(user)}</div>
           </div>
         </div>
-       
       </div>
-     
     </React.Fragment>
   );
 };

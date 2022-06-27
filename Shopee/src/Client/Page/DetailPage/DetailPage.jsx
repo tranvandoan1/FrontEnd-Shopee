@@ -10,18 +10,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProduct } from "../../../reducers/Products";
 import { getAllData } from "./../../../reducers/AllData";
 import { Modal, Rate } from "antd";
-import { addSaveOrder } from "../../../reducers/SaveOrder";
+import {
+  addSaveOrder,
+  uploadSaveOrder,
+} from "../../../reducers/SaveOrderSlice";
 import { openNotificationWithIcon } from "../../../Notification";
 const DetailPage = () => {
-  // useEffect(() => {
-  //   window.scroll(0, 0);
-  // }, []);
   const { id } = useParams();
   // const [product, setProduct] = useState([]);
   const [price, setPrice] = useState(["100000", "212000"]);
   const [classify, setClassify] = useState();
   const [commodityvalue, setCommodityvalue] = useState();
-  const [idCommodityvalue, setIdCommodityvalue] = useState();
+  const [CommodityValueSelect, setCommodityValueSelect] = useState();
   const [quantity, setQuantity] = useState(1);
   const [saveorder, setSaveOrder] = useState();
   const [count, setCount] = useState(1);
@@ -30,10 +30,11 @@ const DetailPage = () => {
   const data = useSelector((data) => data.dataAll.value);
   const product = useSelector((data) => data.product.value);
   useEffect(() => {
+    window.scroll(0, 0);
     dispatch(getProduct(id));
     dispatch(getAllData());
     setQuantity(1);
-    setIdCommodityvalue();
+    setCommodityValueSelect();
     setCommodityvalue();
     setClassify();
   }, [id]);
@@ -79,37 +80,44 @@ const DetailPage = () => {
     setCommodityvalue(
       data.commodityvalue?.filter((item) => item.connection == value.connection)
     );
-    setIdCommodityvalue([]);
+    setCommodityValueSelect([]);
   };
   //size
 
   const onClickCommodityvalue = async (propId, name) => {
-    setIdCommodityvalue([propId, name]);
+    setCommodityValueSelect([propId, name]);
     const price = commodityvalue?.find(
       (item) => item._id == propId && item.price
     );
     setPrice(price.price);
   };
 
-  const onSubmit = async () => {
-  
+  const onSubmitAddOrder = async () => {
     const order = data.saveorder?.find(
       (item) =>
         item.user_id == user._id &&
-        item.clasify == classify._id[1] &&
-        item.commodity_value == idCommodityvalue[1]
+        item.classification == classify.name &&
+        item.commodity_value == CommodityValueSelect[1]
     );
     if (order) {
-      let formData = new FormData();
-      formData.append("amount", +quantity + +oder.amount);
-      // SaveOderAPI.upload(oder._id, formData)
-      // alert("Sửa thành công")
+      const orders = {
+        ...order,
+        amount: +order.amount + +1,
+      };
+      console.log(order)
+      console.log(orders)
+      dispatch(uploadSaveOrder({ dataUpload: orders, id: orders._id }));
+      setQuantity(1);
+      setCommodityValueSelect();
+      setCommodityvalue();
+      setClassify();
+      openNotificationWithIcon("success", "Thêm thành công");
     } else {
-      if (idCommodityvalue[0]) {
+      if (CommodityValueSelect[0]) {
         const order = {
           price: price,
           classification: classify.name,
-          commodity_value: idCommodityvalue[1],
+          commodity_value: CommodityValueSelect[1],
           amount: quantity,
           pro_id: product._id,
           user_id: user._id,
@@ -120,11 +128,10 @@ const DetailPage = () => {
         };
         dispatch(addSaveOrder(order));
         setQuantity(1);
-        setIdCommodityvalue();
+        setCommodityValueSelect();
         setCommodityvalue();
         setClassify();
         openNotificationWithIcon("success", "Thêm thành công");
-
       } else {
         alert("Đã chọn đâu");
       }
@@ -274,9 +281,9 @@ const DetailPage = () => {
                                     : onClickCommodityvalue(item._id, item.name)
                                 }
                                 className={
-                                  idCommodityvalue == undefined
+                                  CommodityValueSelect == undefined
                                     ? ""
-                                    : item._id == idCommodityvalue[0]
+                                    : item._id == CommodityValueSelect[0]
                                     ? "active-value"
                                     : ""
                                 }
@@ -340,9 +347,9 @@ const DetailPage = () => {
                 <div
                   className="addCart"
                   onClick={() =>
-                    classify == undefined && idCommodityvalue == undefined
+                    classify == undefined && CommodityValueSelect == undefined
                       ? alert("Chưa chọn cái nào hết")
-                      : onSubmit()
+                      : onSubmitAddOrder()
                   }
                 >
                   <i className="fas fa-cart-plus"></i> thêm vào giỏ hàng

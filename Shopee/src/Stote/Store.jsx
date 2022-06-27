@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import productSlice from "../reducers/Products";
-import saveOrderSlice from "../reducers/saveOrder";
+import saveOrderSlice from "../reducers/SaveOrderSlice";
 import categorisSlice from "../reducers/CategoriSlice";
 import sliderSlice from "../reducers/SliderSlice";
 import allDataSlice from "../reducers/AllData";
