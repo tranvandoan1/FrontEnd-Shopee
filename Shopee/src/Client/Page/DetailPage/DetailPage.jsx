@@ -9,7 +9,7 @@ import DescriptionProduct from "./DescriptionProduct";
 import { useDispatch, useSelector } from "react-redux";
 import { getProduct } from "../../../reducers/Products";
 import { getAllData } from "./../../../reducers/AllData";
-import { Modal, Rate } from "antd";
+import { Col, Modal, Rate, Row } from "antd";
 import {
   addSaveOrder,
   uploadSaveOrder,
@@ -100,13 +100,9 @@ const DetailPage = () => {
         item.commodity_value == CommodityValueSelect[1]
     );
     if (order) {
-      const orders = {
-        ...order,
-        amount: +order.amount + +1,
-      };
-      console.log(order)
-      console.log(orders)
-      dispatch(uploadSaveOrder({ dataUpload: orders, id: orders._id }));
+      let formData = new FormData();
+      formData.append("amount", +order.amount + +quantity);
+      dispatch(uploadSaveOrder({ dataUpload: formData, id: order._id }));
       setQuantity(1);
       setCommodityValueSelect();
       setCommodityvalue();
@@ -174,21 +170,36 @@ const DetailPage = () => {
               </div>
             </div>
             <div className="img-detail_show">
-              <div className="box-img">
-                <img src={product.photo1} alt="" />
-              </div>
-              <div className="box-img">
-                <img src={product.photo2} alt="" />
-              </div>
-              <div className="box-img">
-                <img src={product.photo3} alt="" />
-              </div>
-              <div className="box-img">
-                <img src={product.photo4} alt="" />
-              </div>
-              <div className="box-img">
-                <img src={product.photo5} alt="" />
-              </div>
+              <Row>
+                <Col xs={12} sm={8} md={6} lg={6} xl={6}>
+                  {" "}
+                  <div className="box-img">
+                    <img src={product.photo1} alt="" />
+                  </div>
+                </Col>
+                <Col xs={12} sm={8} md={6} lg={6} xl={6}>
+                  {" "}
+                  <div className="box-img">
+                    <img src={product.photo2} alt="" />
+                  </div>
+                </Col>
+                <Col xs={12} sm={8} md={6} lg={6} xl={6}>
+                  <div className="box-img">
+                    <img src={product.photo3} alt="" />
+                  </div>
+                </Col>
+                <Col xs={12} sm={8} md={6} lg={6} xl={6}>
+                  {" "}
+                  <div className="box-img">
+                    <img src={product.photo4} alt="" />
+                  </div>
+                </Col>
+                <Col xs={12} sm={8} md={6} lg={6} xl={6}>
+                  <div className="box-img">
+                    <img src={product.photo5} alt="" />
+                  </div>
+                </Col>
+              </Row>
             </div>
           </div>
           <div id="render-detail">
@@ -362,12 +373,7 @@ const DetailPage = () => {
         </div>
         {/* <!-- show img detail --> */}
 
-        <Modal
-          title="Basic Modal"
-          visible={isModalVisible}
-          onOk={handleOk}
-          onCancel={handleCancel}
-        >
+        <Modal visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
           <div className="d_img">
             <div className="d-img_left">
               <div className="img-box">

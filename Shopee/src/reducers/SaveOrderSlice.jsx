@@ -25,6 +25,7 @@ export const removeSaveOrder = createAsyncThunk(
 export const uploadSaveOrder = createAsyncThunk(
   "saveorders/uploadSaveOrder",
   async (data) => {
+    console.log(data)
     const { data: saveorder } = await upload(data.id, data.dataUpload);
     return saveorder;
   }
