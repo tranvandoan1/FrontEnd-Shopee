@@ -13,6 +13,7 @@ export const HeaderNavbar = (props) => {
   const saveorderOfUser = saveorder?.filter(
     (item) => item.user_id == user?._id
   );
+  saveorderOfUser?.reverse();
   useEffect(async () => {
     dispatch(getSaveOrder());
   }, []);
@@ -169,26 +170,28 @@ export const HeaderNavbar = (props) => {
                       <hr />
                       <div className="list_show-cart">
                         {saveorderOfUser.map((item, index) => {
-                          return (
-                            <Link to="" key={index}>
-                              <div className="show-cart_img">
-                                <img src={item.photo} alt="" />
-                              </div>
-                              <div className="show-cart_name">
-                                <p>{item.name_pro}</p>
-                              </div>
-                              <div className="show-cart_money">
-                                <p>
-                                  {Math.ceil(
-                                    item.price * ((100 - item.sale) / 100)
-                                  )
-                                    .toString()
-                                    .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
-                                  đ x {item.amount}
-                                </p>
-                              </div>
-                            </Link>
-                          );
+                          if (index < 5) {
+                            return (
+                              <Link to="" key={index}>
+                                <div className="show-cart_img">
+                                  <img src={item.photo} alt="" />
+                                </div>
+                                <div className="show-cart_name">
+                                  <p>{item.name_pro}</p>
+                                </div>
+                                <div className="show-cart_money">
+                                  <p>
+                                    {Math.ceil(
+                                      item.price * ((100 - item.sale) / 100)
+                                    )
+                                      .toString()
+                                      .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                                    đ x {item.amount}
+                                  </p>
+                                </div>
+                              </Link>
+                            );
+                          }
                         })}
                       </div>
                     </div>
