@@ -4,13 +4,15 @@ import SaveOrderAPI from "../../../API/SaveOrder";
 import { Link } from "react-router-dom";
 import { $ } from "../../../Unti";
 import { useDispatch, useSelector } from "react-redux";
-import { getSaveOrder } from "../../../reducers/SaveOrder";
+import { getSaveOrder } from "../../../reducers/SaveOrderSlice";
 import { getProduct } from "./../../../reducers/Products";
 export const HeaderNavbar = (props) => {
   const user = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
   const dispatch = useDispatch();
   const saveorder = useSelector((data) => data.saveorder.value);
-  const saveorderOfUser = saveorder?.filter((item) => item.user_id == user?._id);
+  const saveorderOfUser = saveorder?.filter(
+    (item) => item.user_id == user?._id
+  );
   useEffect(async () => {
     dispatch(getSaveOrder());
   }, []);
@@ -55,60 +57,6 @@ export const HeaderNavbar = (props) => {
             </li>
           </ul>
         </span>
-      );
-    }
-  }
-  function checkOder(user) {
-    if (user == undefined) {
-      return (
-        <div className="shopping-cart">
-          <Link to="">
-            <i className="fas fa-shopping-cart"></i>
-          </Link>
-        </div>
-      );
-    } else {
-      return (
-        <div className="shopping-cart">
-          <div className="shopee-cart-number-badge">
-            {saveorderOfUser.length}
-          </div>
-          <Link to="/cart">
-            <i className="fas fa-shopping-cart"></i>
-          </Link>
-          {saveorderOfUser.length == 0 ? (
-            <div className="show-cart">
-              <div className="cart__produtcs-news">Chưa có sản phẩm</div>
-            </div>
-          ) : (
-            <div className="show-cart">
-              <div className="cart__produtcs-news">sản phẩm mới thêm</div>
-              <hr />
-              <div className="list_show-cart">
-                {saveorderOfUser.map((item, index) => {
-                  return (
-                    <Link to="" key={index}>
-                      <div className="show-cart_img">
-                        <img src={item.photo} alt="" />
-                      </div>
-                      <div className="show-cart_name">
-                        <p>{item.name_pro}</p>
-                      </div>
-                      <div className="show-cart_money">
-                        <p>
-                          {Math.ceil(item.price * ((100 - item.sale) / 100))
-                            .toString()
-                            .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
-                          đ
-                        </p>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
       );
     }
   }
@@ -192,7 +140,62 @@ export const HeaderNavbar = (props) => {
               />
               <i className="fas fa-search"></i>
             </div>
-            <div className="header__main-shopping-cart">{checkOder(user)}</div>
+            <div className="header__main-shopping-cart">
+              {user == undefined ? (
+                <div className="shopping-cart">
+                  <Link to="">
+                    <i className="fas fa-shopping-cart"></i>
+                  </Link>
+                </div>
+              ) : (
+                <div className="shopping-cart">
+                  <div className="shopee-cart-number-badge">
+                    {saveorderOfUser.length}
+                  </div>
+                  <Link to="/cart">
+                    <i className="fas fa-shopping-cart"></i>
+                  </Link>
+                  {saveorderOfUser.length == 0 ? (
+                    <div className="show-cart">
+                      <div className="cart__produtcs-news">
+                        Chưa có sản phẩm
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="show-cart">
+                      <div className="cart__produtcs-news">
+                        sản phẩm mới thêm
+                      </div>
+                      <hr />
+                      <div className="list_show-cart">
+                        {saveorderOfUser.map((item, index) => {
+                          return (
+                            <Link to="" key={index}>
+                              <div className="show-cart_img">
+                                <img src={item.photo} alt="" />
+                              </div>
+                              <div className="show-cart_name">
+                                <p>{item.name_pro}</p>
+                              </div>
+                              <div className="show-cart_money">
+                                <p>
+                                  {Math.ceil(
+                                    item.price * ((100 - item.sale) / 100)
+                                  )
+                                    .toString()
+                                    .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                                  đ x {item.amount}
+                                </p>
+                              </div>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

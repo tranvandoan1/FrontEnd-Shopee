@@ -42,6 +42,7 @@ const commentSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(getAllComment.fulfilled, (state, action) => {
+      console.log('vafp rồi')
       state.value = action.payload;
     });
     builder.addCase(addComments.fulfilled, (state, action) => {

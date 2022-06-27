@@ -6,17 +6,34 @@ import { getAllData } from "./../../../reducers/AllData";
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Col, Row } from "antd";
-import { removeSaveOrder } from "./../../../reducers/SaveOrder";
+import {
+  getSaveOrder,
+  removeSaveOrder,
+  uploadSaveOrder,
+} from "../../../reducers/SaveOrderSlice";
 import { openNotificationWithIcon } from "../../../Notification";
+import { getShopOwner } from "./../../../reducers/ShopOwner";
 const ListCart = () => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
-  const data = useSelector((data) => data.dataAll.value);
-  const dataSaveOrder = data.saveorder?.filter(
-    (item) => item.user_id == user._id
+  const shopowners = useSelector((data) => data.shopowner.value);
+  const saveorders = useSelector((data) => data.saveorder.value);
+  console.log(saveorders);
+  useEffect(() => {
+    dispatch(getSaveOrder());
+    dispatch(getShopOwner());
+  }, []);
+  const dataPrice = [];
+  // lấy ra những order thuộc của user đang đăng nhập
+  const dataSaveOrder = [];
+  saveorders?.filter(
+    (item) =>
+      item.user_id == user._id &&
+      (dataPrice.push(item.price), dataSaveOrder.push(item))
   );
+  // lấy ra tên shop có sản phẩm đang được order
   const newDataSaveOrder = [];
-  data.shopowner?.filter((item) => {
+  shopowners?.filter((item) => {
     dataSaveOrder?.map((saveorder) => {
       saveorder.shop_id == item._id && newDataSaveOrder.push(item);
     });
@@ -27,26 +44,45 @@ const ListCart = () => {
     while (dupliNameArr.length > 0) {
       newData.push(dupliNameArr[0]);
       dupliNameArr = dupliNameArr?.filter(
-        (item) => item.name !== dupliNameArr[0].name
+        (item) => item.nameShop !== dupliNameArr[0].nameShop
       );
     }
     return newData;
   };
-
-  useEffect(() => {
-    dispatch(getAllData());
-  }, []);
+  // tính tổng tiền
+  let sum = 0;
+  for (let i = 0; i < dataPrice.length; i++) {
+    sum += dataPrice[i];
+  }
   const onclickRemoveSaveOrder = (id) => {
     if (confirm("Bạn có muốn xóa không")) {
       dispatch(removeSaveOrder(id));
       openNotificationWithIcon("success", "Xóa thành công");
     }
   };
+
+  const onclickPush = (saveorder) => {
+    let formData = new FormData();
+    formData.append("amount", +saveorder.amount + +1);
+    dispatch(uploadSaveOrder({ dataUpload: formData, id: saveorder._id }));
+  };
+  const onclickPrev = (saveorder) => {
+    if (saveorder.amount == 1) {
+      if (confirm("Bạn có muốn hủy bỏ sản phẩm này không ?")) {
+        dispatch(removeSaveOrder(saveorder._id));
+        openNotificationWithIcon("success", "Xóa thành công");
+      }
+    } else {
+      let formData = new FormData();
+      formData.append("amount", +saveorder.amount - +1);
+      dispatch(uploadSaveOrder({ dataUpload: formData, id: saveorder._id }));
+    }
+  };
+
   return (
     <div className="shopee__shop">
       {/* <!-- header pc --> */}
       <HeaderSticky />
-
       {/* <!-- main --> */}
       <div className="cart-page-header-wrapper">
         <div className="wapper">
@@ -96,7 +132,10 @@ const ListCart = () => {
                         <input type="checkbox" name="" id="check" />
                       </div>
                       <div className="pr-info">
-                        <Link to={`/detail/product=${saveorder.pro_id}`}>
+                        <Link
+                          to={`/detail/product=${saveorder.pro_id}`}
+                          style={{ marginRight: 20 }}
+                        >
                           <Row>
                             <Col xs={8} sm={8} md={8} lg={8} xl={8}>
                               <div className="pr-image">
@@ -215,16 +254,43 @@ const ListCart = () => {
                             .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
                         </del>{" "}
                         ₫
-                        {Math.ceil(saveorder.price * ((100 - saveorder.sale) / 100))
+                        {Math.ceil(
+                          saveorder.price * ((100 - saveorder.sale) / 100)
+                        )
                           .toString()
                           .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
                       </div>
                       <div className="pr-quantity">
-                        <button className="pr-prev">-</button>
-                        <input type="text" defaultValue={saveorder.amount} className="input" />
-                        <button className="pr-next">+</button>
+                        <button
+                          onClick={() => onclickPrev(saveorder)}
+                          className="pr-prev"
+                        >
+                          -
+                        </button>
+                        <input
+                          type="text"
+                          value={saveorder.amount}
+                          className="input"
+                          onChange={() => lp}
+                          onBlurCapture
+                        />
+                        <button
+                          onClick={() => onclickPush(saveorder)}
+                          className="pr-next"
+                        >
+                          +
+                        </button>
                       </div>
-                      <div className="pr-price">₫654.322</div>
+                      <div className="pr-price">
+                        ₫
+                        {(
+                          Math.ceil(
+                            saveorder.price * ((100 - saveorder.sale) / 100)
+                          ) * saveorder.amount
+                        )
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                      </div>
                       <div
                         className="pr-operation"
                         onClick={() => onclickRemoveSaveOrder(saveorder._id)}
@@ -240,9 +306,17 @@ const ListCart = () => {
 
           <div className="pr-buying">
             <div className="pr-total">
-              <div className="total">
-                <span>tổng thanh toán</span> <span>(0 sản phẩm)</span> :
-                <span>₫0</span>
+              <div className="total" style={{ display: "flex" }}>
+                <React.Fragment>
+                  <span>tổng thanh toán</span>{" "}
+                  <span style={{ marginRight: 10 }}>
+                    ({dataSaveOrder.length} sản phẩm)
+                  </span>{" "}
+                  :
+                </React.Fragment>
+                <span style={{ marginLeft: 20 }}>
+                  ₫{sum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                </span>
               </div>
               <div className="buying">
                 <button>mua ngay</button>
