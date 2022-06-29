@@ -12,8 +12,8 @@ export const HeaderNavbar = (props) => {
   const saveorderOfUser = saveorder?.filter(
     (item) => item.user_id == user?._id
   );
-  const saveordes = saveorderOfUser?.slice().reverse();
 
+  saveorderOfUser?.reverse();
   useEffect(async () => {
     dispatch(getSaveOrder());
   }, []);
@@ -171,7 +171,8 @@ export const HeaderNavbar = (props) => {
                       </div>
                       <hr />
                       <div className="list_show-cart">
-                        {saveordes.map((item, index) => {
+
+                        {saveorderOfUser.map((item, index) => {
                           if (index < 5) {
                             return (
                               <Link to="" key={index}>
