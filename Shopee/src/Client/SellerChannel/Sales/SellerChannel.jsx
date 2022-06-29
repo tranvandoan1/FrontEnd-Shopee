@@ -19,7 +19,7 @@ const SellerChannel = () => {
   let shopowner = [];
   Object.keys(data).length > 0 &&
     shopowner.push(data.shopowner.find((item) => item.user_id == user._id));
-
+  console.log(shopowner);
   useEffect(() => {
     dispatch(getAllData());
   }, []);
@@ -52,7 +52,7 @@ const SellerChannel = () => {
                       </div>
 
                       <div className="section-salesman_info">
-                        <h3>{shopowner[0].nameShop}</h3>
+                        <h3>{shopowner[0].name}</h3>
                         <p>online 1 giờ trước</p>
                       </div>
                     </div>
@@ -80,7 +80,7 @@ const SellerChannel = () => {
                 <div className="section-salesman_info-list_r1">
                   <div className="section-salesman_name-shop">
                     <i className="far fa-user"></i> tên shop :
-                    <span> {shopowner[0].nameShop}</span>
+                    <span> {shopowner[0].name}</span>
                   </div>
                   <div className="section-salesman_category">
                     <i className="fas fa-boxes"></i> danh mục: <span>1</span>

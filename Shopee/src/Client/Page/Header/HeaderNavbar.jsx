@@ -13,7 +13,8 @@ export const HeaderNavbar = (props) => {
   const saveorderOfUser = saveorder?.filter(
     (item) => item.user_id == user?._id
   );
-  saveorderOfUser?.reverse();
+  const saveordes = saveorderOfUser?.slice().reverse();
+
   useEffect(async () => {
     dispatch(getSaveOrder());
   }, []);
@@ -71,7 +72,7 @@ export const HeaderNavbar = (props) => {
           <div className="flex">
             <ul>
               <li>
-                <a href="seller-channel/check_signup">kênh người bán</a>
+                <Link to="/seller-channel/check_signup">kênh người bán</Link>
               </li>
               <li>
                 <Link to="">tải ứng dụng</Link>
@@ -158,7 +159,7 @@ export const HeaderNavbar = (props) => {
                   <Link to="/cart">
                     <i className="fas fa-shopping-cart"></i>
                   </Link>
-                  {saveorderOfUser.length == 0 ? (
+                  {saveordes.length == 0 ? (
                     <div className="show-cart">
                       <div className="cart__produtcs-news">
                         Chưa có sản phẩm
@@ -171,27 +172,29 @@ export const HeaderNavbar = (props) => {
                       </div>
                       <hr />
                       <div className="list_show-cart">
-                        {saveorderOfUser.map((item, index) => {
-                          return (
-                            <Link to="" key={index}>
-                              <div className="show-cart_img">
-                                <img src={item.photo} alt="" />
-                              </div>
-                              <div className="show-cart_name">
-                                <p>{item.name_pro}</p>
-                              </div>
-                              <div className="show-cart_money">
-                                <p>
-                                  {Math.ceil(
-                                    item.price * ((100 - item.sale) / 100)
-                                  )
-                                    .toString()
-                                    .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
-                                  đ x {item.amount}
-                                </p>
-                              </div>
-                            </Link>
-                          );
+                        {saveordes.map((item, index) => {
+                          if (index < 5) {
+                            return (
+                              <Link to="" key={index}>
+                                <div className="show-cart_img">
+                                  <img src={item.photo} alt="" />
+                                </div>
+                                <div className="show-cart_name">
+                                  <p>{item.name_pro}</p>
+                                </div>
+                                <div className="show-cart_money">
+                                  <p>
+                                    {Math.ceil(
+                                      item.price * ((100 - item.sale) / 100)
+                                    )
+                                      .toString()
+                                      .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                                    đ x {item.amount}
+                                  </p>
+                                </div>
+                              </Link>
+                            );
+                          }
                         })}
                       </div>
                     </div>

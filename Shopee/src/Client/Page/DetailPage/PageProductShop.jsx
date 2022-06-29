@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import ProAPI from "../../../API/ProAPI";
-import ShopOwnerAPI from "../../../API/ShopOwner";
 import { getAllData } from "../../../reducers/AllData";
 import { getProduct } from "../../../reducers/Products";
 
@@ -41,7 +39,7 @@ const PageProductShop = () => {
           </a>
 
           <div className="name-shop">
-            <span>{dataShopOwners.nameShop}</span>
+            <span>{dataShopOwners.name}</span>
             <span>
               <i className="fas fa-archive"></i>
               xem shop

@@ -9,7 +9,9 @@ export const HeaderSticky = (props) => {
   const user = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
   const dispatch = useDispatch();
   const saveorder = useSelector((data) => data.saveorder.value);
-  const saveorderOfUser = saveorder?.filter((item) => item.user_id == user?._id);
+  const saveorderOfUser = saveorder?.filter(
+    (item) => item.user_id == user?._id
+  );
   useEffect(() => {
     dispatch(getSaveOrder());
   }, []);
@@ -30,34 +32,6 @@ export const HeaderSticky = (props) => {
     }
   };
 
-  function checkLognIn(user) {
-    if (user == null) {
-      return (
-        <React.Fragment>
-          <Link to="">đăng ký</Link> <Link to="/login">đăng nhập</Link>
-        </React.Fragment>
-      );
-    } else {
-      return (
-        <span>
-          <Link to="/#/user-overview">{user.name}</Link>
-          <ul>
-            <li>
-              <Link to="/admin/categoris">
-                <i className="fas fa-user-cog"></i> Quản trị WebSite
-              </Link>
-            </li>
-            <li id="signout">
-              <a onClick={logOut}>
-                <i className="fas fa-sign-out-alt"></i> Đăng xuất
-              </a>
-            </li>
-          </ul>
-        </span>
-      );
-    }
-  }
-
   return (
     <React.Fragment>
       <div className="header">
@@ -65,7 +39,7 @@ export const HeaderSticky = (props) => {
           <div className="flex">
             <ul>
               <li>
-                <a href="seller-channel/check_signup">kênh người bán</a>
+                <Link to="/seller-channel/check_signup">kênh người bán</Link>
               </li>
               <li>
                 <Link to="">tải ứng dụng</Link>
@@ -117,7 +91,29 @@ export const HeaderSticky = (props) => {
                 </ul>
               </li>
             </ul>
-            <div className="login-logout">{checkLognIn(user)}</div>
+            <div className="login-logout">
+              {user == undefined ? (
+                <React.Fragment>
+                  <Link to="">đăng ký</Link> <Link to="/login">đăng nhập</Link>
+                </React.Fragment>
+              ) : (
+                <span>
+                  <Link to="/#/user-overview">{user.name}</Link>
+                  <ul>
+                    <li>
+                      <Link to="/admin/categoris">
+                        <i className="fas fa-user-cog"></i> Quản trị WebSite
+                      </Link>
+                    </li>
+                    <li id="signout">
+                      <a onClick={logOut}>
+                        <i className="fas fa-sign-out-alt"></i> Đăng xuất
+                      </a>
+                    </li>
+                  </ul>
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -113,9 +113,12 @@ const ListComment = () => {
   const listComment = (item, index) => {
     const time = new Date(item.createdAt);
     return (
-      <>
+      <React.Fragment>
         {edit?._id == item._id ? (
-          <div style={{ margin: "10px 0", width: "100%", display: "flex" }}>
+          <div
+            style={{ margin: "10px 0", width: "100%", display: "flex" }}
+            key={index}
+          >
             {dataAll.user?.map(
               (user) =>
                 item.user_id == user._id && (
@@ -143,33 +146,41 @@ const ListComment = () => {
                 </Upload>
               </div>
               <Row style={{ position: "relative" }}>
-                {photoEdit?.map((item, index) => (
-                  <>
-                    <Col xs={6} sm={4} md={3} lg={4} style={{ padding: 5 }}>
-                      {item !== "" && (
-                        <React.Fragment>
-                          <CloseCircleOutlined
-                            style={{
-                              position: "absolute",
-                              right: 0,
-                              top: 10,
-                              zIndex: 10,
-                              color: "red",
-                            }}
-                            onClick={() =>
-                              setPhotoEdit(
-                                photoEdit.filter((photo) => item !== photo)
-                              )
-                            }
-                          />
-                          <div className={styles.list_image_upload}>
-                            <img key={index} src={item} />
-                          </div>
-                        </React.Fragment>
-                      )}
-                    </Col>
-                  </>
-                ))}
+                {photoEdit.length > 0 &&
+                  photoEdit?.map((item, index) => (
+                    <React.Fragment>
+                      <Col
+                        xs={6}
+                        sm={4}
+                        md={3}
+                        lg={4}
+                        style={{ padding: 5 }}
+                        key={index}
+                      >
+                        {item !== "" && (
+                          <React.Fragment>
+                            <CloseCircleOutlined
+                              style={{
+                                position: "absolute",
+                                right: 0,
+                                top: 10,
+                                zIndex: 10,
+                                color: "red",
+                              }}
+                              onClick={() =>
+                                setPhotoEdit(
+                                  photoEdit.filter((photo) => item !== photo)
+                                )
+                              }
+                            />
+                            <div className={styles.list_image_upload}>
+                              <img key={index} src={item} />
+                            </div>
+                          </React.Fragment>
+                        )}
+                      </Col>
+                    </React.Fragment>
+                  ))}
                 {loading == true && <Spin style={{ marginTop: 20 }} />}
               </Row>
               <div
@@ -214,7 +225,7 @@ const ListComment = () => {
                       action === "disliked" ? DislikeFilled : DislikeOutlined
                     )}
                     <span className="comment-action">{dislikes}</span>
-                    <span style={{marginLeft:10}}>{item.createdAt}</span>
+                    <span style={{ marginLeft: 10 }}>{item.createdAt}</span>
                   </span>
                 </Tooltip>
               </>,
@@ -288,7 +299,7 @@ const ListComment = () => {
             }
           />
         )}
-      </>
+      </React.Fragment>
     );
   };
   return (
@@ -300,12 +311,15 @@ const ListComment = () => {
               {listComment(item, index)}
               {/* <!--check nếu sp có bình luận của user đnag đăng nhập thì hiện icon sửa và xóa--> */}
               {user && user._id == item.user_id && item._id !== edit?._id && (
-                <div style={{ display: "flex", marginTop: 20, color: "blue" }}>
+                <div
+                  style={{ display: "flex", marginTop: 20, color: "blue" }}
+                  key={index}
+                >
                   <EditOutlined
                     style={{ marginRight: 10 }}
                     onClick={() => (
                       setEdit(item),
-                      setPhotoEdit(item.photo[0] != [""] && item.photo)
+                      setPhotoEdit(item.photo[0] != [""] ? item.photo : "")
                     )}
                   />
                   <DeleteOutlined onClick={() => onClickDelete(item)} />
