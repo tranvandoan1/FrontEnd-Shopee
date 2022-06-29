@@ -13,7 +13,8 @@ export const HeaderNavbar = (props) => {
     (item) => item.user_id == user?._id
   );
 
-  saveorderOfUser?.reverse();
+  const saveordes = saveorderOfUser?.slice().reverse();
+
   useEffect(async () => {
     dispatch(getSaveOrder());
   }, []);
