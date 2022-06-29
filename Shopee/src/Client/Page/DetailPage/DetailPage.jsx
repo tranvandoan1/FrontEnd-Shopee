@@ -90,6 +90,17 @@ const DetailPage = () => {
     );
     setPrice(price.price);
   };
+
+  const setEmpty = () => {
+    setQuantity(1);
+    setCommodityValueSelect();
+    setCommodityvalue();
+    setClassify();
+  };
+
+  const onSubmitAddOrder = async (check) => {
+    if (classify == undefined) {
+      openNotificationWithIcon("warning", "Bạn đã chọn gì đâu");
     } else {
       // tìm xem order vừa thêm đã tồn tại chưa
       const order = data.saveorder?.find(
