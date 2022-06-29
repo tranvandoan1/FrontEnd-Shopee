@@ -13,6 +13,7 @@ export const HeaderNavbar = (props) => {
   const saveorderOfUser = saveorder?.filter(
     (item) => item.user_id == user?._id
   );
+
   saveorderOfUser?.reverse();
   useEffect(async () => {
     dispatch(getSaveOrder());
@@ -20,11 +21,13 @@ export const HeaderNavbar = (props) => {
 
   useEffect(() => {
     var sticky = $("#navbar").offsetTop;
-    window.onscroll = async function () {
-      window.pageYOffset >= sticky
-        ? $("#navbar").classList.add("sticky")
-        : $("#navbar").classList.remove("sticky");
-    };
+    if (sticky) {
+      window.onscroll = async function () {
+        window.pageYOffset >= sticky
+          ? $("#navbar").classList.add("sticky")
+          : $("#navbar").classList.remove("sticky");
+      };
+    }
   }, []);
 
   const logOut = () => {
@@ -69,7 +72,7 @@ export const HeaderNavbar = (props) => {
           <div className="flex">
             <ul>
               <li>
-                <a href="seller-channel/check_signup">kênh người bán</a>
+                <Link to="/seller-channel/check_signup">kênh người bán</Link>
               </li>
               <li>
                 <Link to="">tải ứng dụng</Link>
@@ -156,7 +159,7 @@ export const HeaderNavbar = (props) => {
                   <Link to="/cart">
                     <i className="fas fa-shopping-cart"></i>
                   </Link>
-                  {saveorderOfUser.length == 0 ? (
+                  {saveordes.length == 0 ? (
                     <div className="show-cart">
                       <div className="cart__produtcs-news">
                         Chưa có sản phẩm
@@ -169,6 +172,7 @@ export const HeaderNavbar = (props) => {
                       </div>
                       <hr />
                       <div className="list_show-cart">
+
                         {saveorderOfUser.map((item, index) => {
                           if (index < 5) {
                             return (

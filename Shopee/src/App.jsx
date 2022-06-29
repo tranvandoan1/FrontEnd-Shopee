@@ -20,6 +20,7 @@ import AddCateShop from "./Client/SellerChannel/SellerChannelAdmin/Categoris/Add
 import ListPro from './Client/SellerChannel/SellerChannelAdmin/Products/ListPro';
 import AddPro from "./Client/SellerChannel/SellerChannelAdmin/Products//AddPro/AddPro";
 import ListCart from './Client/Page/Cart/ListCart';
+import Checkout from './Client/Page/PayMent/Checkout';
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
         <Route path="/detail/product=:id" element={<DetailPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/cart" element={<ListCart />} />
+        <Route path="/checkout" element={<Checkout />} />
         <Route
           path="/seller-channel/check_signup"
           element={<SellerChannel />}

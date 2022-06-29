@@ -17,10 +17,10 @@ const ProductShop = () => {
       <div className="d-products-title_show">
         <span>sản phẩm khác của shop</span>
         <ul>
-          {data.product?.map((item) => {
+          {data.product?.map((item, index) => {
             return (
-              <li key={item._id}>
-                <Link to={`/detail/id=${item._id}`}>
+              <li key={index}>
+                <Link to={`/detail/product=${item._id}`}>
                   <div className="products-img">
                     <img src={item.photo} alt="" />
                   </div>

@@ -20,7 +20,7 @@ body::-webkit-scrollbar {
     padding-top: 10px;
     width: 100%;
     transition: 350ms ease-in 0s;
-    z-index: 10000;
+    z-index: 100;
     transform: translateY(90%);
     background: linear-gradient(-180deg, #f53d2d, #f63);
     height: 80px;

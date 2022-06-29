@@ -111,12 +111,10 @@ body {
 
 .cart-page_pr {
   background-color: #fff;
-  padding: 10px 20px;
+  margin-bottom: 20px;
 }
-
 .cart-page_pr-owner {
-  background-color: #fff3ed;
-  padding: 20px;
+  padding: 10px 20px;
   color: rgba(0, 0, 0, 0.87);
   border: 1px solid rgba(0, 0, 0, 0.09);
   font-weight: 500;
@@ -156,7 +154,7 @@ body {
   text-align: center;
   box-shadow: inset 0 2px 0 0 rgb(0 0 0 / 2%);
   margin-right: 8px;
-  padding: 0 9px;
+  padding: 0 8px;
   cursor: pointer;
 }
 
@@ -254,39 +252,10 @@ body {
   align-items: center;
 }
 
-.pr-quantity > button {
-  outline: none;
-  cursor: pointer;
-  font-size: 0.875rem;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(0, 0, 0, 0.09);
-  background: rgba(0, 0, 0, 0.09);
-  color: rgba(0, 0, 0, 0.8);
-  width: 32px;
-  height: 32px;
-}
-
-.pr-quantity > button:first-child {
-  border-radius: 2px 0 0 2px;
-}
-
-.pr-quantity > button:last-child {
-  border-radius: 0 2px 2px 0;
-}
-
 .pr-quantity > input {
-  width: 50px;
+  width: 40px;
   height: 32px;
-  border: 1px solid rgba(0, 0, 0, 0.09);
-  font-size: 16px;
-  font-weight: 400;
   text-align: center;
-  cursor: text;
-  border-radius: 0;
-  -webkit-appearance: none;
 }
 
 .pr-quantity > input:focus {
@@ -316,6 +285,7 @@ body {
   bottom: 0;
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.09);
+  margin-bottom: 20px;
 }
 
 .pr-buying > .pr-total {
@@ -339,20 +309,21 @@ body {
   background-color: rgb(238, 77, 45);
   border: none;
   color: white;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   text-transform: capitalize;
-  padding: 10px 50px;
+  padding: 5px 30px;
   border-radius: 3px;
   cursor: pointer;
 }
-
+.pr-classNameify {
+  position: relative;
+}
 .pr-filter {
   position: absolute;
   top: 60px;
   width: 400px;
-  z-index: 100;
+  z-index: 200;
   padding: 10px;
-  display: none;
   right: 0;
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.14);
@@ -473,4 +444,8 @@ body {
   padding: 5px 10px;
   cursor: pointer;
   border-radius: 3px;
+}
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #ee4d2d !important;
+  border-color: #ee4d2d !important;
 }
