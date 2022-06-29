@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import { $ } from "../../../Unti";
 import { useDispatch, useSelector } from "react-redux";
 import { getSaveOrder } from "../../../reducers/SaveOrderSlice";
-import { getProduct } from "./../../../reducers/Products";
 export const HeaderNavbar = (props) => {
   const user = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
   const dispatch = useDispatch();
