@@ -15,7 +15,6 @@ import { openNotificationWithIcon } from "../../../Notification";
 import { getShopOwner } from "./../../../reducers/ShopOwner";
 import { CaretDownOutlined, CaretUpOutlined } from "@ant-design/icons";
 import TotalProductOder from "./TotalProductOder";
-import SaveOrderAPI, { remove } from "./../../../API/SaveOrder";
 const ListOrder = () => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
