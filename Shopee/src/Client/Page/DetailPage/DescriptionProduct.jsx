@@ -7,7 +7,7 @@ import Comments from "./Comment/Comments";
 import OtherProducts from "./OtherProducts";
 import ProductShop from "./ProductShop";
 
-const DescriptionProduct = () => {
+const DescriptionProduct = (props) => {
   return (
     <div className="detail-products">
       <div className="d-products-box">
@@ -42,29 +42,12 @@ const DescriptionProduct = () => {
               </li>
             </ul>
             <h3>mô tả sản phẩm</h3>
-            <h5>CÔNG DỤNG VÀ ƯU ĐIỂM:</h5>
-            <ul className="d-ul__">
-              <li>Khác biệt: đeo êm hơn, dây đeo thoải mái hơn</li>
-              <li>
-                Tai đeo có độ đàn hồi cao, ít tạo áp lực lên tai và mặt, tránh
-                gây khó chịu khi sử dụng trong thời gian dài.
-              </li>
-            </ul>
-            <h5>THÔNG SỐ SẢN PHẨM:</h5>
-            <ul className="d-ul__">
-              <li>
-                Tiêu chuẩn khẩu trang: BFE, VFE, PFE ≥ 98%. Chứng nhận CE, FDA
-              </li>
-              <li>Loại: 3 lớp (2 lớp vải không dệt, 1 lớp meltblown)</li>
-            </ul>
-            <h5>HƯỚNG DẪN SỬ DỤNG:</h5>
-            <ul className="d-ul__">
-              <li>Bước 1: Dùng 2 tay sạch để mở khẩu trang</li>
-              <li>
-                Bước 2: Mang 2 dây qua tai. Điều chỉnh dây cho vừa với khuôn mặt
-                và tạo cảm giác dễ chịu
-              </li>
-            </ul>
+            <p
+              style={{ width: "100%" }}
+              dangerouslySetInnerHTML={{
+                __html: props.product.description,
+              }}
+            />
           </div>
           <div id="list-comment">
             <Comments />

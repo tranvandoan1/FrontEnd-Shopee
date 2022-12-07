@@ -190,7 +190,7 @@
     right: 0;
 }
 
-/* flash products *
+/* flash products */
 .flash__products_header {
     display: flex;
     justify-content: space-between;
@@ -303,15 +303,15 @@
 }
 
 
-/* banner quảng cáo*
+/* banner quảng cáo*/
 
 .banner-advertisement>a>img {
     width: 100%;
     height: 110px;
 }
 
-/* 
-/* <!-- sp tìm kiếm hàng đầu --> *
+
+ /* <!-- sp tìm kiếm hàng đầu -->  */
 
 .search-top {
     display: flex;
@@ -453,7 +453,7 @@
 }
 
 
-/* products *
+/* products */
 
 .products-title {
     line-height: 40px;
@@ -557,53 +557,6 @@
     opacity: .7;
 }
 
-.addToCart,
-.addToCartPro {
-    width: 100%;
-    background-color: rgb(107, 182, 60);
-    line-height: 30px;
-    text-align: center;
-    color: white;
-    cursor: pointer;
-    transition: .2s;
-    text-transform: capitalize;
-    margin-top: 5px;
-}
-
-.addToCart:hover,
-.addToCartPro:hover {
-    background-color: rgb(238, 77, 45);
-    color: white;
-}
-
-.products-title_show>ul>li>a:hover .products-img img,
-.show-products>ul>li>a:hover .imager-products img {
-    transform: translateY(-10%) scale(.8, .8);
-    z-index: 11;
-    transition: .3s;
-}
-
-.products-title_show>ul>li>a:hover .products_name,
-.products-title_show>ul>li>a:hover .products-price {
-    transform: translateY(-70%);
-    transition: ease-in .3s;
-}
-
-.show-products>ul>li>a:hover .tt-products {
-    transform: translateY(-60%);
-    transition: ease-in .3s;
-}
-
-.products-title_show>ul>li>a:hover .addToCart {
-    transform: translateY(-150%);
-    transition: ease-in .3s;
-}
-
-.show-products>ul>li>a:hover .addToCartPro {
-    transform: translateY(-130%);
-    transition: ease-in .3s;
-}
-
 .btn-seemore,
 .btn-seemore-even {
     width: 100%;
@@ -642,4 +595,4 @@
 .activePro {
     background-color: rgb(238, 77, 45);
     color: white !important;
-} */
+}

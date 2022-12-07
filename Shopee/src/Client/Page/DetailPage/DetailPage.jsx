@@ -111,14 +111,12 @@ const DetailPage = () => {
       );
       console.log(order);
       if (order) {
-        console.log("up");
         let formData = new FormData();
         formData.append("amount", +order.amount + +quantity);
         dispatch(uploadSaveOrder({ dataUpload: formData, id: order._id }));
         setEmpty();
         check == "buyNow" && navigate("/cart");
         openNotificationWithIcon("success", "Thêm thành công");
-        console.log(+order.amount + +quantity);
       } else {
         if (CommodityValueSelect[0]) {
           const order = {
@@ -132,8 +130,8 @@ const DetailPage = () => {
             photo: classify.photo,
             sale: product.sale,
             shop_id: product.shop_id,
+            pro_id: product._id,
           };
-          console.log(order);
           dispatch(addSaveOrder(order));
           setEmpty();
           check == "buyNow" && navigate("/cart");
@@ -320,7 +318,7 @@ const DetailPage = () => {
                           .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ"}
                   </span>
                 </span>
-                <span>{product.sale}% giảm</span>
+                {product.sale !== 0 && <span>{product.sale} % giảm</span>}
               </div>
               <div className="validate">
                 <div className="d-type">
@@ -516,7 +514,7 @@ const DetailPage = () => {
         </Modal>
       </div>
       <PageProductShop />
-      <DescriptionProduct />
+      <DescriptionProduct product={product}/>
       <Footer />
     </div>
   );

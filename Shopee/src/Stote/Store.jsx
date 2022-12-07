@@ -8,6 +8,8 @@ import shopOwnersSlice from "./../reducers/ShopOwner";
 import cateshopeeSlice from "./../reducers/CateShopee";
 import dataAddProSlice from "./../reducers/DataAddProSlice";
 import commentSlice from "../reducers/CommentSlice";
+import checkOutSlice from "../reducers/CheckOutSlice";
+import infoUserSlice from "../reducers/InfoUserSlice";
 
 export const store = configureStore({
   reducer: {
@@ -20,5 +22,7 @@ export const store = configureStore({
     cateshop: cateshopeeSlice,
     dataaddpro: dataAddProSlice,
     comment: commentSlice,
+    checkOut: checkOutSlice,
+    infoUser: infoUserSlice,
   },
 });

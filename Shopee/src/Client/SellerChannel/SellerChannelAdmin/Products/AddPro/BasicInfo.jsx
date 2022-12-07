@@ -19,6 +19,9 @@ import {
   uploadTake1,
 } from "../../../../../reducers/DataAddProSlice";
 import { getAllData } from "./../../../../../reducers/AllData";
+import { useRef } from "react";
+import Editor from "react-simple-code-editor";
+
 const { TextArea } = Input;
 const BasicInfo = () => {
   const dispatch = useDispatch();
@@ -36,106 +39,124 @@ const BasicInfo = () => {
   const [loading3, setLoading3] = useState(false);
   const [loading4, setLoading4] = useState(false);
   const [loading5, setLoading5] = useState(false);
-
   const dataaddpro = useSelector((data) => data.dataaddpro.value);
   const data = useSelector((data) => data.dataAll.value);
   useEffect(() => {
     dispatch(getAllData());
   }, []);
-
   const Upload1 = (file) => {
-    const imageRef = ref(storage, `images/${file.name}`);
+    // const imageRef = ref(storage, `images/${file.name}`);
     setLoading1(true);
-    uploadBytes(imageRef, file).then(() => {
-      getDownloadURL(imageRef).then(async (url) => {
-        await setImageUrl1(url);
+    // uploadBytes(imageRef, file).then(() => {
+    //   getDownloadURL(imageRef).then(async (url) => {
+    //     await setImageUrl1(url);
 
-        setLoading1(false);
-      });
-    });
+    //     setLoading1(false);
+    //   });
+    // });
+    console.log(file, "ewdqwqwe");
+
+    const src = URL.createObjectURL(file);
+    setImageUrl1({ url: src, file: JSON.stringify(file) });
+    setLoading1(false);
   };
   const Upload2 = (file) => {
-    const imageRef = ref(storage, `images/${file.name}`);
+    // const imageRef = ref(storage, `images/${file.name}`);
     setLoading2(true);
-    uploadBytes(imageRef, file).then(() => {
-      getDownloadURL(imageRef).then(async (url) => {
-        await setImageUrl2(url);
+    // uploadBytes(imageRef, file).then(() => {
+    //   getDownloadURL(imageRef).then(async (url) => {
+    //     await setImageUrl2(url);
 
-        setLoading2(false);
-      });
-    });
+    //     setLoading2(false);
+    //   });
+    // });
+    const src = URL.createObjectURL(file);
+    setImageUrl2({ url: src, file: JSON.stringify(file) });
+    setLoading2(false);
   };
   const Upload3 = (file) => {
-    const imageRef = ref(storage, `images/${file.name}`);
+    // const imageRef = ref(storage, `images/${file.name}`);
     setLoading3(true);
-    uploadBytes(imageRef, file).then(() => {
-      getDownloadURL(imageRef).then(async (url) => {
-        await setImageUrl3(url);
+    // uploadBytes(imageRef, file).then(() => {
+    //   getDownloadURL(imageRef).then(async (url) => {
+    //     await setImageUrl3(url);
 
-        setLoading3(false);
-      });
-    });
+    //     setLoading3(false);
+    //   });
+    // });
+    const src = URL.createObjectURL(file);
+    setImageUrl3({ url: src, file: JSON.stringify(file) });
+    setLoading3(false);
   };
   const Upload4 = (file) => {
-    const imageRef = ref(storage, `images/${file.name}`);
+    // const imageRef = ref(storage, `images/${file.name}`);
     setLoading4(true);
-    uploadBytes(imageRef, file).then(() => {
-      getDownloadURL(imageRef).then(async (url) => {
-        await setImageUrl4(url);
+    // uploadBytes(imageRef, file).then(() => {
+    //   getDownloadURL(imageRef).then(async (url) => {
+    //     await setImageUrl4(url);
 
-        setLoading4(false);
-      });
-    });
+    //     setLoading4(false);
+    //   });
+    // });
+    const src = URL.createObjectURL(file);
+    setImageUrl4({ url: src, file: JSON.stringify(file) });
+    setLoading4(false);
   };
   const Upload5 = (file) => {
-    const imageRef = ref(storage, `images/${file.name}`);
+    // const imageRef = ref(storage, `images/${file.name}`);
     setLoading5(true);
-    uploadBytes(imageRef, file).then(() => {
-      getDownloadURL(imageRef).then(async (url) => {
-        await setImageUrl5(url);
+    // uploadBytes(imageRef, file).then(() => {
+    //   getDownloadURL(imageRef).then(async (url) => {
+    //     await setImageUrl5(url);
 
-        setLoading5(false);
-      });
-    });
+    //     setLoading5(false);
+    //   });
+    // });
+    const src = URL.createObjectURL(file);
+    setImageUrl5({ url: src, file: JSON.stringify(file) });
+    setLoading5(false);
   };
   const UploadAvatatr = (file) => {
-    const imageRef = ref(storage, `images/${file.name}`);
+    // const imageRef = ref(storage, `images/${file.name}`);
     setLoading(true);
-    uploadBytes(imageRef, file).then(() => {
-      getDownloadURL(imageRef).then(async (url) => {
-        await setImageUrlAvatar(url);
-        setLoading(false);
-      });
-    });
+    // uploadBytes(imageRef, file).then(() => {
+    //   getDownloadURL(imageRef).then(async (url) => {
+    //     await setImageUrlAvatar(url);
+    //     setLoading(false);
+    //   });
+    // });
+    const src = URL.createObjectURL(file);
+    setImageUrlAvatar({ url: src, file: JSON.stringify(file) });
+    setLoading(false);
   };
 
   const onFinish = (values) => {
     const data = {
-      photo1: imageUrl1
-        ? imageUrl1
-        : dataaddpro.take1?.photo1
-        ? dataaddpro.take1?.photo1
-        : "",
-      photo2: imageUrl2
-        ? imageUrl2
-        : dataaddpro.take1?.photo2
-        ? dataaddpro.take1?.photo2
-        : "",
-      photo3: imageUrl3
-        ? imageUrl3
-        : dataaddpro.take1?.photo3
-        ? dataaddpro.take1?.photo3
-        : "",
-      photo4: imageUrl4
-        ? imageUrl4
-        : dataaddpro.take1?.photo4
-        ? dataaddpro.take1?.photo4
-        : "",
-      photo5: imageUrl5
-        ? imageUrl5
-        : dataaddpro.take1?.photo5
-        ? dataaddpro.take1?.photo5
-        : "",
+      // photo1: imageUrl1
+      //   ? imageUrl1
+      //   : dataaddpro.take1?.photo1
+      //   ? dataaddpro.take1?.photo1
+      //   : "",
+      // photo2: imageUrl2
+      //   ? imageUrl2
+      //   : dataaddpro.take1?.photo2
+      //   ? dataaddpro.take1?.photo2
+      //   : "",
+      // photo3: imageUrl3
+      //   ? imageUrl3
+      //   : dataaddpro.take1?.photo3
+      //   ? dataaddpro.take1?.photo3
+      //   : "",
+      // photo4: imageUrl4
+      //   ? imageUrl4
+      //   : dataaddpro.take1?.photo4
+      //   ? dataaddpro.take1?.photo4
+      //   : "",
+      // photo5: imageUrl5
+      //   ? imageUrl5
+      //   : dataaddpro.take1?.photo5
+      //   ? dataaddpro.take1?.photo5
+      //   : "",
       photo: imageUrlAvatar
         ? imageUrlAvatar
         : dataaddpro.take1?.photo
@@ -158,12 +179,20 @@ const BasicInfo = () => {
             : dataaddpro.take1?.description
           : values.description,
     };
+
     dispatch(addTake({ data: data, check: 1 }));
     dispatch(uploadCheckList(2));
   };
+  // const editorRef = useRef();
+  // const [editorState, setEditorState] = useState(() =>
+  //   EditorState.createEmpty()
+  // );
+  // const focus = () => {
+  //   editorRef.current.focus();
+  // };
   return (
-    <div>
-      <div style={{ marginTop: 50 }}>
+    <div style={{ background: "#fff" }}>
+      <div style={{ paddingTop: 30 }}>
         <Row>
           <Col
             xs={12}
@@ -171,12 +200,12 @@ const BasicInfo = () => {
             md={12}
             lg={4}
             xl={4}
-            style={{ textAlign: "right" }}
+            style={{ textAlign: "left", padding: "0 30px" }}
           >
             <span className={styles.image_title}>Ảnh bìa</span>
           </Col>
           <Col xs={12} sm={4} md={12} lg={20} xl={20}>
-            <div className={styles.uploadImage}>
+            <div className={styles.uploadImage} style={{ marginLeft: 12 }}>
               <Upload
                 listType="picture-card"
                 showUploadList={false}
@@ -187,9 +216,9 @@ const BasicInfo = () => {
                     <img
                       src={
                         imageUrlAvatar
-                          ? imageUrlAvatar
-                          : dataaddpro.take1?.photo !== "" &&
-                            dataaddpro.take1.photo
+                          ? imageUrlAvatar.url
+                          : dataaddpro.take1?.photo.url !== "" &&
+                            dataaddpro.take1.photo.url
                       }
                       className="image"
                     />
@@ -207,8 +236,8 @@ const BasicInfo = () => {
                         <PlusCircleOutlined
                           style={{
                             fontSize: 30,
-                            opacity: 0.3,
-                            color: "blue",
+                            opacity: 0.8,
+                            color: "#ee4d2d",
                           }}
                         />
                       )}
@@ -236,8 +265,9 @@ const BasicInfo = () => {
           </Col>
         </Row>
       </div>
+
       <div style={{ marginTop: 20 }}>
-        <Row>
+        {/* <Row>
           <Col
             xs={12}
             sm={4}
@@ -262,9 +292,9 @@ const BasicInfo = () => {
                         <img
                           src={
                             imageUrl1
-                              ? imageUrl1
-                              : dataaddpro.take1?.photo1 &&
-                                dataaddpro.take1.photo1
+                              ? imageUrl1.url
+                              : dataaddpro.take1?.photo1.url &&
+                                dataaddpro.take1.photo1.url
                           }
                           className="image"
                         />
@@ -282,8 +312,8 @@ const BasicInfo = () => {
                             <PlusCircleOutlined
                               style={{
                                 fontSize: 30,
-                                opacity: 0.3,
-                                color: "blue",
+                                opacity: 0.8,
+                                color: "#ee4d2d",
                               }}
                             />
                           )}
@@ -323,9 +353,9 @@ const BasicInfo = () => {
                         <img
                           src={
                             imageUrl2
-                              ? imageUrl2
-                              : dataaddpro.take1?.photo2 !== "" &&
-                                dataaddpro.take1.photo2
+                              ? imageUrl2.url
+                              : dataaddpro.take1?.photo2.url !== "" &&
+                                dataaddpro.take1.photo2.url
                           }
                           className="image"
                         />
@@ -343,8 +373,8 @@ const BasicInfo = () => {
                             <PlusCircleOutlined
                               style={{
                                 fontSize: 30,
-                                opacity: 0.3,
-                                color: "blue",
+                                opacity: 0.8,
+                                color: "#ee4d2d",
                               }}
                             />
                           )}
@@ -384,9 +414,9 @@ const BasicInfo = () => {
                         <img
                           src={
                             imageUrl3
-                              ? imageUrl3
-                              : dataaddpro.take1?.photo3 !== "" &&
-                                dataaddpro.take1.photo3
+                              ? imageUrl3.url
+                              : dataaddpro.take1?.photo3.url !== "" &&
+                                dataaddpro.take1.photo3.url
                           }
                           className="image"
                         />
@@ -404,8 +434,8 @@ const BasicInfo = () => {
                             <PlusCircleOutlined
                               style={{
                                 fontSize: 30,
-                                opacity: 0.3,
-                                color: "blue",
+                                opacity: 0.8,
+                                color: "#ee4d2d",
                               }}
                             />
                           )}
@@ -444,9 +474,9 @@ const BasicInfo = () => {
                         <img
                           src={
                             imageUrl4
-                              ? imageUrl4
-                              : dataaddpro.take1?.photo4 !== "" &&
-                                dataaddpro.take1.photo4
+                              ? imageUrl4.url
+                              : dataaddpro.take1?.photo4.url !== "" &&
+                                dataaddpro.take1.photo4.url
                           }
                           className="image"
                         />
@@ -464,8 +494,8 @@ const BasicInfo = () => {
                             <PlusCircleOutlined
                               style={{
                                 fontSize: 30,
-                                opacity: 0.3,
-                                color: "blue",
+                                opacity: 0.8,
+                                color: "#ee4d2d",
                               }}
                             />
                           )}
@@ -504,9 +534,9 @@ const BasicInfo = () => {
                         <img
                           src={
                             imageUrl5
-                              ? imageUrl5
-                              : dataaddpro.take1?.photo5 !== "" &&
-                                dataaddpro.take1.photo5
+                              ? imageUrl5.url
+                              : dataaddpro.take1?.photo5.url !== "" &&
+                                dataaddpro.take1.photo5.url
                           }
                           className="image"
                         />
@@ -524,8 +554,8 @@ const BasicInfo = () => {
                             <PlusCircleOutlined
                               style={{
                                 fontSize: 30,
-                                opacity: 0.3,
-                                color: "blue",
+                                opacity: 0.8,
+                                color: "#ee4d2d",
                               }}
                             />
                           )}
@@ -554,9 +584,9 @@ const BasicInfo = () => {
               </Col>
             </Row>
           </Col>
-        </Row>
+        </Row> */}
       </div>
-      <div style={{ marginTop: 20 }}>
+      <div style={{ marginTop: 20, padding: "20px" }}>
         <Form
           name="basic"
           labelCol={{
@@ -574,6 +604,7 @@ const BasicInfo = () => {
           <Form.Item
             label="Tên sản phẩm"
             name="name"
+            labelAlign="left"
             rules={[
               (dataaddpro.take1?.name == undefined || name == "") && {
                 required: true,
@@ -594,6 +625,7 @@ const BasicInfo = () => {
           <Form.Item
             label="Mô tả"
             onChange={(e) => setDescription(e.target.value)}
+            labelAlign="left"
             name="description"
             rules={[
               (dataaddpro.take1?.description == undefined ||
@@ -616,6 +648,7 @@ const BasicInfo = () => {
           </Form.Item>
           <Form.Item
             label="Danh mục"
+            labelAlign="left"
             name="cate_id"
             rules={[
               dataaddpro.take1?.cate_id == undefined && {

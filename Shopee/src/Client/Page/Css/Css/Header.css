@@ -7,7 +7,7 @@ body::-webkit-scrollbar {
 
 .shopee__shop {
     width: 100%;
-    background-color: #f7f7f7;
+    background-color: #ededed;
 }
 
 .header {
@@ -36,6 +36,7 @@ body::-webkit-scrollbar {
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
+    padding: 5px 0;
 }
 
 .flex>ul {
@@ -45,7 +46,6 @@ body::-webkit-scrollbar {
 
 .flex>ul>li {
     list-style: none;
-    padding: 10px 0;
 }
 
 .flex>ul>li>a {
@@ -111,7 +111,6 @@ body::-webkit-scrollbar {
 .navbar__links>ul>li {
     list-style: none;
     position: relative;
-    padding: 10px 0;
 }
 
 .navbar__links>ul>li>a {
@@ -172,7 +171,6 @@ body::-webkit-scrollbar {
 .login-logout>span ul>li {
     list-style: none;
     padding: 5px;
-    margin: 10px 0;
 }
 
 .login-logout>span ul>li:hover {
@@ -190,13 +188,11 @@ body::-webkit-scrollbar {
     display: none;
     background-color: #fff;
     width: 150px;
-    margin-top: 5px;
     margin-left: -30px;
 }
 
 .navbar__links>ul>li>ul>li {
     display: block;
-    padding: 10px 10px 5px 10px;
     position: relative;
 }
 
@@ -238,7 +234,6 @@ body::-webkit-scrollbar {
 
 .login-logout {
     margin-left: 5px;
-    margin-top: 10px;
 }
 
 .login-logout>a {

@@ -1,9 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Checkout from "./../PayMent/Checkout";
+import { useDispatch, useSelector } from "react-redux";
+import { addData } from "../../../reducers/CheckOutSlice";
+import { uploadSaveOrderss } from "../../../reducers/SaveOrderSlice";
+import { getAllData } from "../../../reducers/AllData";
 
 const TotalProductOder = (props) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const dataSelect = props.saveOrderSelect;
+  const dataSaveOrder = props.saveorder;
+  const dataAll = useSelector((data) => data.dataAll.value);
+  useEffect(async () => {
+    dispatch(getAllData());
+  }, []);
+
   // tính tổng tiền
   const dataPrice = [];
-  props.saveOrderSelect?.map((item) =>
+  dataSelect?.map((item) =>
     dataPrice.push(
       item.sale == ""
         ? item.price * item.amount
@@ -14,7 +29,22 @@ const TotalProductOder = (props) => {
   for (let i = 0; i < dataPrice.length; i++) {
     sum += dataPrice[i];
   }
+  const buyNow = async () => {
+    // set all id check= true
+    const idAll = [];
+    dataSaveOrder.map((item) => idAll.push(item._id));
+    const dataALL = { idSelect: idAll, check: false };
 
+    await dispatch(uploadSaveOrderss(dataALL));
+
+    // set  id select check= true
+
+    const id = [];
+    dataSelect.map((item) => id.push(item._id));
+    const data = { idSelect: id, check: true };
+    dispatch(uploadSaveOrderss(data));
+    navigate("/checkout");
+  };
   return (
     <div className="pr-buying">
       <div className="pr-total">
@@ -22,7 +52,7 @@ const TotalProductOder = (props) => {
           <React.Fragment>
             <span>tổng thanh toán</span>{" "}
             <span style={{ marginRight: 10 }}>
-              ({props.saveOrderSelect.length} sản phẩm)
+              ({dataSelect.length} sản phẩm)
             </span>{" "}
             :
           </React.Fragment>
@@ -30,7 +60,7 @@ const TotalProductOder = (props) => {
             ₫{sum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
           </span>
         </div>
-        <div className="buying">
+        <div className="buying" onClick={() => buyNow()}>
           <button>mua ngay</button>
         </div>
       </div>

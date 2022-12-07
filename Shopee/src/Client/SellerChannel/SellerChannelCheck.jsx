@@ -1,5 +1,5 @@
 import { Button } from "antd";
-import React from "react";
+import React, { Suspense } from "react";
 import "../Page/Css/Css/SellerChannelCheck.css";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";

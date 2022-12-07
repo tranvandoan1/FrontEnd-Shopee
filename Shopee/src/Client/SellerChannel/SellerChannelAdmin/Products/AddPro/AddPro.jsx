@@ -6,16 +6,22 @@ import { useDispatch, useSelector } from "react-redux";
 import DetailedInfo from "./DetailedInfo";
 import { uploadCheckList } from "../../../../../reducers/DataAddProSlice";
 import SalesInfor from "./SalesInfor";
+import { LeftOutlined } from "@ant-design/icons";
 
 const AddPro = () => {
   const dispatch = useDispatch();
   const data = useSelector((data) => data.dataaddpro.value);
-
+  const back = (e) => {
+    dispatch(uploadCheckList(e));
+  };
   return (
     <div className="add_pro">
       {data.checkList == 1 && (
-        <div className="click">
-          <div className="header-add-pro">
+        <div className="click" style={{ paddingRight: 10 }}>
+          <div
+            className="header-add-pro"
+            style={{ background: "#fff", padding: "10px 10px 30px 10px" }}
+          >
             <span
               style={{
                 fontWeight: 600,
@@ -29,6 +35,7 @@ const AddPro = () => {
               Bước 1/4
             </span>
           </div>
+          <hr style={{ background: "rgba(0,0,0,0.2)" }} />
 
           <div className="image">
             <BasicInfo />
@@ -37,8 +44,11 @@ const AddPro = () => {
       )}
 
       {data.checkList == 2 && (
-        <div className="click">
-          <div className="header-add-pro">
+        <div className="click" style={{ paddingRight: 10 }}>
+          <div
+            className="header-add-pro"
+            style={{ background: "#fff", padding: "10px 10px 0px 10px" }}
+          >
             <span
               style={{
                 fontWeight: 600,
@@ -46,6 +56,10 @@ const AddPro = () => {
                 width: "100%",
               }}
             >
+              <LeftOutlined
+                style={{ cursor: "pointer" }}
+                onClick={() => back(1)}
+              />{" "}
               Thông tin chi tiết
             </span>
             <span style={{ width: "100%", textAlign: "right", color: "red" }}>
@@ -60,8 +74,11 @@ const AddPro = () => {
       )}
 
       {data.checkList == 3 && (
-        <div className="click">
-          <div className="header-add-pro">
+        <div className="click" style={{ paddingRight: 10 }}>
+          <div
+            className="header-add-pro"
+            style={{ background: "#fff", padding: "10px 10px 30px 10px" }}
+          >
             <span
               style={{
                 fontWeight: 600,
@@ -69,21 +86,23 @@ const AddPro = () => {
                 width: "100%",
               }}
             >
+              <LeftOutlined
+                style={{ cursor: "pointer" }}
+                onClick={() => back(2)}
+              />{" "}
               Thông tin bán hàng
             </span>
             <span style={{ width: "100%", textAlign: "right", color: "red" }}>
               Bước 3/4
             </span>
           </div>
-          <div className="image">
-            <SalesInfor />
-          </div>
+          <SalesInfor />
         </div>
       )}
       {data.checkList == 4 && (
         <div className="click">
           <span style={{ fontWeight: 600, fontSize: 16 }}>
-            Thông tin cơ bản
+            Xem lại thông tin
           </span>
           <div className="image"></div>
         </div>

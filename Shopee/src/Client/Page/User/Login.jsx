@@ -31,7 +31,7 @@ const Login = () => {
                 <h3>Đăng nhập</h3>
                 <div className="name">
                   <input
-                    type="email"
+                    type="text"
                     {...register("email", { required: true })}
                     placeholder="Email hoặc tên đăng nhập"
                   />{" "}

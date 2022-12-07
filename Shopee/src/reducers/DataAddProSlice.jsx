@@ -9,7 +9,7 @@ export const getCate = createAsyncThunk("dataAddProSlice/getCate", async () => {
 const dataAddProSlice = createSlice({
   name: "dataAddProSlice",
   initialState: {
-    value: { take1: {}, take2: {}, take3: {}, take4: {}, checkList: 3 },
+    value: { take1: {}, take2: {}, take3: {}, take4: {}, checkList: 1 },
   },
   reducers: {
     addTake(state, action) {

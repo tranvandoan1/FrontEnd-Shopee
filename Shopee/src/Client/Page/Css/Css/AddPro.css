@@ -34,12 +34,9 @@
   display: none;
 } */
 .click {
-  background-color: #fff;
-  padding: 10px 20px;
   animation: 0.3s ease-in ko;
   opacity: 1;
   transform: scale(1, 1);
-
   width: 100%;
   transition: 1s ease;
 }

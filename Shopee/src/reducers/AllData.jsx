@@ -7,9 +7,10 @@ import SliderAPI from "./../API/Slider";
 import ImageProAPI from "./../API/ImageProAPI";
 import ClassifyAPI from "../API/ClassifyAPI";
 import CommodityValueAPI from "./../API/CommodityValueAPI";
-import UserAPI from './../API/Users';
-import CommentAPI from './../API/CommentAPI';
-import SaveOrderAPI from './../API/SaveOrder';
+import UserAPI from "./../API/Users";
+import CommentAPI from "./../API/CommentAPI";
+import SaveOrderAPI from "./../API/SaveOrder";
+import InfoUserAPI from "../API/InFoUser";
 
 export const getAllData = createAsyncThunk("allData/getAllData", async () => {
   const { data: categoris } = await CateAPI.getAll();
@@ -23,6 +24,7 @@ export const getAllData = createAsyncThunk("allData/getAllData", async () => {
   const { data: users } = await UserAPI.getAll();
   const { data: comments } = await CommentAPI.getAll();
   const { data: saveorders } = await SaveOrderAPI.getAll();
+  const { data: info_user } = await InfoUserAPI.getAll();
 
   const dataAll = {
     categori: categoris,
@@ -36,6 +38,7 @@ export const getAllData = createAsyncThunk("allData/getAllData", async () => {
     user: users,
     comment: comments,
     saveorder: saveorders,
+    info_user: info_user,
   };
   return dataAll;
 });

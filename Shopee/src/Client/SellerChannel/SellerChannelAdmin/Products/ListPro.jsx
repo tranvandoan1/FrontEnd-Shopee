@@ -57,7 +57,7 @@ const ListPro = () => {
       </div>
       <Table
         dataSource={data?.product}
-        rowKey={(item) => item.key}
+        rowKey={(item) => item}
         columns={columns}
         expandable={{
           expandedRowRender: (record) => (

@@ -1,5 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import SaveOrderAPI, { add, remove, upload } from "../API/SaveOrder";
+import SaveOrderAPI, {
+  add,
+  remove,
+  upload,
+  uploadSaveOrders,
+} from "../API/SaveOrder";
 
 export const getSaveOrder = createAsyncThunk(
   "saveorders/getSaveOrder",
@@ -30,6 +35,13 @@ export const uploadSaveOrder = createAsyncThunk(
     return saveorder;
   }
 );
+export const uploadSaveOrderss = createAsyncThunk(
+  "saveorders/uploadSaveOrderss",
+  async (data) => {
+    const { data: saveorder } = await uploadSaveOrders(data);
+    return saveorder;
+  }
+);
 const saveOrderSlice = createSlice({
   name: "saveorders",
   initialState: {
@@ -47,6 +59,9 @@ const saveOrderSlice = createSlice({
       state.value = action.payload;
     });
     builder.addCase(removeSaveOrder.fulfilled, (state, action) => {
+      state.value = action.payload;
+    });
+    builder.addCase(uploadSaveOrderss.fulfilled, (state, action) => {
       state.value = action.payload;
     });
   },

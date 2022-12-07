@@ -1,202 +1,233 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import "../Css/Css/Checkout.css";
+import { HeaderSticky } from "./../Header/HeaderSticky";
+import TotalPrice from "./TotalPrice";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { Button, Checkbox, Input, Radio, Spin } from "antd";
+import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import ShowAddAddress from "./ShowAddAdress";
+import {
+  getInfoUser,
+  removeInfoUser,
+  uploadInfoUser,
+} from "../../../reducers/InfoUserSlice";
+import { openNotificationWithIcon } from "../../../Notification";
+import ListAddress from "./ListAddress";
+import { getAllData } from "../../../reducers/AllData";
+import { Link, useNavigate } from "react-router-dom";
+import { Footer } from "./../Header/Footer";
 
 const Checkout = () => {
+  const user = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const data = useSelector((data) => data.dataAll.value);
+  const [sum, setSum] = useState();
+
+  useEffect(() => {
+    dispatch(getAllData());
+  }, []);
+
+  const dataSelect = data.saveorder?.filter((item) => item.check == true);
+  const shopowner = [];
+  data.shopowner?.filter((item) => {
+    dataSelect.map((data) => {
+      if (item._id == data.shop_id) {
+        shopowner.push(item);
+      }
+    });
+  });
+  // lọc nhưng tên trùng nhau
+  const dupliName = (dupliNameArr = []) => {
+    const newData = [];
+    while (dupliNameArr.length > 0) {
+      newData.push(dupliNameArr[0]);
+      dupliNameArr = dupliNameArr?.filter(
+        (item) => item.name !== dupliNameArr[0].name
+      );
+    }
+    return newData;
+  };
+
+  // lấy ra những order thuộc của user đang đăng nhập
+  const dataSaveOrder = [];
+  data.saveorder?.filter(
+    (item) =>
+      item.user_id == user?._id &&
+      item.check == true &&
+      dataSaveOrder.push(item)
+  );
+  // (
+  //   <div className="loading">
+  //     <Spin
+  //       className="load"
+  //       indicator={
+  //         <LoadingOutlined
+  //           style={{
+  //             fontSize: 50,
+  //             color: "red",
+  //           }}
+  //           spin
+  //         />
+  //       }
+  //     />
+  //   </div>
+  // )
   return (
-    <div>
-      <div class="cart-page-header-wrapper">
-        <div class="wapper">
-          <div class="cart-page-header">
-            <div class="cart-page-logo">
-              <a href="Index.html">
+    <div style={{ background: "#f7f7f7" }}>
+      <HeaderSticky />
+      <div className="cart-page-header-wrapper">
+        <div className="wapper">
+          <div className="cart-page-header">
+            <div className="cart-page-logo">
+              <Link to="/">
                 <img
                   src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Shopee.svg/2560px-Shopee.svg.png"
                   alt=""
                 />
-              </a>
+              </Link>
               <span>Thanh toán</span>
             </div>
           </div>
         </div>
       </div>
-      <div class="payment-header">
-        <div class="pm"></div>
-        <div class="delivery-addres">
-          <div class="delivery-address">
-            {" "}
-            <i class="fas fa-map-marker-alt"></i> địa chỉ nhận hàng
-          </div>
-          <div class="payment_delivery-address">
-            <div class="payment_name">trần văn đoàn ( 0329903787 )</div>
-            <div class="payment_address">
-              172 Phố Trần Bình, Phường Mỹ Đình 1, Phường Mỹ Đình 1, Quận Nam Từ
-              Liêm, Hà Nội
-            </div>
-            <span>mặc định</span>
-            <div class="payment_change">THAY ĐỔI</div>
-          </div>
+
+      <ListAddress />
+      <div className="cart-main">
+        <div className="cart_products-header">
+          <div className="cart-pr">Sản Phẩm</div>
+          <div className="cart-pr_unit-price">Đơn Giá</div>
+          <div className="cart-pr_quantity">Số Lượng</div>
+          <div className="cart-pr_into-money">Thành Tiền</div>
         </div>
-        <div class="add-address">
-          <div class="add_address">
-            <div class="delivery-address">
-              {" "}
-              <i class="fas fa-map-marker-alt"></i> địa chỉ nhận hàng
-            </div>
-            <button>
-              <i class="fas fa-plus"></i> thêm địa chỉ mới
-            </button>
+      </div>
+      {dupliName(shopowner)?.map((item, index) => (
+        <div className="cart-pr_show" key={item}>
+          <div className="cart-pr_shop">
+            <i className="fas fa-house-user"></i> {item.name}
           </div>
-          <div class="change-address">
-            <ul>
-              <li>
-                <input type="checkbox" name="" id="checkbox" />
-                <label for="checkbox">
-                  <div class="check-dots"></div>
-                </label>
-                <input type="checkbox" name="" id="" />
-                <div class="payment_name">trần văn đoàn ( 0329903787 )</div>
-                <div class="payment_address">
-                  172 Phố Trần Bình, Phường Mỹ Đình 1, Phường Mỹ Đình 1, Quận
-                  Nam Từ Liêm, Hà Nội
+          {dataSaveOrder?.map((saveorder, index) => {
+            if (saveorder.shop_id == item._id) {
+              return (
+                <div className="cart-pr_show-pr" key={index}>
+                  <div className="cart-pr_image-name">
+                    <div className="cart-pr_image">
+                      <img src={saveorder.photo} alt="" />
+                    </div>
+                    <div className="cart-pr_name">
+                      <div className="name">{saveorder.name_pro}</div>
+                      <div className="type">
+                        Loại :{" "}
+                        <span>
+                          {saveorder.classification},{saveorder.commodity_value}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="unit-price">
+                    {" "}
+                    <del style={{ marginRight: 10 }}>
+                      ₫
+                      {saveorder.price
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                    </del>
+                    ₫
+                    {Math.ceil(saveorder.price * ((100 - saveorder.sale) / 100))
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                  </div>
+                  <div className="quantityy">{saveorder.amount}</div>
+                  <div className="into-money">
+                    ₫
+                    {(
+                      Math.ceil(
+                        saveorder.price * ((100 - saveorder.sale) / 100)
+                      ) * saveorder.amount
+                    )
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                  </div>
                 </div>
-                <span class="md">Mặc định</span>
-                <span>
-                  <button>
-                    <i class="far fa-trash-alt"></i>
-                  </button>
+              );
+            }
+          })}
+          <div className="sum">
+            <div style={{ display: "flex" }}>
+              <div
+                style={{
+                  display: "flex",
+                  width: "40%",
+                  alignItems: "center",
+                }}
+              >
+                <span style={{ width: "30%" }}>Lời nhắn</span>{" "}
+                <Input
+                  style={{ width: "100%" }}
+                  placeholder="Lưu ý cho Người bán"
+                />
+              </div>
+              <div
+                style={{
+                  width: "60%",
+                  borderLeft: "1px solid #eaeaea",
+                  marginLeft: 10,
+                }}
+              >
+                <span className="shipping-unit">Đơn vị vận chuyển</span>
+                <span className="flas">Nhanh</span>
+              </div>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <span>
+                Tổng tiền :{" "}
+                <span className="price">
+                  {dataSaveOrder?.map((saveorder, index) => {
+                    if (saveorder.shop_id == item._id) {
+                      return (
+                        <React.Fragment>
+                          ₫
+                          {
+                            (
+                      
+                              Math.ceil(
+                                saveorder.price * ((100 - saveorder.sale) / 100)
+                              ) *
+                                saveorder.amount
+                            )
+                              .toString()
+                              .replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                          }
+                        </React.Fragment>
+                      );
+                    }
+                  })}
                 </span>
-              </li>
-              <li>
-                <input type="checkbox" name="" id="checkbox" />
-                <label for="checkbox">
-                  <div class="check-dots"></div>
-                </label>
-                <input type="checkbox" name="" id="" />
-                <div class="payment_name">trần văn đoàn ( 0329903787 )</div>
-                <div class="payment_address">
-                  172 Phố Trần Bình, Phường Mỹ Đình 1, Phường Mỹ Đình 1, Quận
-                  Nam Từ Liêm, Hà Nội
-                </div>
-              </li>
-              <li>
-                <input type="checkbox" name="" id="checkbox" />
-                <label for="checkbox">
-                  <div class="check-dots"></div>
-                </label>
-                <input type="checkbox" name="" id="" />
-                <div class="payment_name">trần văn đoàn ( 0329903787 )</div>
-                <div class="payment_address">
-                  172 Phố Trần Bình, Phường Mỹ Đình 1, Phường Mỹ Đình 1, Quận
-                  Nam Từ Liêm, Hà Nội
-                </div>
-              </li>
-            </ul>
-          </div>
-          <div class="back-complete">
-            <div class="complete">
-              <button>hoàn thành</button>
-            </div>
-            <div class="back">
-              <button>trở lại</button>
+              </span>
             </div>
           </div>
         </div>
-      </div>
-      <div class="cart-main">
-        <div class="cart_products-header">
-          <div class="cart-pr">Sản Phẩm</div>
-          <div class="cart-pr_unit-price">Đơn Giá</div>
-          <div class="cart-pr_quantity">Số Lượng</div>
-          <div class="cart-pr_into-money">Thành Tiền</div>
-        </div>
-      </div>
-      <div class="cart-pr_show">
-        <div class="cart-pr_shop">
-          <i class="fas fa-house-user"></i> tranvandoan2005
-        </div>
-        <div class="cart-pr_show-pr">
-          <div class="cart-pr_image-name">
-            <div class="cart-pr_image">
-              <img
-                src="https://cf.shopee.vn/file/88577c6975464e467634f59611a87231"
-                alt=""
-              />
-            </div>
-            <div class="cart-pr_name">
-              <div class="name">
-                172 Phố Trần Bình, Phường Mỹ Đình 1, Phường Mỹ Đình 1, Quận Nam
-                Từ Liêm, Hà Nội
-              </div>
-              <div class="type">
-                Loại :{" "}
-                <span>đen -áo khoác đén lắm nhưng chưa đen nhiều lắm</span>
-              </div>
-            </div>
-          </div>
+      ))}
 
-          <div class="unit-price">₫123.123</div>
-          <div class="quantityy">1</div>
-          <div class="into-money">₫312.432</div>
-        </div>
-        <div class="cart-pr_show-pr">
-          <div class="cart-pr_image-name">
-            <div class="cart-pr_image">
-              <img
-                src="https://cf.shopee.vn/file/88577c6975464e467634f59611a87231"
-                alt=""
-              />
-            </div>
-            <div class="cart-pr_name">
-              <div class="name">
-                172 Phố Trần Bình, Phường Mỹ Đình 1, Phường Mỹ Đình 1, Quận Nam
-                Từ Liêm, Hà Nội
-              </div>
-              <div class="type">
-                Loại :{" "}
-                <span>đen -áo khoác đén lắm nhưng chưa đen nhiều lắm</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="unit-price">₫123.123</div>
-          <div class="quantityy">1</div>
-          <div class="into-money">₫312.432</div>
-        </div>
-      </div>
-      <div class="use-coins">
-        <div class="usc-box">
-          <div class="use">
-            <i class="fas fa-dollar-sign"></i> Shopee Xu{" "}
+      <div className="use-coins">
+        <div className="usc-box">
+          <div className="use">
+            <i className="fas fa-dollar-sign"></i> Shopee Xu{" "}
             <span>Dùng 200 Shopee Xu</span>
           </div>
-          <div class="coins">
-            <label for="checkcoin">
+          <div className="coins">
+            <label htmlFor="checkcoin">
               <span>-200</span>
-              <div class="check__coin"></div>
+              <div className="check__coin"></div>
             </label>
             <input type="checkbox" id="check-coin" />
           </div>
         </div>
       </div>
-      <div class="total-money-oder">
-        <div class="info-money">
-          <div class="total-amount">
-            Tổng tiền hàng: <span>₫322.213</span>
-          </div>
-          <div class="shope-coin">
-            Dùng xu shope: <span>-₫200</span>
-          </div>
-          <div class="total-money">
-            Tổng thanh toán : <span>₫100.121.212</span>
-          </div>
-        </div>
-
-        <div class="oder">
-          <span>
-            Nhấn "Đặt hàng" đồng nghĩa với việc bạn đã đồng ý đạt hàng
-          </span>
-          <button>Đặt hàng ngay</button>
-        </div>
-      </div>
+      <TotalPrice dataSelect={dataSelect} />
+      <Footer />
     </div>
   );
 };

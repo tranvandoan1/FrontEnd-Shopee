@@ -10,7 +10,6 @@ const DetailedInfo = () => {
   const dispatch = useDispatch();
   const [completedQuantity, setCompletedQuantity] = useState([]);
   const dataaddpro = useSelector((data) => data.dataaddpro.value);
-  console.log(dataaddpro);
   const onFinish = (values) => {
     dispatch(addTake({ data: { ...values }, check: 2 }));
     dispatch(uploadCheckList(3));
@@ -24,7 +23,7 @@ const DetailedInfo = () => {
     // );
   };
   return (
-    <div>
+    <div style={{ background: "#fff",padding:10 }}>
       <p>
         Hoàn thành: {completedQuantity?.length} / 4 Điền thông tin thuộc tính để
         tăng mức độ hiển thị cho sản phẩm
@@ -133,18 +132,18 @@ const DetailedInfo = () => {
 
           <Form.Item
             wrapperCol={{
-              offset: 18,
+              offset: 21,
               span: 24,
-            }}
+            }}  
           >
             <div style={{ display: "flex", alignItems: "center" }}>
-              <Button
+              {/* <Button
                 onClick={() => dispatch(uploadCheckList(1))}
                 icon={<LeftOutlined />}
                 style={{ background: "#fff", marginRight: 10, color: "black" }}
               >
                 Quay lại
-              </Button>
+              </Button> */}
               <Button type="primary" htmlType="submit">
                 Tiếp
                 <RightOutlined />

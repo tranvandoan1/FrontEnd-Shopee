@@ -1,31 +1,31 @@
 import { axiosClient } from "./API";
 
-const SaveOrderAPI = {
+const InfoUserAPI = {
   getAll() {
-    const url = `/saveoders`;
+    const url = `/info-user`;
     return axiosClient.get(url);
   },
   get(id) {
-    const url = `/saveoders/${id}`;
+    const url = `/info-user/${id}`;
     return axiosClient.get(url);
   },
+
+  upload(id, data) {
+    const url = `/info-user/${id}`;
+    return axiosClient.put(url, data);
+  },
 };
-export default SaveOrderAPI;
+export default InfoUserAPI;
 export const add = (data) => {
-  const url = `/saveoders`;
+  const url = `/info-user`;
   return axiosClient.post(url, data);
 };
-
 export const remove = (id) => {
-  const url = `/saveoders/${id}`;
+  const url = `/info-user/${id}`;
   return axiosClient.delete(url);
 };
-export const upload = (id, data) => {
-  const url = `/saveoders/${id}`;
-  return axiosClient.put(url, data);
-};
 
-export const uploadSaveOrders = (data) => {
-  const url = `/saveoders/check`;
-  return axiosClient.patch(url, data);
+export const upload = (id, data) => {
+  const url = `/info-user/${id}`;
+  return axiosClient.put(url, data);
 };

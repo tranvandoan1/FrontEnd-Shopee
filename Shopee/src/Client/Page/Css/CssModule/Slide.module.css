@@ -1,15 +1,19 @@
 .slide {
   margin: 0 80px;
   padding: 10px 0;
+  height: 100%;
 }
+/* .slide:hover .button_next {
+  display: block;
+} */
 .banner {
   padding-left: 10px;
 }
-.banner1,.banner2{
-    width: 100%;
-    height: 100%;
+.banner1,
+.banner2 {
+  width: 100%;
+  height: 100%;
 }
-.image{
-    width: 100%;
-    height: 50%;
+.image {
+  width: 100%;
 }

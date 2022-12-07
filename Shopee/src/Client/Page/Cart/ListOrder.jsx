@@ -15,24 +15,27 @@ import { openNotificationWithIcon } from "../../../Notification";
 import { getShopOwner } from "./../../../reducers/ShopOwner";
 import { CaretDownOutlined, CaretUpOutlined } from "@ant-design/icons";
 import TotalProductOder from "./TotalProductOder";
+import SaveOrderAPI, { remove } from "./../../../API/SaveOrder";
 const ListOrder = () => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
 
   const [quantity, setQuantity] = useState();
   const [saveOrderSelect, setSaveOrderSelect] = useState([]);
-  const [checkListClassify, setCheckListClassify] = useState();
+  const [checkList_commodityValue, setCheckList_commodityValue] = useState();
+  const [selectCommodityValue, setSelectCommodityValue] = useState();
+  const [commodity, setCommodity] = useState();
+  const [classify, setClassify] = useState();
 
   const shopowners = useSelector((data) => data.shopowner.value);
   const saveorders = useSelector((data) => data.saveorder.value);
   const data = useSelector((data) => data.dataAll.value);
 
-  useEffect(() => {
+  useEffect(async () => {
     dispatch(getSaveOrder());
     dispatch(getShopOwner());
     dispatch(getAllData());
   }, []);
-  
   // lấy ra những order thuộc của user đang đăng nhập
   const dataSaveOrder = [];
   saveorders?.filter(
@@ -56,26 +59,16 @@ const ListOrder = () => {
     }
     return newData;
   };
-  const dupliName1 = (dupliNameArr = []) => {
-    const newData = [];
-    while (dupliNameArr.length > 0) {
-      newData.push(dupliNameArr[0]);
-      dupliNameArr = dupliNameArr?.filter(
-        (item) => item.name !== dupliNameArr[0].name
-      );
-    }
-    return newData;
-  };
+
   // xóa order
   const onclickRemoveSaveOrder = (id) => {
     if (confirm("Bạn có muốn xóa không")) {
       dispatch(removeSaveOrder(id));
-      openNotificationWithIcon("success", "Xóa thành công");
     }
   };
 
-  // giảm số lượng
-  const onclickQuantity = (saveorder, check) => {
+  // tăng giảm số lượng
+  const onclickQuantity = async (saveorder, check) => {
     if (saveorder.amount == 1 && check == 1) {
       if (confirm("Bạn có muốn hủy bỏ sản phẩm này không ?")) {
         dispatch(removeSaveOrder(saveorder._id));
@@ -102,7 +95,39 @@ const ListOrder = () => {
       openNotificationWithIcon("success", "Cập nhật thành công");
     }
   };
-  console.log(dupliName(data?.commodityvalue));
+  const checkIdSaveOrder = (saveorder) => {
+    const commodityValue = data.commodityvalue?.filter(
+      (item) => item.linked == saveorder.linked
+    );
+    setCheckList_commodityValue(
+      checkList_commodityValue !== undefined
+        ? checkList_commodityValue.id !== saveorder._id
+          ? { id: saveorder._id, commodityvalue: commodityValue }
+          : undefined
+        : { id: saveorder._id, commodityvalue: commodityValue }
+    );
+  };
+
+  const onclickClass = (classs) => {
+    setClassify(classs);
+    const commodityValue = data.commodityvalue?.filter(
+      (item) => item.connection == classs.connection
+    );
+    setSelectCommodityValue(commodityValue);
+  };
+
+  const buyNow = (id) => {
+    let formData = new FormData();
+    formData.append("classification", classify.name);
+    formData.append("commodity_value", commodity.name);
+    dispatch(uploadSaveOrder({ dataUpload: formData, id: id }));
+    setCheckList_commodityValue();
+    setSelectCommodityValue();
+    setCommodity();
+    setClassify();
+    openNotificationWithIcon("success", "Cập nhật thành công");
+  };
+
   return (
     <div>
       <Checkbox.Group
@@ -129,12 +154,12 @@ const ListOrder = () => {
                         style={{ marginRight: 20 }}
                       >
                         <Row>
-                          <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+                          <Col xs={8} sm={8} md={8} lg={6} xl={6}>
                             <div className="pr-image">
                               <img src={saveorder.photo} alt="" />
                             </div>
                           </Col>
-                          <Col xs={16} sm={16} md={16} lg={16} xl={16}>
+                          <Col xs={16} sm={16} md={16} lg={18} xl={18}>
                             <span>{saveorder.name_pro}</span>
                           </Col>
                         </Row>
@@ -143,19 +168,12 @@ const ListOrder = () => {
                       <div className="pr-classNameify">
                         <div
                           style={{ cursor: "pointer", zIndex: 1 }}
-                          onc={() => setCheckListClassify()}
-                          onClick={() =>
-                            setCheckListClassify(
-                              checkListClassify !== saveorder._id
-                                ? saveorder._id
-                                : undefined
-                            )
-                          }
+                          onClick={() => checkIdSaveOrder(saveorder)}
                         >
-                          <span>
+                          <span style={{ color: "rgba(0,0,0,.54)" }}>
                             phân loại{" "}
-                            {checkListClassify == undefined ||
-                            checkListClassify !== saveorder._id ? (
+                            {checkList_commodityValue == undefined ||
+                            checkList_commodityValue !== saveorder._id ? (
                               <CaretUpOutlined />
                             ) : (
                               <CaretDownOutlined />
@@ -168,7 +186,7 @@ const ListOrder = () => {
                           </div>
                         </div>
 
-                        {checkListClassify == saveorder._id &&
+                        {checkList_commodityValue?.id == saveorder._id &&
                           data.product?.map((pro) => {
                             if (pro.linked == saveorder.linked) {
                               return (
@@ -185,6 +203,9 @@ const ListOrder = () => {
                                               <li
                                                 key={classs._id}
                                                 style={{ marginRight: 5 }}
+                                                onClick={() =>
+                                                  onclickClass(classs)
+                                                }
                                               >
                                                 <a>{classs.name}</a>
                                                 <div className="pr-check-type">
@@ -203,13 +224,22 @@ const ListOrder = () => {
                                     <h4>{pro.name_commodityvalue}</h4>
                                     <div className="size">
                                       <ul>
-                                        {data.commodityvalue?.map((commm) => {
+                                        {(selectCommodityValue == undefined
+                                          ? dupliName(
+                                              checkList_commodityValue?.commodityvalue
+                                            )
+                                          : selectCommodityValue
+                                        )?.map((commm, index) => {
                                           if (
                                             commm.linked == saveorder.linked
                                           ) {
-                                            console.log(commm.name);
                                             return (
-                                              <li>
+                                              <li
+                                                key={index}
+                                                onClick={() =>
+                                                  setCommodity(commm)
+                                                }
+                                              >
                                                 <a>{commm.name}</a>
                                                 <div className="pr-check-size">
                                                   <div className="pr-check_z">
@@ -225,7 +255,10 @@ const ListOrder = () => {
                                   </div>
                                   <div className="pr-button">
                                     <button className="back">Trở lại</button>
-                                    <button className="confirm">
+                                    <button
+                                      onClick={() => buyNow(saveorder._id)}
+                                      className="confirm"
+                                    >
                                       Mua ngay
                                     </button>
                                   </div>
@@ -236,12 +269,14 @@ const ListOrder = () => {
                       </div>
                     </div>
                     <div className="pr-price_sale">
-                      <del>
-                        ₫
-                        {saveorder.price
-                          .toString()
-                          .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
-                      </del>{" "}
+                      {saveorder.sale !== 0 && (
+                        <del>
+                          ₫
+                          {saveorder.price
+                            .toString()
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                        </del>
+                      )}
                       ₫
                       {Math.ceil(
                         saveorder.price * ((100 - saveorder.sale) / 100)
@@ -304,7 +339,10 @@ const ListOrder = () => {
           </div>
         ))}
       </Checkbox.Group>
-      <TotalProductOder saveOrderSelect={saveOrderSelect} />
+      <TotalProductOder
+        saveOrderSelect={saveOrderSelect}
+        saveorder={dataSaveOrder}
+      />
     </div>
   );
 };

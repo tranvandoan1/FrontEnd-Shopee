@@ -76,6 +76,7 @@ const AdminLayout = () => {
                 key: "6",
                 icon: <UploadOutlined />,
                 label: "Quay lại",
+                itemIcon: <Link to="/" />,
               },
             ]}
           />

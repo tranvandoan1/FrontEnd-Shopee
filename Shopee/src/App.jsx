@@ -21,6 +21,7 @@ import ListPro from './Client/SellerChannel/SellerChannelAdmin/Products/ListPro'
 import AddPro from "./Client/SellerChannel/SellerChannelAdmin/Products//AddPro/AddPro";
 import ListCart from './Client/Page/Cart/ListCart';
 import Checkout from './Client/Page/PayMent/Checkout';
+import PurchaseIndex from './Client/Page/Purchase/PurchaseIndex';
 
 const App = () => {
   return (
@@ -31,6 +32,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/cart" element={<ListCart />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/purchase" element={<PurchaseIndex />} />
         <Route
           path="/seller-channel/check_signup"
           element={<SellerChannel />}

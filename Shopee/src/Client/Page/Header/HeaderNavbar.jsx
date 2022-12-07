@@ -34,7 +34,7 @@ export const HeaderNavbar = (props) => {
   const logOut = () => {
     if (confirm("Bạn có muốn đăng xuất không ?")) {
       localStorage.removeItem("user");
-      window.location.href = "";
+      window.location.href = "/";
     }
   };
 

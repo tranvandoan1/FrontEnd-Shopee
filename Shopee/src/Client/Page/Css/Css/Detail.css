@@ -1079,17 +1079,11 @@
   box-shadow: 0 0 1px black;
   height: 330px;
   overflow: hidden;
+  background-color: #fff;
 }
 
-.products-title_show > ul > li:hover {
-  border: 1px solid rgb(238, 77, 45, 0.6);
-  box-shadow: 0 0 3px rgb(238, 77, 45);
-}
 
-.products-title_show > ul > li > a {
-  text-decoration: none;
-  width: 100%;
-}
+
 
 .products-title_show ul li a img {
   position: absolute;
@@ -1137,47 +1131,6 @@
   opacity: 0.7;
 }
 
-.addToCart,
-.addToCartPro {
-  width: 100%;
-  background-color: rgb(107, 182, 60);
-  line-height: 30px;
-  text-align: center;
-  color: white;
-  cursor: pointer;
-  transition: 0.2s;
-  text-transform: capitalize;
-}
-
-.addToCart:hover,
-.addToCartPro:hover {
-  background-color: rgb(238, 77, 45);
-  color: white;
-}
-
-.products-title_show > ul > li > a:hover .products-img img,
-.show-products > ul > li > a:hover .imager-products img {
-  transform: translateY(-10%) scale(0.8, 0.8);
-  z-index: 11;
-  transition: 0.3s;
-}
-
-.products-title_show > ul > li > a:hover .products_name,
-.products-title_show > ul > li > a:hover .products-price,
-.show-products > ul > li > a:hover .tt-products {
-  transform: translateY(-100%);
-  transition: ease-in 0.3s;
-}
-
-.products-title_show > ul > li > a:hover .addToCart {
-  transform: translateY(-115%);
-  transition: ease-in 0.3s;
-}
-
-.show-products > ul > li > a:hover .addToCartPro {
-  transform: translateY(-110%);
-  transition: ease-in 0.3s;
-}
 
 .btn-seemore,
 .btn-seemore-even {
