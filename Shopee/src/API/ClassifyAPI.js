@@ -9,18 +9,22 @@ const ClassifyAPI = {
         const url = `/classifies/${id}`;
         return axiosClient.get(url);
     },
-    add(cate) {
-        const url = `/classifies`;
-        return axiosClient.post(url, cate);
-    },
-    remove(id) {
-        const url = `/classifies/${id}`;
-        return axiosClient.delete(url);
-    },
-    upload(id, data) {
-        const url = `/classifies/${id}`;
-        return axiosClient.put(url, data);
-    },
+
 
 };
 export default ClassifyAPI;
+export const add = (cate) => {
+    const url = `/classifies`;
+    return axiosClient.post(url, cate);
+};
+
+export const upload = (id, data) => {
+    const url = `/classifies/${id}`;
+    return axiosClient.put(url, data);
+};
+
+
+export const removes = (data) => {
+    const url = `/removes-classifies`;
+    return axiosClient.post(url, data);
+};

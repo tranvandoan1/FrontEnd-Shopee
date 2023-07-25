@@ -22,6 +22,8 @@ export const add = (data) => {
 };
 
 export const upload = (id, data) => {
+  console.log(id,'datadatada21e3wqdsta')
+  console.log(data,'ád2wqs')
   const url = `/slides/${id}`;
   return axiosClient.put(url, data);
 };

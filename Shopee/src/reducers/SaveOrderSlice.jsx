@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import SaveOrderAPI, {
   add,
   remove,
+  removes,
   upload,
   uploadSaveOrders,
 } from "../API/SaveOrder";
@@ -27,11 +28,17 @@ export const removeSaveOrder = createAsyncThunk(
     return saveorder;
   }
 );
+export const removesSaveOrder = createAsyncThunk(
+  "saveorders/removesSaveOrder",
+  async (data) => {
+    const { data: saveorder } = await removes(data);
+    return saveorder;
+  }
+);
 export const uploadSaveOrder = createAsyncThunk(
   "saveorders/uploadSaveOrder",
   async (data) => {
-    console.log(data)
-    const { data: saveorder } = await upload(data.id, data.dataUpload);
+    const { data: saveorder } = await upload(data);
     return saveorder;
   }
 );
@@ -62,6 +69,9 @@ const saveOrderSlice = createSlice({
       state.value = action.payload;
     });
     builder.addCase(uploadSaveOrderss.fulfilled, (state, action) => {
+      state.value = action.payload;
+    });
+    builder.addCase(removesSaveOrder.fulfilled, (state, action) => {
       state.value = action.payload;
     });
   },

@@ -21,7 +21,7 @@ export const HeaderNavbar = (props) => {
   }, []);
 
   useEffect(() => {
-    var sticky = $("#navbar").offsetTop;
+    const sticky = $("#navbar").offsetTop;
     if (sticky) {
       window.onscroll = async function () {
         window.pageYOffset >= sticky

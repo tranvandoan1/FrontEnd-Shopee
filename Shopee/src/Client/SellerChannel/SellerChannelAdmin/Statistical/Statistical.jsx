@@ -57,8 +57,7 @@ const Statistical = () => {
         )}
       </div>
       <div style={{ background: "#fff", padding: 24, marginTop: 10 }}>
-        
-        <Map />
+        <Map/>
       </div>
     </div>
   );

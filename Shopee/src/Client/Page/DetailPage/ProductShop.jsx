@@ -1,44 +1,52 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import ProAPI from "../../../API/ProAPI";
 import ShopOwnerAPI from "../../../API/ShopOwner";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { getAllData } from "./../../../reducers/AllData";
+import styles from '../Css/CssModule/Detail.module.css'
 
 const ProductShop = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const data = useSelector((data) => data.dataAll.value);
   useEffect(() => {
     dispatch(getAllData());
   }, []);
   return (
     <div className="detail__products-right">
-      <div className="d-products-title_show">
+      <div className="products-title_show detail-pro">
         <span>sản phẩm khác của shop</span>
         <ul>
-          {data.product?.map((item, index) => {
+          {data.product?.map((pro, index) => {
             return (
-              <li key={index}>
-                <Link to={`/detail/product=${item._id}`}>
+              <li key={pro._id} onClick={() => navigate(`/detail/product=${pro._id}`)}>
+                <div>
                   <div className="products-img">
-                    <img src={item.photo} alt="" />
+                    <img src={pro.photo} alt="" />
                   </div>
-                  <div className="slae-pro">
-                    <span>{item.sale}%</span> giảm
-                  </div>
-                  <div className="products-item_content">
-                    <div className="products_name">{item.name}</div>
-                    <div className="products-price">
-                      <span>1.212.232đ</span>
-                      <span>đã bán 2.4k</span>
+                  {pro.sale == 0 ? (
+                    ""
+                  ) : (
+                    <div className="slae-pro">
+                      <span>{pro.sale + "%"}</span> <span>giảm</span>
                     </div>
+                  )}
+                </div>
+    
+                <div className="products-item_content">
+                  <div className="products_name">{pro.name}</div>
+                  <div className="products-price">
+                    <span>
+                     12312
+                    </span>
+                    <span>đã bán {pro.sold}</span>
                   </div>
-                  <div className="addToCart">
-                    <span>Sản phẩm tương tự</span>
-                  </div>
-                </Link>
+                </div>
+    
               </li>
+            // </Col>
             );
           })}
         </ul>

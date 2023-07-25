@@ -42,7 +42,7 @@ const ListComment = () => {
 
   const { id } = useParams();
   const dispatch = useDispatch();
-  const comment = useSelector((data) => data.comment.value);
+  const comment = useSelector((data) => data.comments.value);
   const dataAll = useSelector((data) => data.dataAll.value);
   const [loading, setLoading] = useState(false);
 

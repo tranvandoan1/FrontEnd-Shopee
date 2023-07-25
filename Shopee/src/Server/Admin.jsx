@@ -55,6 +55,7 @@ const Admin = () => {
         <Content
           style={{
             margin: "0 16px",
+            background:'#fff'
           }}
         >
           <div

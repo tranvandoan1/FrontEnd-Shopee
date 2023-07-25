@@ -1,6 +1,17 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import ProAPI, { add } from "../API/ProAPI";
+import ProAPI, { add, remove, removes } from "../API/ProAPI";
+async function getAll() {
+  const { data: products } = await ProAPI.getAll();
+  const user = JSON.parse(localStorage.getItem("user"));
+  const dataProducts = [];
+  products?.filter((item) => {
+    if (item.user_id == user._id) {
+      dataProducts.push(item);
+    }
+  });
 
+  return dataProducts;
+}
 export const getProduct = createAsyncThunk(
   "products/getProduct",
   async (id) => {
@@ -11,42 +22,62 @@ export const getProduct = createAsyncThunk(
 export const getProductAll = createAsyncThunk(
   "products/getProductAll",
   async () => {
-    const { data: products } = await ProAPI.getAll();
-    console.log(products);
-    return products;
+    return getAll();
   }
 );
 export const addProduct = createAsyncThunk(
   "products/addProduct",
   async (data) => {
-    console.log(data,'qưdesc');
-    const { data: products } = await add(data);
-    console.log(products);
-    return products;
+    await add(data);
+    return getAll();
+  }
+);
+export const removeProduct = createAsyncThunk(
+  "products/removeProduct",
+  async (id) => {
+    await remove(id);
+    return getAll();
+  }
+);
+export const removeProducts = createAsyncThunk(
+  "products/removeProducts",
+  async (dataId) => {
+    await removes(dataId);
+    return getAll();
   }
 );
 const productSlice = createSlice({
   name: "products",
   initialState: {
     value: [],
+    loading: true
   },
   reducers: {
-    addProduct(state, action) {
-      // state.value.push(action.payload)
-    },
+
   },
   extraReducers: (builder) => {
     builder.addCase(getProduct.fulfilled, (state, action) => {
-      console.log("12");
+
+      state.loading = false;
       state.value = action.payload;
     });
     builder.addCase(getProductAll.fulfilled, (state, action) => {
-      console.log(action.payload);
+      state.loading = false;
       state.value = action.payload;
     });
     builder.addCase(addProduct.fulfilled, (state, action) => {
-      console.log(action.payload);
+      state.loading = false;
       state.value = action.payload;
+    });
+    builder.addCase(removeProduct.fulfilled, (state, action) => {
+      state.loading = false;
+      state.value = action.payload;
+      console.log('2e312')
+    });
+    builder.addCase(removeProducts.fulfilled, (state, action) => {
+      state.loading = false;
+      state.value = action.payload;
+      console.log('2e312')
     });
   },
 });

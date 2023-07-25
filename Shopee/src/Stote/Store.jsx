@@ -10,19 +10,22 @@ import dataAddProSlice from "./../reducers/DataAddProSlice";
 import commentSlice from "../reducers/CommentSlice";
 import checkOutSlice from "../reducers/CheckOutSlice";
 import infoUserSlice from "../reducers/InfoUserSlice";
+import classifieSlice from "../reducers/Classifies";
 
 export const store = configureStore({
   reducer: {
-    product: productSlice,
+    products: productSlice,
     saveorder: saveOrderSlice,
-    categori: categorisSlice,
-    slide: sliderSlice,
+    categoris: categorisSlice,
+    slides: sliderSlice,
     dataAll: allDataSlice,
-    shopowner: shopOwnersSlice,
-    cateshop: cateshopeeSlice,
+    shopowners: shopOwnersSlice,
+    cateshops: cateshopeeSlice,
     dataaddpro: dataAddProSlice,
-    comment: commentSlice,
+    comments: commentSlice,
     checkOut: checkOutSlice,
     infoUser: infoUserSlice,
+    classifies:classifieSlice
+
   },
 });

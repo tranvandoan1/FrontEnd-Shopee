@@ -1,10 +1,24 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import SaveOrderAPI from "../API/SaveOrder";
-import SliderAPI from "./../API/Slider";
-
-export const getSlider = createAsyncThunk("slider/getSlider", async () => {
+import SliderAPI, { add, upload } from "./../API/Slider";
+async function getAll() {
   const { data: slides } = await SliderAPI.getAll();
-  return slides;
+  return slides
+}
+export const getSlider = createAsyncThunk("slider/getSlider", async (data) => {
+  console.log(data,'e2qwds')
+  return getAll();
+});
+
+export const uploadSliders = createAsyncThunk("slider/uploadSliders", async (data) => {
+  // return getAll();
+  console.log(data,'e2qwds')
+  await upload(data);
+  console.log('đâsdasdasd')
+  return getAll();
+});
+export const addSlider = createAsyncThunk("slider/addSlider", async (data) => {
+  await add(data);
+  return getAll();
 });
 
 const sliderSlice = createSlice({
@@ -13,18 +27,17 @@ const sliderSlice = createSlice({
     value: [],
   },
   reducers: {
-    addSlide(state, action) {
-      state.value.push(action.payload);
-    },
-    uploadSlide(state, action) {
-      state.value = action.payload;
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(getSlider.fulfilled, (state, action) => {
       state.value = action.payload;
     });
+    builder.addCase(uploadSliders.fulfilled, (state, action) => {
+      state.value = action.payload;
+    });
+    builder.addCase(addSlider.fulfilled, (state, action) => {
+      state.value = action.payload;
+    });
   },
 });
-export const { addSlide, uploadSlide } = sliderSlice.actions;
 export default sliderSlice.reducer;

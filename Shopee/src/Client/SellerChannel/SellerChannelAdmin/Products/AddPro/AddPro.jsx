@@ -1,22 +1,37 @@
-import { Button } from "antd";
-import React, { useState } from "react";
+import React, { useReducer } from "react";
 import BasicInfo from "./BasicInfo";
 import "../../../../Page/Css/Css/AddPro.css";
-import { useDispatch, useSelector } from "react-redux";
 import DetailedInfo from "./DetailedInfo";
-import { uploadCheckList } from "../../../../../reducers/DataAddProSlice";
 import SalesInfor from "./SalesInfor";
 import { LeftOutlined } from "@ant-design/icons";
+import { Space, Spin } from "antd";
 
 const AddPro = () => {
-  const dispatch = useDispatch();
-  const data = useSelector((data) => data.dataaddpro.value);
-  const back = (e) => {
-    dispatch(uploadCheckList(e));
-  };
+  const [state, setState] = useReducer(
+    (state, newState) => ({
+      ...state,
+      ...newState,
+    }),
+    {
+      dataBasicInfo: undefined,
+      dataDetailedInfo: undefined,
+      check: 1,
+      imageUrlAvatar: undefined,
+      loading: false
+    }
+  );
   return (
     <div className="add_pro">
-      {data.checkList == 1 && (
+      {
+        state?.loading == true &&
+        <div style={{ zIndex: 10, position: 'fixed', top: '0', left: '0', right: '0', bottom: '0', background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Space direction="vertical" style={{ width: '100%' }}>
+            <Spin tip="Loading" size="large">
+              <div className="content" />
+            </Spin></Space>
+        </div>
+      }
+      {state?.check == 1 && (
         <div className="click" style={{ paddingRight: 10 }}>
           <div
             className="header-add-pro"
@@ -38,12 +53,18 @@ const AddPro = () => {
           <hr style={{ background: "rgba(0,0,0,0.2)" }} />
 
           <div className="image">
-            <BasicInfo />
+            <BasicInfo
+              callBack={(e) =>
+                setState({ dataBasicInfo: e.data, check: e.check })
+              }
+              setImageUrlAvatar={(e) => setState({ imageUrlAvatar: e })}
+              state={state}
+            />
           </div>
         </div>
       )}
 
-      {data.checkList == 2 && (
+      {state?.check == 2 && (
         <div className="click" style={{ paddingRight: 10 }}>
           <div
             className="header-add-pro"
@@ -58,7 +79,9 @@ const AddPro = () => {
             >
               <LeftOutlined
                 style={{ cursor: "pointer" }}
-                onClick={() => back(1)}
+                onClick={() =>
+                  setState({ dataBasicInfo: state?.dataBasicInfo, check: 1 })
+                }
               />{" "}
               Thông tin chi tiết
             </span>
@@ -68,12 +91,17 @@ const AddPro = () => {
           </div>
 
           <div className="image">
-            <DetailedInfo />
+            <DetailedInfo
+              callBack={(e) =>
+                setState({ dataDetailedInfo: e.data, check: e.check })
+              }
+              state={state}
+            />
           </div>
         </div>
       )}
 
-      {data.checkList == 3 && (
+      {state?.check == 3 && (
         <div className="click" style={{ paddingRight: 10 }}>
           <div
             className="header-add-pro"
@@ -88,7 +116,13 @@ const AddPro = () => {
             >
               <LeftOutlined
                 style={{ cursor: "pointer" }}
-                onClick={() => back(2)}
+                onClick={() =>
+                  setState({
+                    dataBasicInfo: state?.dataBasicInfo,
+                    check: 2,
+                    dataDetailedInfo: state?.dataDetailedInfo,
+                  })
+                }
               />{" "}
               Thông tin bán hàng
             </span>
@@ -96,10 +130,16 @@ const AddPro = () => {
               Bước 3/4
             </span>
           </div>
-          <SalesInfor />
+          <SalesInfor
+            state={state}
+            callBack={(e) => setState({
+              ...e.state,
+              loading: e.loading
+            })}
+          />
         </div>
       )}
-      {data.checkList == 4 && (
+      {state?.check == 4 && (
         <div className="click">
           <span style={{ fontWeight: 600, fontSize: 16 }}>
             Xem lại thông tin

@@ -257,7 +257,6 @@
     text-align: center;
     width: 40px;
     background-color: rgba(255, 212, 36, .9);
-    padding: 5px;
     font-size: .8rem;
     color: #fff;
 }
@@ -273,11 +272,22 @@
     width: 0;
     height: 0;
     left: 0;
-    bottom: -10px;
+    bottom: -9.1px;
     position: absolute;
     border-color: transparent rgba(255, 212, 36, .9);
     border-style: solid;
     border-width: 0 20px 10px;
+}
+
+.slae-pro>span:nth-child(1) {
+    color: rgb(238, 77, 45);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.slae-pro>span:nth-child(2) {
+    font-size: 11px;
+    color: #fff;
 }
 
 .content-products_price {
@@ -311,7 +321,7 @@
 }
 
 
- /* <!-- sp tìm kiếm hàng đầu -->  */
+/* <!-- sp tìm kiếm hàng đầu -->  */
 
 .search-top {
     display: flex;
@@ -461,7 +471,6 @@
     position: sticky;
     top: 60px;
     z-index: 999;
-    background-color: white;
 }
 
 .products-title ul li {
@@ -479,7 +488,7 @@
 .products-img {
     position: relative;
     transition: ease-in .3s;
-    height: 220px;
+    height: 200px;
 }
 
 .products-show {
@@ -490,43 +499,58 @@
     list-style: none;
     display: none;
     overflow: hidden;
+    background-color: #fff;
+    cursor: pointer;
 }
 
-.products-title_show>ul>li {
+.products-title_show>ul li {
     list-style: none;
     position: relative;
-    border: 1px solid rgb(214, 214, 214);
     box-shadow: 0 0 1px black;
-    height: 310px;
     overflow: hidden;
+    background-color: #fff;
+    height: 290px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
 }
 
-.products-title_show>ul>li:hover {
-    border: 1px solid rgb(238, 77, 45, .6);
-    box-shadow: 0 0 3px rgb(238, 77, 45);
+.products-title_show>ul li:hover {
+    box-shadow: 0 0 2px red;
+    border: 1px solid red;
+    transition: .3s;
+
 }
 
-.products-title_show>ul>li>a {
+.products-title_show>ul>li>div {
     text-decoration: none;
     width: 100%;
+    height: 100%;
 }
 
-.products-title_show ul li a img {
+.products-title_show ul li div img {
     position: absolute;
     top: 0;
     width: 100%;
     height: 100%;
     transition: .3s;
-    object-fit: contain;
+    object-fit: cover;
 }
 
 .products-item_content {
+    margin-top: 10px;
     padding: 5px 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
 }
 
 .products_name {
-    font-size: 1rem;
+    font-size: .75rem;
     color: black;
+    font-weight: 500;
     text-transform: capitalize;
     display: -webkit-box;
     text-overflow: ellipsis;
@@ -537,25 +561,29 @@
 }
 
 .products-price {
-    display: flex;
-    transition: .3s;
-    justify-content: space-between;
+    position: relative;
 }
 
 .products-price span:nth-child(1) {
+    position: absolute;
+    left: 0;
+    top: -30px;
     color: #ee4d2d;
     font-size: 1rem;
-    padding: 10px 0 5px 0;
     font-weight: 500;
 }
 
 .products-price span:nth-child(2) {
+    position: absolute;
+    right: 0;
+    top: -30px;
     font-size: .7rem;
-    padding: 13px 0 0px 0;
     text-transform: capitalize;
     color: black;
     opacity: .7;
 }
+
+
 
 .btn-seemore,
 .btn-seemore-even {

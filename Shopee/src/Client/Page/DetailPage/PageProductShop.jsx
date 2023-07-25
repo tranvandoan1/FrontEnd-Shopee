@@ -9,7 +9,7 @@ const PageProductShop = () => {
   const dispatch = useDispatch();
 
   const data = useSelector((data) => data.dataAll.value);
-  const product = useSelector((data) => data.product.value);
+  const product = useSelector((data) => data.products.value);
   useEffect(() => {
     dispatch(getProduct(id));
     dispatch(getAllData());

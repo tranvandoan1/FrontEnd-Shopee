@@ -22,6 +22,7 @@ import AddPro from "./Client/SellerChannel/SellerChannelAdmin/Products//AddPro/A
 import ListCart from './Client/Page/Cart/ListCart';
 import Checkout from './Client/Page/PayMent/Checkout';
 import PurchaseIndex from './Client/Page/Purchase/PurchaseIndex';
+import EditSlider from "./Server/Slider/EditSlider";
 
 const App = () => {
   return (
@@ -41,16 +42,16 @@ const App = () => {
         <Route path="/seller-channel/admin/" element={<AdminLayout />}>
           <Route path="statistical" element={<Statistical />} />
           <Route path="categoris" element={<List />} />
+          <Route path="categoris/add" element={<AddCateShop />} />
           <Route path="products" element={<ListPro />} />
           <Route path="products/add" element={<AddPro />} />
         </Route>
         <Route path="/admin/" element={<Admin />}>
-          <Route path="categoris" element={<Categoris />} />
-          <Route path="categoris/add" element={<AddCate />} />
-          <Route path="categoris/edit=:id" element={<EditCate />} />
+       
           <Route path="slider" element={<Slider />} />
           <Route path="slider/add" element={<AddSlider />} />
-        </Route>
+          <Route path="slider/edit=:id" element={<EditSlider />} />
+          </Route>
       </Routes>
     </BrowserRouter>
   );

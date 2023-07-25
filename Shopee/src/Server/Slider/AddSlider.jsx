@@ -9,7 +9,7 @@ import { add } from "../../API/Slider";
 import { UploadOutlined } from "@ant-design/icons";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../firebase";
-import { addSlide } from "../../reducers/SliderSlice";
+import { addSlider } from "../../reducers/SliderSlice";
 
 const AddSlider = () => {
   const navigate = useNavigate();
@@ -26,8 +26,7 @@ const AddSlider = () => {
           ordinal_number: values.ordinal_number,
           status: values.status,
         };
-        await add(slider);
-        dispatch(addSlide(slider));
+        dispatch(addSlider(slider));
         navigate("/admin/slider");
         openNotificationWithIcon("success", "Thêm thành công");
         setLoading(false);

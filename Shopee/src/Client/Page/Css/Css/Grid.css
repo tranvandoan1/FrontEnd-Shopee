@@ -1,8 +1,8 @@
 /* chung */
 
-.products-title_show ul,
+/* .products-title_show ul, */
 .full-home-banners,
-.products-title_show ul,
+/* .products-title_show ul, */
 .footer-shop,
 .detail-wrapper,
 .d-type,
@@ -101,12 +101,12 @@
     grid-template-columns: 1fr;
     grid-gap: 10px;
 }
-
+/* 
 .productss>.products-title_show>ul {
     grid-template-columns: repeat(4, 1fr);
     grid-gap: 10px;
 }
-
+ */
 
 /* shop-owner-category */
 

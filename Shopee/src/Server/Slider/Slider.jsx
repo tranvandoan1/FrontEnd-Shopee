@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import styles from "../Css/AdminCate.module.css";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { getSlider, uploadSlide } from "./../../reducers/SliderSlice";
+import { getSlider, uploadSliders } from "./../../reducers/SliderSlice";
 import { openNotificationWithIcon } from "../../Notification";
 import { upload } from "./../../API/Slider";
 
@@ -35,7 +35,7 @@ const Slider = () => {
       }
     }
 
-    dispatch(uploadSlide(new_slider_status));
+    dispatch(uploadSlider(new_slider_status));
     openNotificationWithIcon("success", "Cập nhật thành công");
   };
   const columns = [

@@ -29,21 +29,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../../../../firebase";
 import { addProduct } from "./../../../../../reducers/Products";
+import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
-const SalesInfor = () => {
+const SalesInfor = ({ state, callBack }) => {
+  const user = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const data = useSelector((data) => data.dataaddpro.value);
   const [checkPl1, setCheckPl1] = useState(false);
   const [checkPl2, setCheckPl2] = useState(false);
   const [classify1, setClassify1] = useState();
   const [classify2, setClassify2] = useState();
   const [classifyValue, setClassifyValue] = useState();
-  const [loading, setLoading] = useState(false);
 
   const [dataTh1, setDataTh1] = useState();
   const [form] = Form.useForm();
-  const [luu, setLuu] = useState([]);
   const onFinish = (values) => {
     if (values.classify1 == undefined) {
       message.warning("Bạn chưa có giá trị phân loại!");
@@ -70,10 +70,16 @@ const SalesInfor = () => {
     }
     setImageUrl([]);
   };
+
   const confirm = async (values) => {
+    callBack({
+      loading: true, state: {}
+    })
     if (checkPl2 == false) {
-      console.log(dataTh1, "dataTh1");
-      console.log(imageUrl, "2ewds");
+      const objectPro = {
+        quantity: classify2?.quantity,
+        price: classify2?.price,
+      };
     } else {
       const newArray = [];
       // chuyển dạng object có key là tên giá trị phân loại thành mảng thành value
@@ -89,14 +95,17 @@ const SalesInfor = () => {
               newArray[i].classify[j] = classify2[z];
             }
           }
-          newData.push({ name: newArray[i].name, items: newArray[i].classify });
+          newData.push({
+            name: newArray[i].name,
+            items: newArray[i].classify,
+            id: Math.random(),
+          });
         }
       }
       // lọc cái phần tử trùng
       function getUniqueListBy(arr, key) {
         return [...new Map(arr.map((item) => [item[key], item])).values()];
       }
-      // setDataTh1(getUniqueListBy(newData, "name"));
       const dataNew = getUniqueListBy(newData, "name");
       const dataSuccessful = [];
       for (let i = 0; i < dataNew.length; i++) {
@@ -105,47 +114,76 @@ const SalesInfor = () => {
             dataSuccessful.push({
               name: dataNew[i].name,
               value: dataNew[i].items,
-              // photo: dataCheck[j].file,
-              photo:
-                "https://firebasestorage.googleapis.com/v0/b/imageshopee-e80ee.appspot.com/o/images%2Fz3858008705466_103a67ceeeb8c9df9365051f453c5c2d.jpg?alt=media&token=33e6b010-5dc9-4265-8b9c-a6a6e8bcba46",
+              photo: dataCheck[j].file,
             });
           }
         }
       }
-      const newArrayy = [];
-      // dataSuccessful.filter((item) => {
-      //   console.log(item.photo, "itemitem");
-      //   const imageRef = ref(storage, `images/${item.photo.name}`);
-      //   uploadBytes(imageRef, item.photo).then(() => {
-      //     getDownloadURL(imageRef).then(async (url) => {
-      //       await newArrayy.push(url);
-      //       console.log(url, "32rewds");
-      //     });
-      //   });
-      // });
 
-      console.log(dataSuccessful, "dataSuccessful");
-      console.log(data, "data");
-      console.log(newArrayy, "newArrayy");
-      const dataProduct = {
-        warehouse: data.take2.warehouse,
-        trademark: data.take2.trademark,
-        sent_from: data.take2.sent_from,
-        origin: data.take2.origin,
-        name: 'Product 2',
-        description: data.take1.description,
-        cate_id: data.take1.cate_id,
-        classification: {
-          name_classify1: classifyValue.name_classify1,
-          name_classify2: classifyValue.name_classify2,
-          value2: dataSuccessful,
-        },
-        photo:
-          "https://firebasestorage.googleapis.com/v0/b/imageshopee-e80ee.appspot.com/o/images%2Fdanh-sach-cac-loai-oc-bien-oc-nuoc-ngot-va-oc-doc-tai-viet-nam-202108041639403382%20(1).png?alt=media&token=8cc802c2-4920-4136-bcf7-1465282f5f63",
-      };
-      console.log(dataProduct, "dataProductdataProduct");
-      await dispatch(addProduct(dataProduct));
-      message.success("Thêm thành công  ");
+      // lưu dữ liệu vào mảng mới trong đó có ảnh đại diện sản phẩm
+      const newPro = [
+        { name: "test", photo: state?.imageUrlAvatar?.file },
+        ...dataSuccessful,
+      ];
+      const newArrayy = [];
+      newPro.filter((item, index) => {
+        const imageRef = ref(storage, `images/${item.photo.name}`);
+        uploadBytes(imageRef, item.photo).then(() => {
+          getDownloadURL(imageRef).then(async (url, indec) => {
+            await newArrayy.push({ ...item, photo: url });
+          });
+        });
+      });
+      setTimeout(async () => {
+        const linkedPro = Math.random();
+        // linked dùng để liên kết với bảng thể loại với giá trị thể loại
+        const dataProduct = [];
+        const classifies = [];
+        newArrayy?.map((item) => {
+          if (item.name !== "test") {
+            classifies.push({
+              linked: linkedPro,
+              name: item?.name,
+              photo: item.photo,
+              values: item.value,
+            });
+          } else {
+            dataProduct.push({
+              warehouse: state?.dataDetailedInfo.warehouse,
+              trademark: state?.dataDetailedInfo.trademark,
+              sent_from: state?.dataDetailedInfo.sent_from,
+              origin: state?.dataDetailedInfo.origin,
+              name: state?.dataBasicInfo.name,
+              description: state?.dataBasicInfo.description,
+              shop_id: state?.dataBasicInfo.cate_id,
+              cate_id: state?.dataBasicInfo.cate_id,
+              linked: linkedPro,
+              name_commodityvalue: classifyValue.name_classify2,
+              name_classification: classifyValue.name_classify1,
+              photo: item.photo,
+              review: 0,
+              view: 0,
+              sold: 0,
+              sale: state?.dataBasicInfo.sale,
+              user_id:user._id
+            });
+          }
+        });
+        await dispatch(
+          addProduct({ product: dataProduct, classifies: classifies })
+        );
+        callBack({
+          loading: false, state: {
+            dataBasicInfo: undefined,
+            dataDetailedInfo: undefined,
+            check: 1,
+            imageUrlAvatar: undefined,
+          }
+        })
+        // navigate("/seller-channel/admin/products");
+        message.success("Thêm thành công  ");
+
+      }, 10000);
     }
   };
 
@@ -244,9 +282,7 @@ const SalesInfor = () => {
       key: "quantity",
     },
   ];
-  console.log(dataCheck, "dataCheck");
-  console.log(classify2, "classify2");
-  console.log(loading1, "loading1");
+
   return (
     <div>
       <div style={{ padding: "0 20px", background: "#fff" }}>
@@ -427,63 +463,94 @@ const SalesInfor = () => {
                     <Form.List name="classify2">
                       {(fields, { add, remove }) => (
                         <>
-                          {fields.map((field) => (
-                            <Space key={field.key} align="baseline">
-                              <Form.Item
-                                noStyle
-                                shouldUpdate={(prevValues, curValues) =>
-                                  prevValues.area !== curValues.area ||
-                                  prevValues.sights !== curValues.sights
-                                }
-                              >
-                                {() => (
-                                  <Form.Item
-                                    {...field}
-                                    label="Phân loại hàng"
-                                    name={[field.name, "name"]}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message:
-                                          "Bạn chưa nhập tên phân loại hàng !",
-                                      },
-                                    ]}
-                                  >
-                                    <Input placeholder="Nhập phân loại, ví dụ: S, M, v.v" />
-                                  </Form.Item>
-                                )}
-                              </Form.Item>
-                              <Form.Item
-                                {...field}
-                                label="Giá Tiền"
-                                name={[field.name, "price"]}
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: "Bạn chưa nhập giá tiền !",
-                                  },
-                                ]}
-                              >
-                                <Input placeholder="Giá tiền" />
-                              </Form.Item>
-                              <Form.Item
-                                {...field}
-                                label="Số lượng"
-                                name={[field.name, "quantity"]}
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: "Bạn chưa nhập số lượng !",
-                                  },
-                                ]}
-                              >
-                                <Input placeholder="Số lượng" />
-                              </Form.Item>
-                              <MinusCircleOutlined
-                                onClick={() => remove(field.name)}
-                              />
-                            </Space>
-                          ))}
+                          {fields.map((field, index) => {
+                            return (
+                              <Space key={field.key} align="baseline" style={{ border: 1, borderColor: 'red' }}>
+                                <Row gutter={24}>
+                                  <Col xs={12} sm={4} md={12} lg={12} xl={12}>
+                                    <Form.Item
+                                      noStyle
+                                      shouldUpdate={(prevValues, curValues) =>
+                                        prevValues.area !== curValues.area ||
+                                        prevValues.sights !== curValues.sights
+                                      }
+                                    >
+                                      {() => (
+                                        <Form.Item
+                                          {...field}
+                                          label="Phân loại hàng"
+                                          name={[field.name, "name"]}
+                                          rules={[
+                                            {
+                                              required: true,
+                                              message:
+                                                "Bạn chưa nhập tên phân loại hàng !",
+                                            },
+                                          ]}
+                                        >
+                                          <Input placeholder="Nhập phân loại, ví dụ: S, M, v.v" />
+                                        </Form.Item>
+                                      )}
+                                    </Form.Item>
+                                  </Col>
+                                  <Col xs={12} sm={4} md={12} lg={12} xl={12}>
+
+                                    <Form.Item
+                                      {...field}
+                                      label="Giá Tiền"
+                                      name={[field.name, "price"]}
+                                      rules={[
+                                        {
+                                          required: true,
+                                          message: "Bạn chưa nhập giá tiền !",
+                                        },
+                                      ]}
+                                    >
+                                      <Input placeholder="Giá tiền" />
+                                    </Form.Item>
+                                  </Col>
+                                  <Col xs={12} sm={4} md={12} lg={12} xl={12}>
+
+                                    <Form.Item
+                                      {...field}
+                                      label="Số lượng"
+                                      name={[field.name, "quantity"]}
+                                      rules={[
+                                        {
+                                          required: true,
+                                          message: "Bạn chưa nhập số lượng !",
+                                        },
+                                      ]}
+                                    >
+                                      <Input placeholder="Số lượng" />
+                                    </Form.Item>
+                                  </Col>
+                                  <Col xs={12} sm={4} md={12} lg={12} xl={12}>
+                                    <Form.Item
+                                      {...field}
+                                      label="STT"
+                                      name={[field.name, "indexNumber"]}
+                                    // rules={[
+                                    //   {
+                                    //     required: true,
+                                    //     message: "Bạn chưa nhập số lượng !",
+                                    //   },
+                                    // ]}
+                                    >
+                                      <Input placeholder="Số lượng" type="number" />
+                                    </Form.Item>
+                                  </Col>
+
+                                </Row>
+
+
+
+                                <MinusCircleOutlined
+                                  onClick={() => remove(field.name)}
+                                />
+                              </Space>
+                            )
+                          })}
 
                           <Form.Item>
                             <Button
@@ -644,101 +711,101 @@ const SalesInfor = () => {
         {(classify1 !== undefined ||
           classify2 !== undefined ||
           dataTh1?.classify1 !== undefined) && (
-          <React.Fragment>
-            <hr style={{ margin: "30px 0" }} />
-            <div style={{ display: "flex", width: "100%" }}>
-              <span
-                style={{
-                  color: "#ee4d2d",
-                  fontWeight: "400",
-                  width: "30%",
-                  fontSize: 18,
-                }}
-              >
-                Chọn ảnh cho từng mẫu hàng
-              </span>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  width: "70%",
-                }}
-              >
-                {dataCheck?.map((item) => {
-                  return (
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        flexDirection: "column",
-                        marginLeft: 10,
-                        position: "relative",
-                      }}
-                      key={item}
-                    >
-                      <Upload
-                        listType="picture-card"
-                        showUploadList={false}
-                        beforeUpload={Upload1}
-                        onClick={() => setSelectImage(item)}
+            <React.Fragment>
+              <hr style={{ margin: "30px 0" }} />
+              <div style={{ display: "flex", width: "100%" }}>
+                <span
+                  style={{
+                    color: "#ee4d2d",
+                    fontWeight: "400",
+                    width: "30%",
+                    fontSize: 18,
+                  }}
+                >
+                  Chọn ảnh cho từng mẫu hàng
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "70%",
+                  }}
+                >
+                  {dataCheck?.map((item) => {
+                    return (
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          flexDirection: "column",
+                          marginLeft: 10,
+                          position: "relative",
+                        }}
+                        key={item}
                       >
-                        {item.url !== undefined ? (
-                          <div className="box-image">
-                            <img src={item.url} className="image" />
-                          </div>
-                        ) : (
-                          <div>
-                            <div
-                              style={{
-                                marginTop: 8,
-                              }}
-                            >
-                              {loading1 == true ? (
-                                <Spin />
-                              ) : (
-                                <PlusCircleOutlined
-                                  style={{
-                                    fontSize: 30,
-                                    opacity: 0.8,
-                                    color: "#ee4d2d",
-                                  }}
-                                />
-                              )}
+                        <Upload
+                          listType="picture-card"
+                          showUploadList={false}
+                          beforeUpload={Upload1}
+                          onClick={() => setSelectImage(item)}
+                        >
+                          {item.url !== undefined ? (
+                            <div className="box-image">
+                              <img src={item.url} className="image" />
                             </div>
+                          ) : (
+                            <div>
+                              <div
+                                style={{
+                                  marginTop: 8,
+                                }}
+                              >
+                                {loading1 == true ? (
+                                  <Spin />
+                                ) : (
+                                  <PlusCircleOutlined
+                                    style={{
+                                      fontSize: 30,
+                                      opacity: 0.8,
+                                      color: "#ee4d2d",
+                                    }}
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </Upload>
+                        <span
+                          style={{
+                            color: "#ee4d2d",
+                            textTransform: "capitalize",
+                          }}
+                        >
+                          {item.name}
+                        </span>
+
+                        {item.url !== undefined && (
+                          <div
+                            style={{
+                              cursor: "pointer",
+                              position: "absolute",
+                              top: -10,
+                              right: -0,
+                              color: "#ee4d2d",
+                            }}
+                            onClick={() => removeImgae(item)}
+                          >
+                            <CloseCircleOutlined style={{ fontSize: 17 }} />
                           </div>
                         )}
-                      </Upload>
-                      <span
-                        style={{
-                          color: "#ee4d2d",
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        {item.name}
-                      </span>
-
-                      {item.url !== undefined && (
-                        <div
-                          style={{
-                            cursor: "pointer",
-                            position: "absolute",
-                            top: -10,
-                            right: -0,
-                            color: "#ee4d2d",
-                          }}
-                          onClick={() => removeImgae(item)}
-                        >
-                          <CloseCircleOutlined style={{ fontSize: 17 }} />
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          </React.Fragment>
-        )}
+            </React.Fragment>
+          )}
       </div>
       <div
         style={{

@@ -20,9 +20,13 @@ export const remove = (id) => {
   const url = `/saveoders/${id}`;
   return axiosClient.delete(url);
 };
-export const upload = (id, data) => {
-  const url = `/saveoders/${id}`;
-  return axiosClient.put(url, data);
+export const removes = (data) => {
+  const url = `/removes-saveoders`;
+  return axiosClient.post(url, data);
+};
+export const upload = (data) => {
+  const url = `/upload-saveoder`;
+  return axiosClient.post(url, data);
 };
 
 export const uploadSaveOrders = (data) => {

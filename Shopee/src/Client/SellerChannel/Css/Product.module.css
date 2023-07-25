@@ -1,0 +1,9 @@
+.trademark,
+.origin,
+.warehouse,
+.sent_from {
+    text-align: center;
+    color: red;
+    font-size: 16px;
+    font-weight: 600;
+}

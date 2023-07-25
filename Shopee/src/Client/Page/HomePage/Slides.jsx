@@ -8,7 +8,7 @@ import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 const Slides = () => {
   const dispatch = useDispatch();
   const slider = useRef(null);
-  const slides = useSelector((data) => data.slide.value);
+  const slides = useSelector((data) => data.slides.value);
   const listSlide = () => {
     if (slides.length > 0) {
       const slide = slides.filter((item) => item.status == 2);

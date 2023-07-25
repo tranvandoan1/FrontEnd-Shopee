@@ -5,7 +5,6 @@ import { Link } from "react-router-dom"
 const ProductTop = () => {
     const [commodityvalue, setCommodityvalue] = useState([])
     const [productArr, setProductArr] = useState([])
-
     useEffect(() => {
         const getData = async () => {
             const { data: products } = await ProAPI.getAll();

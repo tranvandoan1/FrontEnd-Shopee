@@ -37,84 +37,78 @@ const AddCateShop = () => {
 
   return (
     <div>
-      <Button type="primary" onClick={showModal}>
+      <Button type="primary" onClick={()=>console.log('first')}>
         Thêm danh mục
       </Button>
-      <Modal
-        title="Thêm danh mục"
-        visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleOk}
+   
+      <Form
+      name="basic"
+      labelCol={{
+        span: 8,
+      }}
+      wrapperCol={{
+        span: 16,
+      }}
+      initialValues={{
+        remember: true,
+      }}
+      onFinish={onFinish}
+      autoComplete="off"
+    >
+      <Form.Item
+        label="Tên danh mục"
+        name="name"
+        labelAlign="left"
+        rules={[
+          {
+            required: true,
+            message: "Bạn chưa nhập tên danh mục!",
+          },
+        ]}
       >
-        <Form
-          name="basic"
-          labelCol={{
-            span: 8,
-          }}
-          wrapperCol={{
-            span: 16,
-          }}
-          initialValues={{
-            remember: true,
-          }}
-          onFinish={onFinish}
-          autoComplete="off"
-        >
-          <Form.Item
-            label="Tên danh mục"
-            name="name"
-            labelAlign="left"
-            rules={[
-              {
-                required: true,
-                message: "Bạn chưa nhập tên danh mục!",
-              },
-            ]}
-          >
-            <Input placeholder="Tên danh mục" />
-          </Form.Item>
+        <Input placeholder="Tên danh mục" />
+      </Form.Item>
 
-          <Form.Item
-            label="Danh mục shopee"
-            name="cateShope_id"
-            labelAlign="left"
-            rules={[
-              {
-                required: true,
-                message: "Bạn chưa chọn danh mục của web",
-              },
-            ]}
-          >
-            {Object.keys(data).length > 0 && (
-              <Select placeholder="Danh mục của shop">
-                {data.categori.map((item) => (
-                  <Select.Option key={(item) => item._id} value={item._id}>
-                    <span style={{ textTransform: "capitalize", fontSize: 13 }}>
-                      {item.name}
-                    </span>
-                  </Select.Option>
-                ))}
-              </Select>
-            )}
-          </Form.Item>
-          <Form.Item
-            wrapperCol={{
-              offset: 4,
-              span: 24,
-            }}
-          >
-            <Button type="primary" htmlType="submit">
-              Thêm
-            </Button>
-            <Button
-              onClick={() => setIsModalVisible(false)}
-              style={{ marginLeft: 10 }}
-            >
-              Hủy
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+      <Form.Item
+        label="Danh mục shopee"
+        name="cateShope_id"
+        labelAlign="left"
+        rules={[
+          {
+            required: true,
+            message: "Bạn chưa chọn danh mục của web",
+          },
+        ]}
+      >
+        {Object.keys(data).length > 0 && (
+          <Select placeholder="Danh mục của shop">
+            {data.categori.map((item) => (
+              <Select.Option key={(item) => item._id} value={item._id}>
+                <span style={{ textTransform: "capitalize", fontSize: 13 }}>
+                  {item.name}
+                </span>
+              </Select.Option>
+            ))}
+          </Select>
+        )}
+      </Form.Item>
+      <Form.Item
+        wrapperCol={{
+          offset: 4,
+          span: 24,
+        }}
+      >
+        <Button type="primary" htmlType="submit">
+          Thêm
+        </Button>
+        <Button
+          onClick={() => setIsModalVisible(false)}
+          style={{ marginLeft: 10 }}
+        >
+          Hủy
+        </Button>
+      </Form.Item>
+    </Form>
     </div>
   );
 };

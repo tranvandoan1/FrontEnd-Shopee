@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import CateAPI from '../../../API/Categoris'
 import { $ } from '../../../Unti'
+import { useDispatch, useSelector } from 'react-redux';
+import { getCate } from '../../../reducers/CategoriSlice';
 
 const Categoris = () => {
-    const [categoris, setCategoris] = useState([])
     const [count, setCount] = useState(0)
+    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(getCate())
+    }, [])
+    const categories = useSelector(data => data.categoris.value)
     useEffect(async () => {
-        const { data: categoris } = await CateAPI.getAll()
-        setCategoris(categoris)
+        dispatch(getCate())
     }, [])
 
     const next = () => {
@@ -17,7 +22,7 @@ const Categoris = () => {
 
         const cateWidthBox = cateSum[0].offsetWidth / 2;
         const cateWidthAllBox = cateWidthBox * 2.7;
-        const newCount =  cateWidthAllBox+count;
+        const newCount = cateWidthAllBox + count;
         setCount(cateWidthAllBox)
         if (newCount > cateWidthAllBox) {
             setCount(0)
@@ -49,7 +54,7 @@ const Categoris = () => {
             <div className="list-category">
                 <div className="cate" >
                     <ul>
-                        {categoris.map((cate, index) => {
+                        {categories.map((cate, index) => {
                             return (
                                 <li key={index}>
                                     <a href="">
