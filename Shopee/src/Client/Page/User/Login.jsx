@@ -31,7 +31,6 @@ const Login = () => {
   };
 
   const handleFailure = (result) => {
-    message.error('error');
   };
   const handleLogin = (googleData) => {
     // dispatch(
