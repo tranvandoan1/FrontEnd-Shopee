@@ -1,24 +1,13 @@
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import Checkout from "./../PayMent/Checkout";
-import { useDispatch, useSelector } from "react-redux";
-import { addData } from "../../../reducers/CheckOutSlice";
+import React from "react";
+import { useDispatch } from "react-redux";
 import { uploadSaveOrderss } from "../../../reducers/SaveOrderSlice";
-import { getAllData } from "../../../reducers/AllData";
-
-const TotalProductOder = (props) => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const dataSelect = props.saveOrderSelect;
-  const dataSaveOrder = props.saveorder;
-  const dataAll = useSelector((data) => data.dataAll.value);
-  useEffect(async () => {
-    dispatch(getAllData());
-  }, []);
-
+import { useNavigate } from "react-router-dom";
+const TotalProductOder = ({ saveOrderSelect }) => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
   // tính tổng tiền
   const dataPrice = [];
-  dataSelect?.map((item) =>
+  saveOrderSelect?.map((item) =>
     dataPrice.push(
       item.sale == ""
         ? item.price * item.amount
@@ -30,19 +19,10 @@ const TotalProductOder = (props) => {
     sum += dataPrice[i];
   }
   const buyNow = async () => {
-    // set all id check= true
-    const idAll = [];
-    dataSaveOrder.map((item) => idAll.push(item._id));
-    const dataALL = { idSelect: idAll, check: false };
-
-    await dispatch(uploadSaveOrderss(dataALL));
-
-    // set  id select check= true
-
     const id = [];
-    dataSelect.map((item) => id.push(item._id));
+    saveOrderSelect?.map((item) => id.push(item._id));
     const data = { idSelect: id, check: true };
-    dispatch(uploadSaveOrderss(data));
+    await dispatch(uploadSaveOrderss(data));
     navigate("/checkout");
   };
   return (
@@ -52,7 +32,7 @@ const TotalProductOder = (props) => {
           <React.Fragment>
             <span>tổng thanh toán</span>{" "}
             <span style={{ marginRight: 10 }}>
-              ({dataSelect.length} sản phẩm)
+              ({saveOrderSelect?.length} sản phẩm)
             </span>{" "}
             :
           </React.Fragment>

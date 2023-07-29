@@ -13,15 +13,14 @@ import SaveOrderAPI from "./../API/SaveOrder";
 import InfoUserAPI from "../API/InFoUser";
 
 export const getAllData = createAsyncThunk("allData/getAllData", async () => {
-  const { data: categoris } = await CateAPI.getAll();
   const { data: products } = await ProAPI.getAll();
+  const { data: categoris } = await CateAPI.getAll();
   const { data: slides } = await SliderAPI.getAll();
   const { data: cateshopee } = await CateShopeeAPI.getAll();
   const { data: shopowners } = await ShopOwnerAPI.getAll();
   const { data: imagepros } = await ImageProAPI.getAll();
   const { data: classifies } = await ClassifyAPI.getAll();
   const { data: commodityvalues } = await CommodityValueAPI.getAll();
-  const { data: users } = await UserAPI.getAll();
   const { data: comments } = await CommentAPI.getAll();
   const { data: saveorders } = await SaveOrderAPI.getAll();
   const { data: info_user } = await InfoUserAPI.getAll();
@@ -35,7 +34,6 @@ export const getAllData = createAsyncThunk("allData/getAllData", async () => {
     imagepros: imagepros,
     classify: classifies,
     commodityvalue: commodityvalues,
-    user: users,
     comment: comments,
     saveorder: saveorders,
     info_user: info_user,

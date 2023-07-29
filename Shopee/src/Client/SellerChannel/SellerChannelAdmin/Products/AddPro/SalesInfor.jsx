@@ -32,29 +32,31 @@ import { addProduct } from "./../../../../../reducers/Products";
 import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
-const SalesInfor = ({ state, callBack }) => {
+const SalesInfor = ({ state, callBack, data }) => {
   const user = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [checkPl1, setCheckPl1] = useState(false);
-  const [checkPl2, setCheckPl2] = useState(false);
+  const [checkPl1, setCheckPl1] = useState(false);//thêm phân loại 1
+  const [checkPl2, setCheckPl2] = useState(false);//thêm phân loại 2
   const [classify1, setClassify1] = useState();
   const [classify2, setClassify2] = useState();
   const [classifyValue, setClassifyValue] = useState();
-
-  const [dataTh1, setDataTh1] = useState();
+  const [dataClassify, setDataClassify] = useState([]);
+  const [loading1, setLoading1] = useState(false);
+  const [selectImage, setSelectImage] = useState();
+  const [dataClassification, setDataClassification] = useState();
   const [form] = Form.useForm();
   const onFinish = (values) => {
     if (values.classify1 == undefined) {
       message.warning("Bạn chưa có giá trị phân loại!");
     } else {
       if (checkPl2 == false) {
-        setDataTh1(values);
+        setDataClassification(values);
         setClassifyValue([]);
         setClassify1([]);
         setClassify2([]);
       } else {
-        setDataTh1([]);
+        setDataClassification([]);
         setClassifyValue({
           name_classify1: values.name_classify1,
           name_classify2: values.name_classify2,
@@ -68,18 +70,95 @@ const SalesInfor = ({ state, callBack }) => {
         setClassify2(values.classify2);
       }
     }
-    setImageUrl([]);
+    setDataClassify([]);
   };
 
   const confirm = async (values) => {
+
+    const shopowners = data?.shopowner?.find(item => item.user_id == user._id)
+
     callBack({
-      loading: true, state: {}
-    })
+      loading: true,
+      state: {},
+    });
+
+
     if (checkPl2 == false) {
-      const objectPro = {
-        quantity: classify2?.quantity,
-        price: classify2?.price,
-      };
+
+      // lưu dữ liệu vào mảng mới trong đó có ảnh đại diện sản phẩm
+      const newPro = [
+        { name: "test", file: state?.imageUrlAvatar?.file },
+        ...dataClassify,
+      ];
+
+      const newArrayy = [];
+      newPro.filter((item, index) => {
+        const imageRef = ref(storage, `images/${item.file.name}`);
+        uploadBytes(imageRef, item.file).then(() => {
+          getDownloadURL(imageRef).then(async (url, indec) => {
+
+            await newArrayy.push({ ...item, photo: url });
+            if (newArrayy?.length == newPro?.length) {
+              const linkedPro = Math.random();
+              // linked dùng để liên kết với bảng thể loại với giá trị thể loại
+              const dataProduct = [];
+              const classifies = [];
+              newArrayy?.map((item) => {
+                if (item.name !== "test") {
+                  classifies.push({
+                    linked: linkedPro,
+                    name: item?.name,
+                    photo: item.photo,
+                    values: undefined,
+                    indexNumber: item.indexNumber,
+                    price: item.price,
+                    quantity: item.quantity
+                  });
+                } else {
+                  dataProduct.push({
+                    warehouse: state?.dataDetailedInfo.warehouse,
+                    trademark: state?.dataDetailedInfo.trademark,
+                    sent_from: state?.dataDetailedInfo.sent_from,
+                    origin: state?.dataDetailedInfo.origin,
+                    name: state?.dataBasicInfo.name,
+                    description: state?.dataBasicInfo.description,
+                    shop_id: shopowners?._id,
+                    cate_id: state?.dataBasicInfo.cate_id,
+                    linked: linkedPro,
+                    name_commodityvalue: undefined,
+                    name_classification: dataClassification.name_classify1,
+                    photo: item.photo,
+                    review: 0,
+                    view: 0,
+                    sold: 0,
+                    sale: state?.dataBasicInfo.sale,
+                    user_id: user._id,
+
+                  });
+                }
+              });
+              await dispatch(
+                addProduct({ product: dataProduct, classifies: classifies })
+              );
+              callBack({
+                loading: false,
+                state: {
+                  dataBasicInfo: undefined,
+                  dataDetailedInfo: undefined,
+                  check: 1,
+                  imageUrlAvatar: undefined,
+                },
+              });
+              navigate("/seller-channel/admin/products");
+              message.success("Thêm thành công  ");
+            }
+          });
+        });
+      });
+      // setTimeout(async () => {
+
+
+      // }, 10000);
     } else {
       const newArray = [];
       // chuyển dạng object có key là tên giá trị phân loại thành mảng thành value
@@ -146,6 +225,9 @@ const SalesInfor = ({ state, callBack }) => {
               name: item?.name,
               photo: item.photo,
               values: item.value,
+              indexNumber: undefined,
+              price: undefined,
+              quantity: undefined
             });
           } else {
             dataProduct.push({
@@ -155,7 +237,7 @@ const SalesInfor = ({ state, callBack }) => {
               origin: state?.dataDetailedInfo.origin,
               name: state?.dataBasicInfo.name,
               description: state?.dataBasicInfo.description,
-              shop_id: state?.dataBasicInfo.cate_id,
+              shop_id: shopowners?._id,
               cate_id: state?.dataBasicInfo.cate_id,
               linked: linkedPro,
               name_commodityvalue: classifyValue.name_classify2,
@@ -165,7 +247,8 @@ const SalesInfor = ({ state, callBack }) => {
               view: 0,
               sold: 0,
               sale: state?.dataBasicInfo.sale,
-              user_id:user._id
+              user_id: user._id,
+
             });
           }
         });
@@ -173,33 +256,30 @@ const SalesInfor = ({ state, callBack }) => {
           addProduct({ product: dataProduct, classifies: classifies })
         );
         callBack({
-          loading: false, state: {
+          loading: false,
+          state: {
             dataBasicInfo: undefined,
             dataDetailedInfo: undefined,
             check: 1,
             imageUrlAvatar: undefined,
-          }
-        })
-        // navigate("/seller-channel/admin/products");
+          },
+        });
+        navigate("/seller-channel/admin/products");
         message.success("Thêm thành công  ");
-
       }, 10000);
     }
   };
 
-  const [imageUrl, setImageUrl] = useState([]);
-  const [loading1, setLoading1] = useState(false);
-  const [selectImage, setSelectImage] = useState();
+
 
   const dataCheck =
-    imageUrl?.length <= 0
-      ? dataTh1?.classify1 == undefined
+    dataClassify?.length <= 0
+      ? dataClassification?.classify1 == undefined
         ? classify1
-        : dataTh1?.classify1
-      : imageUrl;
+        : dataClassification?.classify1
+      : dataClassify;
 
   const Upload1 = (file) => {
-    console.log(file, "32ewdqs");
     setLoading1(true);
 
     const src = URL.createObjectURL(file);
@@ -212,6 +292,7 @@ const SalesInfor = ({ state, callBack }) => {
           file: file,
           price: item.price1 || item.price,
           quantity: item.quantity,
+          indexNumber: item.indexNumber,
         });
       } else {
         newImage.push({
@@ -220,10 +301,11 @@ const SalesInfor = ({ state, callBack }) => {
           file: item.file,
           price: item.price1 || item.price,
           quantity: item.quantity,
+          indexNumber: item.indexNumber,
         });
       }
     });
-    setImageUrl(newImage);
+    setDataClassify(newImage);
     setLoading1(false);
   };
   const removeImgae = (data) => {
@@ -237,6 +319,7 @@ const SalesInfor = ({ state, callBack }) => {
           file: item.file,
           price: item.price1 || item.price,
           quantity: item.quantity,
+          indexNumber: item.indexNumber,
         });
       } else {
         newImage.push({
@@ -245,19 +328,12 @@ const SalesInfor = ({ state, callBack }) => {
           file: item.file,
           price: item.price1 || item.price,
           quantity: item.quantity,
+          indexNumber: item.indexNumber,
         });
       }
     });
-    setImageUrl(newImage);
+    setDataClassify(newImage);
     setLoading1(false);
-  };
-  const complete = () => {
-    console.log(
-      imageUrl.length <= 0
-        ? [...dataTh1, classifyValue]
-        : [...imageUrl, classifyValue],
-      "2ewds"
-    );
   };
 
   const columns = [
@@ -326,64 +402,82 @@ const SalesInfor = ({ state, callBack }) => {
                       <>
                         {fields.map((field) => (
                           <Space key={field.key} align="baseline">
-                            <Form.Item
-                              noStyle
-                              shouldUpdate={(prevValues, curValues) =>
-                                prevValues.area !== curValues.area ||
-                                prevValues.sights !== curValues.sights
-                              }
-                            >
-                              {() => (
+                            <Row gutter={24}>
+                              <Col xs={12} sm={4} md={12} lg={12} xl={12}>
+                                {" "}
+                                <Form.Item
+                                  noStyle
+                                  shouldUpdate={(prevValues, curValues) =>
+                                    prevValues.area !== curValues.area ||
+                                    prevValues.sights !== curValues.sights
+                                  }
+                                >
+                                  {() => (
+                                    <Form.Item
+                                      {...field}
+                                      label="Phân loại hàng"
+                                      name={[field.name, "name"]}
+                                      rules={[
+                                        {
+                                          required: true,
+                                          message:
+                                            "Bạn chưa nhập tên phân loại hàng !",
+                                        },
+                                      ]}
+                                    >
+                                      <Input placeholder="Nhập phân loại hàng, ví dụ: Trắng, Đỏ v.v" />
+                                    </Form.Item>
+                                  )}
+                                </Form.Item>
+                              </Col>
+                              <Col xs={12} sm={4} md={12} lg={12} xl={12}>
+                                {" "}
                                 <Form.Item
                                   {...field}
-                                  label="Phân loại hàng"
-                                  name={[field.name, "name"]}
+                                  label="Giá Tiền"
+                                  name={[field.name, "price1"]}
                                   rules={[
                                     {
-                                      required: true,
-                                      message:
-                                        "Bạn chưa nhập tên phân loại hàng !",
+                                      required: checkPl2 == true ? false : true,
+                                      message: "Bạn chưa nhập giá tiền !",
                                     },
                                   ]}
+                                  style={{
+                                    display: checkPl2 == true ? "none" : "flex",
+                                  }}
                                 >
-                                  <Input placeholder="Nhập phân loại hàng, ví dụ: Trắng, Đỏ v.v" />
+                                  <Input placeholder="Giá tiền" />
                                 </Form.Item>
-                              )}
-                            </Form.Item>
+                              </Col>
+                              <Col xs={12} sm={4} md={12} lg={12} xl={12}>
+                                <Form.Item
+                                  {...field}
+                                  label="Số lượng"
+                                  name={[field.name, "quantity"]}
+                                  rules={[
+                                    {
+                                      required: checkPl2 == true ? false : true,
+                                      message: "Bạn chưa nhập số lượng !",
+                                    },
+                                  ]}
+                                  style={{
+                                    display: checkPl2 == true ? "none" : "flex",
+                                  }}
+                                >
+                                  <Input placeholder="Số lượng" />
+                                </Form.Item>
+                              </Col>
+                              <Col xs={12} sm={4} md={12} lg={12} xl={12}>
+                                <Form.Item
+                                  {...field}
+                                  label="STT"
+                                  name={[field.name, "indexNumber"]}
+                                >
+                                  <Input placeholder="Số thứ tự" type="number" />
+                                </Form.Item>
+                              </Col>
+                            </Row>
 
-                            <Form.Item
-                              {...field}
-                              label="Giá Tiền"
-                              name={[field.name, "price1"]}
-                              rules={[
-                                {
-                                  required: checkPl2 == true ? false : true,
-                                  message: "Bạn chưa nhập giá tiền !",
-                                },
-                              ]}
-                              style={{
-                                display: checkPl2 == true ? "none" : "flex",
-                              }}
-                            >
-                              <Input placeholder="Giá tiền" />
-                            </Form.Item>
-
-                            <Form.Item
-                              {...field}
-                              label="Số lượng"
-                              name={[field.name, "quantity"]}
-                              rules={[
-                                {
-                                  required: checkPl2 == true ? false : true,
-                                  message: "Bạn chưa nhập số lượng !",
-                                },
-                              ]}
-                              style={{
-                                display: checkPl2 == true ? "none" : "flex",
-                              }}
-                            >
-                              <Input placeholder="Số lượng" />
-                            </Form.Item>
                             <MinusCircleOutlined
                               onClick={() => remove(field.name)}
                             />
@@ -465,7 +559,11 @@ const SalesInfor = ({ state, callBack }) => {
                         <>
                           {fields.map((field, index) => {
                             return (
-                              <Space key={field.key} align="baseline" style={{ border: 1, borderColor: 'red' }}>
+                              <Space
+                                key={field.key}
+                                align="baseline"
+                                style={{ border: 1, borderColor: "red" }}
+                              >
                                 <Row gutter={24}>
                                   <Col xs={12} sm={4} md={12} lg={12} xl={12}>
                                     <Form.Item
@@ -494,7 +592,6 @@ const SalesInfor = ({ state, callBack }) => {
                                     </Form.Item>
                                   </Col>
                                   <Col xs={12} sm={4} md={12} lg={12} xl={12}>
-
                                     <Form.Item
                                       {...field}
                                       label="Giá Tiền"
@@ -510,7 +607,6 @@ const SalesInfor = ({ state, callBack }) => {
                                     </Form.Item>
                                   </Col>
                                   <Col xs={12} sm={4} md={12} lg={12} xl={12}>
-
                                     <Form.Item
                                       {...field}
                                       label="Số lượng"
@@ -537,19 +633,19 @@ const SalesInfor = ({ state, callBack }) => {
                                     //   },
                                     // ]}
                                     >
-                                      <Input placeholder="Số lượng" type="number" />
+                                      <Input
+                                        placeholder="Số thứ tự"
+                                        type="number"
+                                      />
                                     </Form.Item>
                                   </Col>
-
                                 </Row>
-
-
 
                                 <MinusCircleOutlined
                                   onClick={() => remove(field.name)}
                                 />
                               </Space>
-                            )
+                            );
                           })}
 
                           <Form.Item>
@@ -584,14 +680,14 @@ const SalesInfor = ({ state, callBack }) => {
             </Button>
             <br />
             <span style={{ fontSize: 14, opacity: 0.5, color: "black" }}>
-              (Hãy tích vào giá trị phân loại của loại hàng nếu có )
+              {checkPl1 == false ? '(Hãy tích vào giá trị phân loại của loại hàng nếu có )' : '(Xem lại dữ liệu sản phẩm)'}
             </span>
           </h4>
         </Form>
-        {dataTh1?.classify1?.length > 0 && checkPl2 == false && (
+        {dataClassification?.classify1?.length > 0 && checkPl2 == false && (
           <Table
             pagination={false}
-            dataSource={dataTh1?.classify1}
+            dataSource={dataClassification?.classify1}
             columns={columns}
           />
         )}
@@ -710,7 +806,7 @@ const SalesInfor = ({ state, callBack }) => {
         )}
         {(classify1 !== undefined ||
           classify2 !== undefined ||
-          dataTh1?.classify1 !== undefined) && (
+          dataClassification?.classify1 !== undefined) && (
             <React.Fragment>
               <hr style={{ margin: "30px 0" }} />
               <div style={{ display: "flex", width: "100%" }}>
@@ -898,7 +994,7 @@ const SalesInfor = ({ state, callBack }) => {
           </span>
         </div>
       </div>
-      {imageUrl.length > 0 && (
+      {dataClassify.length > 0 && (
         <div
           // className="button_save"
           style={{

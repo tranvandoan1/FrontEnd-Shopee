@@ -1,12 +1,19 @@
-import React, { useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import BasicInfo from "./BasicInfo";
 import "../../../../Page/Css/Css/AddPro.css";
 import DetailedInfo from "./DetailedInfo";
 import SalesInfor from "./SalesInfor";
 import { LeftOutlined } from "@ant-design/icons";
 import { Space, Spin } from "antd";
+import { getAllData } from "../../../../../reducers/AllData";
+import { useDispatch, useSelector } from "react-redux";
 
 const AddPro = () => {
+  const dispatch = useDispatch();
+  const data = useSelector((data) => data.dataAll.value);
+  useEffect(() => {
+    dispatch(getAllData());
+  }, []);
   const [state, setState] = useReducer(
     (state, newState) => ({
       ...state,
@@ -59,6 +66,7 @@ const AddPro = () => {
               }
               setImageUrlAvatar={(e) => setState({ imageUrlAvatar: e })}
               state={state}
+              data={data}
             />
           </div>
         </div>
@@ -96,6 +104,7 @@ const AddPro = () => {
                 setState({ dataDetailedInfo: e.data, check: e.check })
               }
               state={state}
+              data={data}
             />
           </div>
         </div>
@@ -136,6 +145,7 @@ const AddPro = () => {
               ...e.state,
               loading: e.loading
             })}
+            data={data}
           />
         </div>
       )}

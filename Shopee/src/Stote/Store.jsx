@@ -11,11 +11,13 @@ import commentSlice from "../reducers/CommentSlice";
 import checkOutSlice from "../reducers/CheckOutSlice";
 import infoUserSlice from "../reducers/InfoUserSlice";
 import classifieSlice from "../reducers/Classifies";
+import userSlice from "../reducers/UserSlice";
+import pushEmailSlice from "../reducers/PushEmail";
 
 export const store = configureStore({
   reducer: {
     products: productSlice,
-    saveorder: saveOrderSlice,
+    saveorders: saveOrderSlice,
     categoris: categorisSlice,
     slides: sliderSlice,
     dataAll: allDataSlice,
@@ -25,7 +27,9 @@ export const store = configureStore({
     comments: commentSlice,
     checkOut: checkOutSlice,
     infoUser: infoUserSlice,
-    classifies:classifieSlice
+    classifies:classifieSlice,
+    users:userSlice,
+    otpEmail:pushEmailSlice
 
   },
 });

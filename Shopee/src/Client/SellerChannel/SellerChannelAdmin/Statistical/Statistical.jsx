@@ -31,7 +31,7 @@ const Statistical = () => {
             </Descriptions.Item>
             <Descriptions.Item>
               <div className={styles.cate}>
-                <span className={styles.listLength}>0</span>
+                <span className={styles.listLength}>{data?.product?.length}</span>
                 <span>Sản phẩm</span>
               </div>
             </Descriptions.Item>
@@ -49,7 +49,7 @@ const Statistical = () => {
             </Descriptions.Item>
             <Descriptions.Item>
               <div className={styles.cate}>
-                <span className={styles.listLength}>{data.slide.length}</span>
+                <span className={styles.listLength}>{data?.slide?.length}</span>
                 <span>Slide ảnh</span>
               </div>
             </Descriptions.Item>

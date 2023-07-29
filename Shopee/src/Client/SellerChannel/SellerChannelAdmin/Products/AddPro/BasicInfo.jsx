@@ -4,27 +4,20 @@ import {
   RightOutlined,
 } from "@ant-design/icons";
 import { Button, Col, Form, Input, Row, Select, Spin, Upload, notification } from "antd";
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import "../../../../Page/Css/Css/AddPro.css";
-import { useDispatch, useSelector } from "react-redux";
 import styles from "../../../../Page/Css/CssModule/AddPro.module.css";
 
-import { getAllData } from "./../../../../../reducers/AllData";
-import { startTransition } from "react";
 
 const { TextArea } = Input;
-const BasicInfo = ({ callBack, state, setImageUrlAvatar }) => {
-  const dispatch = useDispatch();
+const BasicInfo = ({ callBack, state, setImageUrlAvatar, data }) => {
 
   const [name, setName] = useState();
   const [description, setDescription] = useState();
   const [loading, setLoading] = useState(false);
 
   const [api, contextHolder] = notification.useNotification();
-  const data = useSelector((data) => data.dataAll.value);
-  useEffect(() => {
-    dispatch(getAllData());
-  }, []);
+
 
   const UploadAvatatr = (file) => {
     setLoading(true);
@@ -211,6 +204,8 @@ const BasicInfo = ({ callBack, state, setImageUrlAvatar }) => {
             <Input
               placeholder="Giảm giá"
               type="number"
+              max={100}
+              min={0}
               defaultValue={
                 state?.dataBasicInfo?.sale == undefined
                   ? ""

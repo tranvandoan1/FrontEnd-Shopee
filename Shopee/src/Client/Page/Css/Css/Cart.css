@@ -21,16 +21,16 @@ body {
   flex: 1;
 }
 
-.cart-page-logo > a {
+.cart-page-logo>a {
   width: 10rem;
   color: rgb(238, 77, 45);
 }
 
-.cart-page-logo > a > img {
+.cart-page-logo>a>img {
   width: 100%;
 }
 
-.cart-page-logo > span {
+.cart-page-logo>span {
   margin-left: 0.9375rem;
   border-left: 0.0625rem solid #ee4d2d;
   color: #ee4d2d;
@@ -51,7 +51,7 @@ body {
   overflow: hidden;
 }
 
-.cart-page-search > input {
+.cart-page-search>input {
   width: 100%;
   border: 2px solid #ee4d2d;
   height: 80%;
@@ -60,11 +60,11 @@ body {
   font-size: 1.1rem;
 }
 
-.cart-page-search > input:focus {
+.cart-page-search>input:focus {
   outline: #ee4d2d;
 }
 
-.cart-page-search > button {
+.cart-page-search>button {
   position: absolute;
   right: 0;
   background-color: rgb(238, 77, 45);
@@ -75,7 +75,7 @@ body {
   cursor: pointer;
 }
 
-.cart-page-search > button > i {
+.cart-page-search>button>i {
   color: #fff;
   font-size: 1.1rem;
 }
@@ -113,6 +113,7 @@ body {
   background-color: #fff;
   margin-bottom: 20px;
 }
+
 .cart-page_pr-owner {
   padding: 10px 20px;
   color: rgba(0, 0, 0, 0.87);
@@ -120,7 +121,7 @@ body {
   font-weight: 500;
 }
 
-.cart-page_pr-owner > i {
+.cart-page_pr-owner>i {
   font-size: 1.2rem;
   margin-right: 10px;
   color: rgb(238, 77, 45);
@@ -145,7 +146,7 @@ body {
   display: none;
 }
 
-.checkbox > label {
+.checkbox>label {
   position: relative;
   width: 16px;
   height: 16px;
@@ -183,17 +184,19 @@ body {
   overflow: hidden;
 }
 
-.pr-image > img {
+.pr-image>img {
   position: absolute;
   top: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-.pr-info > a {
+
+.pr-info>a {
   display: flex;
 }
-.pr-info > a span {
+
+.pr-info>a span {
   text-decoration: none;
   color: rgb(101, 101, 101);
   display: -webkit-box;
@@ -220,7 +223,11 @@ body {
   cursor: pointer;
 }
 
-.pr-classify > .classify > .pr-size {
+.pr-classNameify .pr-size {
+  text-transform: capitalize;
+}
+
+.pr-classify>.classify>.pr-size {
   font-size: 0.8rem;
   display: -webkit-box;
   text-overflow: ellipsis;
@@ -241,7 +248,7 @@ body {
   justify-content: center;
 }
 
-.pr-price_sale > del {
+.pr-price_sale>del {
   margin-right: 10px;
   font-size: 0.9rem;
 }
@@ -252,13 +259,13 @@ body {
   align-items: center;
 }
 
-.pr-quantity > input {
+.pr-quantity>input {
   width: 40px;
   height: 32px;
   text-align: center;
 }
 
-.pr-quantity > input:focus {
+.pr-quantity>input:focus {
   outline: rgba(0, 0, 0, 0.09);
 }
 
@@ -276,7 +283,7 @@ body {
   font-size: 1.2rem;
 }
 
-.pr-operation > i {
+.pr-operation>i {
   cursor: pointer;
 }
 
@@ -288,24 +295,24 @@ body {
   margin-bottom: 20px;
 }
 
-.pr-buying > .pr-total {
+.pr-buying>.pr-total {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px;
 }
 
-.pr-buying > .pr-total span:nth-child(1) {
+.pr-buying>.pr-total span:nth-child(1) {
   text-transform: capitalize;
   font-size: 1.3rem;
 }
 
-.pr-buying > .pr-total span:nth-child(3) {
+.pr-buying>.pr-total span:nth-child(3) {
   color: rgb(238, 77, 45);
   font-size: 1.3rem;
 }
 
-.buying > button {
+.buying>button {
   background-color: rgb(238, 77, 45);
   border: none;
   color: white;
@@ -315,9 +322,11 @@ body {
   border-radius: 3px;
   cursor: pointer;
 }
+
 .pr-classNameify {
   position: relative;
 }
+
 .pr-filter {
   position: absolute;
   top: 60px;
@@ -348,9 +357,9 @@ body {
   display: none;
 }
 
-.pr-type > h4,
-.pr-size > h4 {
-  font-size: 0.7rem;
+.pr-type>h4,
+.pr-size>h4 {
+  font-size: .85rem;
   font-weight: 500;
   text-transform: capitalize;
   margin-top: 10px;
@@ -358,13 +367,15 @@ body {
   width: 45%;
 }
 
-.pr-type > .type,
-.pr-size > .size {
+.pr-type>.type,
+.pr-size>.size {
   width: 100%;
 }
 
-.pr-type > .type > ul > li > .pr-check-type,
-.pr-size > .size > ul > li > .pr-check-size {
+
+
+.pr-type>.type>ul>li>.pr-check-type,
+.pr-size>.size>ul>li>.pr-check-size {
   width: 2rem;
   height: 2rem;
   position: absolute;
@@ -380,8 +391,8 @@ body {
   width: 30px;
 }
 
-.pr-type > .type > ul > li > .pr-check-type i,
-.pr-size > .size > ul > li > .pr-check-size i {
+.pr-type>.type>ul>li>.pr-check-type i,
+.pr-size>.size>ul>li>.pr-check-size i {
   position: absolute;
   right: -1px;
   bottom: -2px;
@@ -390,20 +401,20 @@ body {
   color: white;
 }
 
-.type > ul > li > .pr-check-type > ::before,
-.pr-size > .size > ul > li > .pr-check-size > ::before {
-  border-top: 1.1rem solid transparent;
-  border-right: 1.1rem solid transparent;
-  border-left: 1.1rem solid transparent;
-  border-bottom: 1.1rem solid #ee4d2d;
+.pr-filter .pr-check-type> ::before,
+.pr-filter .pr-check-size> ::before {
+  border-top: 1.2rem solid transparent;
+  border-right: 1.2rem solid transparent;
+  border-left: 1.2rem solid transparent;
+  border-bottom: 1.2rem solid #ee4d2d;
   content: "";
   position: absolute;
   right: -1.4rem;
   bottom: -2.5px;
 }
 
-.pr-type > .type > ul > li,
-.pr-size > .size > ul > li {
+.pr-type>.type>ul>li,
+.pr-size>.size>ul>li {
   display: inline-block;
   list-style: none;
   padding: 5px;
@@ -414,8 +425,8 @@ body {
   position: relative;
 }
 
-.pr-type > .type > ul > li > a,
-.pr-size > .size > ul > li > a {
+.pr-type>.type>ul>li>a,
+.pr-size>.size>ul>li>a {
   text-decoration: none;
   font-size: 0.7rem;
   opacity: 0.7;
@@ -427,7 +438,7 @@ body {
   text-align: right;
 }
 
-.pr-button > .back {
+.pr-button>.back {
   border: none;
   color: black;
   font-size: 0.8rem;
@@ -437,7 +448,7 @@ body {
   cursor: pointer;
 }
 
-.pr-button > .confirm {
+.pr-button>.confirm {
   background-color: rgb(238, 77, 45);
   color: #fff;
   border: none;
@@ -446,7 +457,13 @@ body {
   cursor: pointer;
   border-radius: 3px;
 }
+
 .ant-checkbox-checked .ant-checkbox-inner {
   background-color: #ee4d2d !important;
   border-color: #ee4d2d !important;
+}
+
+.warning403 {
+  background-color: #fff;
+  margin-bottom: 10px;
 }

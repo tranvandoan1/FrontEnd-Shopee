@@ -1,7 +1,11 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { uploadSaveOrderCart, uploadSaveOrderss } from "../../../reducers/SaveOrderSlice";
 
-const TotalPrice = (props) => {
-  const dataSelect = props.dataSelect;
+const TotalPrice = ({ dataSelect }) => {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const priceSale = [];
   const price = [];
   dataSelect?.map(
@@ -14,14 +18,19 @@ const TotalPrice = (props) => {
   );
   let sumSale = 0;
   for (let i = 0; i < priceSale.length; i++) {
-    sumSale += priceSale[[i]];
+    sumSale += priceSale[i];
   }
   console.log(price);
   let sum = 0;
   for (let i = 0; i < price.length; i++) {
-    sum += price[[i]];
+    sum += price[i];
   }
-
+  const back = async () => {
+    const id = []
+    dataSelect?.filter(item => id.push(item._id))
+    await dispatch(uploadSaveOrderss({ idSelect: id, check: false }))
+    navigate('/cart')
+  }
   return (
     <div className="total-money-oder" style={{ marginBottom: 20 }}>
       <div className="info-money">
@@ -42,7 +51,10 @@ const TotalPrice = (props) => {
 
       <div className="oder">
         <span>Nhấn "Đặt hàng" đồng nghĩa với việc bạn đã đồng ý đạt hàng</span>
-        <button>Đặt hàng ngay</button>
+        <div>
+          <button onClick={() => back()}>Quay lại</button>
+          <button>Đặt hàng ngay</button>
+        </div>
       </div>
     </div>
   );

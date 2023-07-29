@@ -20,7 +20,7 @@ body {
     background-color: rgba(0, 0, 0, 0.5);
     width: 100%;
     height: 100vh;
-    z-index: 1000;
+    z-index: 10;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -34,10 +34,22 @@ body {
     font-weight: 600;
 }
 
-form {
+.form-login .form-signup {
     background-color: #fff;
-    padding: 20px 150px 50px 150px;
+    width: 70%;
+    padding: 20px 80px 50px 80px;
+    border-radius: 3px;
+
 }
+
+.form-signin {
+    background-color: #fff;
+    width: 50%;
+    padding: 20px 80px 50px 80px;
+    border-radius: 3px;
+
+}
+
 
 .form h2 {
     text-align: center;
@@ -69,8 +81,9 @@ input:focus {
     outline: none;
 }
 
-.button-login ,.button-signup{
-    width: 100%;
+
+.button-login,
+.button-signup {
     border: 0;
     background-color: black;
     font-size: .9rem;
@@ -78,6 +91,8 @@ input:focus {
     border-radius: 2px;
     color: #fff !important;
     cursor: pointer;
+    height: 100%;
+    width: 100%;
 }
 
 
@@ -86,10 +101,18 @@ input:focus {
     background-color: red;
 }
 
+.button-login:hover {
+    background-color: red;
+}
+
+.button-signup:hover {
+    background-color: black;
+}
+
 .hr {
     width: 100%;
     position: relative;
-    z-index: 100;
+    z-index: 1;
     text-align: center;
     font-size: .8rem;
     color: rgb(167, 167, 167);
@@ -116,15 +139,7 @@ input:focus {
     background-color: rgb(224, 224, 224);
 }
 
-.login form>a {
-    text-align: center;
-    text-decoration: none;
-    font-size: .9rem;
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-    color: black;
-}
+
 
 .text-danger {
     color: black;
@@ -132,4 +147,54 @@ input:focus {
     font-size: .9rem;
     display: none;
     margin: 40px 0;
+}
+
+.upload-avatar {
+    position: relative;
+}
+
+.form-signup .close {
+    position: absolute;
+    left: 70px;
+    top: -10px;
+    cursor: pointer;
+    color: red;
+}
+
+.form-item-upload-avatar {
+    margin-top: 20px;
+}
+
+.form-signup h3 {
+    color: red;
+}
+
+.input-email,
+.input-password {
+    height: 40px;
+}
+
+.creact-account a {
+    text-align: center;
+    text-decoration: none;
+    font-size: .9rem;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    color: black;
+
+}
+.button-signup-google{
+    margin-top: 10px;
+    width: 100%;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.creact-account button:nth-child(2){
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
 }

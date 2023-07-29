@@ -4,7 +4,7 @@ import { HeaderSticky } from "./../Header/HeaderSticky";
 import TotalPrice from "./TotalPrice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { Button, Checkbox, Radio } from "antd";
+import { Button, Checkbox, Radio, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import ShowAddAddress from "./ShowAddAdress";
 import {
@@ -15,69 +15,70 @@ import {
 import { openNotificationWithIcon } from "../../../Notification";
 
 const ListAddress = () => {
-    const user = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
-    const dispatch = useDispatch();
-  
-    const infousers = useSelector((data) => data.infoUser.value);
-    useEffect(() => {
-      dispatch(getInfoUser());
-    }, []);
-  
-    const dataInfoUser = infousers?.filter((item) => item.user_id == user._id);
-  
-    const [checkChange, setCheckChange] = useState(false);
-    const [checkAddAdress, setCheckAddAdress] = useState(false);
-    const [idInfoUser, setIdInfoUser] = useState();
-  
-    const onChange = (checkedValues) => {
-      setIdInfoUser(checkedValues);
-    };
-  
-    const deleteInfo = (id) => {
-      const newdata = dataInfoUser.find(
-        (item) => item._id == id && item.status == 1
+  const dispatch = useDispatch();
+
+  const infousers = useSelector((data) => data.infoUser.value);
+  useEffect(() => {
+    dispatch(getInfoUser());
+  }, []);
+
+  const dataInfoUser = infousers?.find((item) => item?.status == true);//lấy địa chỉ mặc định
+  const [checkChange, setCheckChange] = useState(false);
+  const [checkAddAdress, setCheckAddAdress] = useState(false);
+  const [idInfoUser, setIdInfoUser] = useState();
+
+  const onChange = (checkedValues) => {
+    setIdInfoUser(checkedValues[0]);
+  };
+
+  const deleteInfo = async (item) => {
+
+    if (item.status == true) {
+      openNotificationWithIcon("warning", "Không thể xóa địa chỉ mặc định !");
+    } else {
+      if (confirm("Bạn có muốn xóa không ?")) {
+        await dispatch(removeInfoUser(item._id));
+        message.open({
+          type: "success",
+          content: "Xóa thành công",
+          duration: 1,
+        });
+      }
+    }
+  };
+
+  const complete = async () => {
+    if (idInfoUser.length == undefined) {
+      openNotificationWithIcon("warning", "Bạn chỉ có thể chọn 1 địa chỉ");
+    } else {
+      const idInfoUserUpdate = infousers?.find(item => item._id == idInfoUser)
+      const idInfoUserTrue = infousers?.find(item => item.status == true)
+
+      await dispatch(
+        uploadInfoUser({
+          _idUpload: idInfoUserUpdate._id, _idInfoTrue: idInfoUserTrue?._id
+        })
       );
-      if (newdata) {
-        openNotificationWithIcon("warning", "Không thể xóa địa chỉ mặc định !");
-      } else {
-        if (confirm("Bạn có muốn xóa không ?")) {
-          dispatch(removeInfoUser(id));
-        }
-      }
-    };
-  
-    const complete = () => {
-      if (idInfoUser.length > 1) {
-        openNotificationWithIcon("warning", "Bạn chỉ có thể chọn 1 địa chỉ");
-      } else {
-        const newdata = dataInfoUser.find((item) => item.status == 1);
-        let formData = new FormData();
-        let formData1 = new FormData();
-        formData.append("status", 1);
-        formData1.append("status", 2);
-        dispatch(
-          uploadInfoUser({
-            dataUpload: formData,
-            idUpload: idInfoUser,
-            data: formData1,
-            id: newdata._id,
-          })
-        );
-        setCheckChange(false);
-  
-        openNotificationWithIcon("success", "Cập nhật thành công");
-      }
-    };
+      setCheckChange(false);
+      message.open({
+        type: "success",
+        content: "Cập nhật thành công",
+        duration: 1,
+      });
+    }
+  };
   return (
     <React.Fragment>
       <div className="payment-header">
         <div className="pm"></div>
 
-        {dataInfoUser?.length == 0 ? (
-          <div style={{ padding: 20, color: "red", fontSize: 17 }}>
-            Bạn chưa có địa chỉ nhận hàng !{" "}
+        {dataInfoUser == undefined && checkChange == false ? (
+          <div className="no-addres">
+            <span>
+              Bạn chưa có địa chỉ nhận hàng !
+            </span>
             <Button
-              onClick={() => setCheckAddAdress(true)}
+              onClick={() => infousers?.value?.length <= 0 && infousers?.loading == false ? setCheckAddAdress(true) : setCheckChange(true)}
               icon={<PlusOutlined />}
             >
               Thêm địa chỉ
@@ -103,25 +104,20 @@ const ListAddress = () => {
                 THAY ĐỔI
               </div>
             </div>
-            {dataInfoUser.map((item, index) => {
-              if (item.status == 1) {
-                return (
-                  <div className="payment_delivery-address" key={index}>
-                    <div className="payment_name">
-                      {item.name} (0{item.phone} )
-                    </div>
-                    <div className="payment_address">
-                      {item.address == ""
-                        ? `${`${item.specific_address},`}${item.ward}${
-                            item.district
-                          },${item.city}`
-                        : `${`${item.specific_address},`}${item.address}}`}
-                    </div>
-                    {item.status == 1 && <span>mặc định</span>}
-                  </div>
-                );
-              }
-            })}
+
+            <div className="payment_delivery-address" >
+              <div className="payment_name">
+                {dataInfoUser?.name} (0{dataInfoUser?.phone} )
+              </div>
+              <div className="payment_address">
+                {dataInfoUser?.address == ""
+                  ? `${`${dataInfoUser?.specific_address},`}${dataInfoUser?.ward}${dataInfoUser?.district
+                  },${dataInfoUser?.city}`
+                  : `${`${dataInfoUser?.specific_address},`}${dataInfoUser?.address}}`}
+              </div>
+              {dataInfoUser?.status == true && <span>mặc định</span>}
+            </div>
+
           </div>
         ) : (
           <div className="add-address">
@@ -138,11 +134,11 @@ const ListAddress = () => {
             <Checkbox.Group className="checkbox" onChange={onChange}>
               <div className="change-address">
                 <ul>
-                  {dataInfoUser?.map((item, index) => {
+                  {infousers?.map((item, index) => {
                     return (
                       <li key={index}>
                         <Checkbox
-                          disabled={item.status == 1 && true}
+                          disabled={item.status == true && true}
                           value={item._id}
                           key={index}
                           style={{ marginRight: 10 }}
@@ -152,14 +148,13 @@ const ListAddress = () => {
                         </div>
                         <div style={{ textAlign: "center" }}>
                           {item.address == ""
-                            ? `${`${item.specific_address},`}${item.ward},${
-                                item.district
-                              },${item.city}`
+                            ? `${`${item.specific_address},`}${item.ward},${item.district
+                            },${item.city}`
                             : `${`${item.specific_address},`}${item.address}}`}
                         </div>
                         <span>{item.status == 1 && "Mặc định"}</span>
                         <span>
-                          <button onClick={() => deleteInfo(item._id)}>
+                          <button onClick={() => deleteInfo(item)}>
                             <i className="far fa-trash-alt"></i>
                           </button>
                         </span>

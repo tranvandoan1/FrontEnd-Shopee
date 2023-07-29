@@ -33,7 +33,7 @@ const ProductSale = () => {
       <div className="flash__products_header">
         <div className="flash-sale_header">
           <em> flash sale</em>
-          <Countdown date={1659111850521} renderer={renderer} />
+          <Countdown date={123123} renderer={renderer} />
         </div>
         <div className="flash-header_links">
           <a href="">

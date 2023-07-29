@@ -5,17 +5,19 @@ const UserAPI = {
         const url = `/user`;
         return axiosClient.get(url);
     },
-    get(id) {
-        const url = `/user?id=${id}`;
-        return axiosClient.get(url);
-    },
+
     signup(user) {
         const url = `/signup`;
         return axiosClient.post(url, user);
     },
-    signin(user){
-        const url=`/signin`;
-        return axiosClient.post(url,user)
+
+    signOut() {
+        const url = `/signout`;
+        return axiosClient.get(url);
+    },
+    signin(user) {
+        const url = `/signin`;
+        return axiosClient.post(url, user)
     }
     ,
     remove(id) {
@@ -28,3 +30,20 @@ const UserAPI = {
     },
 };
 export default UserAPI;
+export const uploadInfoUser = (data) => {
+    const url = `/upload-user`;
+    return axiosClient.post(url, data);
+};
+export const uploadPassword = (data) => {
+    const url = `/user/upload/password`;
+    return axiosClient.post(url, data);
+};
+export const getInfoUser = (id) => {
+    const url = `/get-user/${id}`;
+    return axiosClient.get(url);
+};
+export const uploadEmail = (email) => {
+  const url = `/email/upload/email`;
+  return axiosClient.post(url, email);
+};
+

@@ -29,8 +29,8 @@ const DetailPage = () => {
   const navigate = useNavigate();
 
   const data = useSelector((data) => data.dataAll.value);
-  const product = useSelector((data) => data.products.value);
 
+  const product = useSelector((data) => data.products.value);
   useEffect(() => {
     window.scroll(0, 0);
     dispatch(getProduct(id));
@@ -54,19 +54,24 @@ const DetailPage = () => {
 
   // hiện tên thuộc phân loại
   const commValue = [];
-  const classifies = data?.classify?.filter((item) => {
+  const classifies = []
+
+  data?.classify?.filter((item) => {
     if (item.linked == product.linked) {
-      item.values.map((itemValue) => {
-        commValue.push({ ...itemValue });
-      });
-      return item;
+      if (item?.values == undefined && item?.values == null) {
+        classifies.push(item);
+      } else {
+        item?.values?.map((itemValue) => {
+          commValue.push({ ...itemValue });
+        });
+        classifies.push(item);
+      }
     }
   });
   // lấy giá trị phân loại
-  const newDataCommValue = duplicateMame(commValue)?.sort(
+  const newDataCommValue = duplicateMame(commValue?.length <= 0 ? classifies : commValue)?.sort(
     (a, b) => a.indexNumber - b.indexNumber
   );
-
   // lấy ra tiền của sản phẩm
   const priceArr = [];
   duplicateMame(newDataCommValue)?.map((item) => priceArr.push(item.price));
@@ -75,10 +80,23 @@ const DetailPage = () => {
 
   //chọn type
   const onClickClassify = async (item) => {
-    const newDataCommValue = duplicateMame(item?.values)?.sort(
-      (a, b) => a.indexNumber - b.indexNumber
-    );
-    setClassify({ ...item, values: newDataCommValue });
+    if (item._id == classify?._id) {
+      setClassify()
+      setPrice()
+    } else {
+      if (commValue?.length <= 0) {
+        setPrice(item?.price);
+        setClassify(item);
+
+      } else {
+        const newDataCommValue = duplicateMame(item?.values)?.sort(
+          (a, b) => a.indexNumber - b.indexNumber
+        );
+        setClassify({ ...item, values: newDataCommValue });
+      }
+    }
+
+
   };
   //chọn giá trị phân loại để thêm sản phẩm
   const onClickCommodityvalue = async (item) => {
@@ -90,33 +108,31 @@ const DetailPage = () => {
     setQuantity(1);
     setCommodityValueSelect();
     setClassify();
+    setPrice()
   };
-
   const onSubmitAddOrder = async (check) => {
-    if (classify == undefined) {
+    if ((classify == undefined && commValue?.length > 0)) {
       openNotificationWithIcon("warning", "Bạn đã chọn gì đâu");
     } else {
       // tìm xem order vừa thêm đã tồn tại chưa
       const order = data.saveorder?.find(
         (item) =>
           item.user_id == user._id &&
-          item.classification_id == classify._id &&
-          item.commodity_value_id == commodityValueSelect._id
+          item.classification_id == classify?._id &&
+          (item.commodity_value_id == commodityValueSelect?._id || item.commodity_value_id == null)
       );
       if (order) {
-        console.log('1')
         await dispatch(uploadSaveOrder({ _id: order._id, amount: Number(+order.amount + +quantity) }));
         setEmpty();
         check == "buyNow" && navigate("/cart");
         openNotificationWithIcon("success", "Thêm thành công");
       } else {
-        console.log('2')
-        if (commodityValueSelect !== undefined) {
+        if (commodityValueSelect !== undefined || commValue?.length == 0) {
           try {
             const order = {
               price: price,
-              classification: classify.name,
-              commodity_value: commodityValueSelect.name,
+              classification: classify?.name,
+              commodity_value: commValue?.length == 0 ? null : commodityValueSelect.name,
               amount: Number(quantity),
               linked: product.linked,
               user_id: user._id,
@@ -126,8 +142,9 @@ const DetailPage = () => {
               shop_id: product.shop_id,
               pro_id: product._id,
               classification_id: classify?._id,
-              commodity_value_id: commodityValueSelect._id,
+              commodity_value_id:commValue?.length == 0 ? null : commodityValueSelect._id,
             };
+            console.log(order, 'order')
             await dispatch(addSaveOrder(order));
             setEmpty();
             check == "buyNow" && navigate("/cart");
@@ -172,23 +189,7 @@ const DetailPage = () => {
       return photoHover;
     }
   };
-  const hoverImage = (hover) => {
-    setPhotoHover(
-      // hover == 1
-      //   ? product.photo1
-      //   : hover == 2
-      //   ? product.photo2
-      //   : hover == 3
-      //   ? product.photo3
-      //   : hover == 4
-      //   ? product.photo4
-      //   : hover == 5
-      //   ? product.photo5
-      //   : ""
-      hover
-    ),
-      setEmpty();
-  };
+
   return (
     <div className="shopee__shop">
       <HeaderNavbar />
@@ -312,45 +313,47 @@ const DetailPage = () => {
                     </ul>
                   </div>
                 </div>
-                <div className="d-size">
-                  <h4>{product.name_commodityvalue}</h4>
-                  <div className="size">
-                    <ul id="list">
-                      {(classify == undefined
-                        ? newDataCommValue
-                        : classify?.values
-                      ).map((item, index) => {
-                        return (
-                          <li
-                            key={index}
-                            onClick={() =>
-                              classify == undefined
-                                ? openNotificationWithIcon(
-                                  "warning",
-                                  "Phải chọn thể loại trước"
-                                )
-                                : onClickCommodityvalue(item)
-                            }
-                            className={
-                              commodityValueSelect == undefined
-                                ? ""
-                                : item._id == commodityValueSelect._id
-                                  ? "active-value"
-                                  : ""
-                            }
-                          >
-                            <a>{item.name ? item.name : item}</a>
-                            <div className="check-size">
-                              <div className="check_z">
-                                <i className="fas fa-check"></i>
+                {
+                  commValue?.length > 0 && <div className="d-size">
+                    <h4>{product.name_commodityvalue}</h4>
+                    <div className="size">
+                      <ul id="list">
+                        {(classify == undefined
+                          ? newDataCommValue
+                          : classify?.values
+                        ).map((item, index) => {
+                          return (
+                            <li
+                              key={index}
+                              onClick={() =>
+                                classify == undefined
+                                  ? openNotificationWithIcon(
+                                    "warning",
+                                    "Phải chọn thể loại trước"
+                                  )
+                                  : onClickCommodityvalue(item)
+                              }
+                              className={
+                                commodityValueSelect == undefined
+                                  ? ""
+                                  : item._id == commodityValueSelect._id
+                                    ? "active-value"
+                                    : ""
+                              }
+                            >
+                              <a>{item.name ? item.name : item}</a>
+                              <div className="check-size">
+                                <div className="check_z">
+                                  <i className="fas fa-check"></i>
+                                </div>
                               </div>
-                            </div>
-                          </li>
-                        );
-                      })}
-                    </ul>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
                   </div>
-                </div>
+                }
                 <div className="quantity">
                   <h4>số lượng</h4>
                   <div className="q-quantity">
@@ -432,7 +435,7 @@ const DetailPage = () => {
                       <img src={product.photo} alt="" />
                     </div>
                   </Col>
-                
+
                 </Row>
               </Col>
             </Row>

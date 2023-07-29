@@ -94,7 +94,14 @@
     margin: 20px auto 0 auto;
     background: #fff;
 }
-
+.products-wrapper .ant-tabs-top > .ant-tabs-nav{
+    margin: 0;
+    border-bottom: 2px solid #ee4d2d;
+}
+.products-wrapper .ant-tabs-tab-btn{
+    margin-left: 10px;
+    font-size: 16px;
+}
 .category,
 .search-top,
 .flash__products_header {
@@ -495,6 +502,8 @@
     margin-top: 10px;
 }
 
+
+
 .products-show>ul>li {
     list-style: none;
     display: none;
@@ -504,11 +513,11 @@
 }
 
 .products-title_show>ul li {
+    background-color: #fff;
     list-style: none;
     position: relative;
-    box-shadow: 0 0 1px black;
+    box-shadow: 0 0 2px rgb(104, 104, 104);
     overflow: hidden;
-    background-color: #fff;
     height: 290px;
     display: flex;
     flex-direction: column;
@@ -548,7 +557,7 @@
 }
 
 .products_name {
-    font-size: .75rem;
+    font-size: 1rem;
     color: black;
     font-weight: 500;
     text-transform: capitalize;

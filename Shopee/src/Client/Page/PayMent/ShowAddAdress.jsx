@@ -18,7 +18,6 @@ import { addInfoUser } from "./../../../reducers/InfoUserSlice";
 const ShowAddAddress = (props) => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
-  const data = useSelector((data) => data.checkOut.value[0]);
 
   const [dataUrlCity, setDataUrlCity] = useState();
   const [city, setCity] = useState();
@@ -38,7 +37,7 @@ const ShowAddAddress = (props) => {
     setDistrict();
     setWardd();
     setValueAddress();
-    setShowAddAddress();
+    setShowAddAddress(false);
   };
   window.addEventListener("click", function (e) {
     if (e.target == shopeePopupFormHeader) {
@@ -54,7 +53,7 @@ const ShowAddAddress = (props) => {
       .then((data) => setDataUrlCity(data));
   }, []);
 
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     const newData_InfoUser = {
       name: values.name,
       phone: values.phone,
@@ -64,9 +63,8 @@ const ShowAddAddress = (props) => {
       ward: wardd?.name ? wardd.name : "",
       specific_address: values.specific_address,
       address: valueAddress ? valueAddress : "",
-      status: values.status == true ? 1 : 2,
     };
-    dispatch(addInfoUser(newData_InfoUser));
+    await dispatch(addInfoUser(newData_InfoUser));
     props.setFalse();
     setAll();
   };
@@ -156,9 +154,8 @@ const ShowAddAddress = (props) => {
                 value={
                   city == undefined
                     ? valueAddress
-                    : `${city?.name ? `${city?.name},` : ""}${
-                        district?.name ? `${district?.name},` : ""
-                      } ${wardd?.name ? `${wardd?.name}` : ""}`
+                    : `${city?.name ? `${city?.name},` : ""}${district?.name ? `${district?.name},` : ""
+                    } ${wardd?.name ? `${wardd?.name}` : ""}`
                 }
               />
 
@@ -182,14 +179,14 @@ const ShowAddAddress = (props) => {
                           district == undefined && city !== undefined
                             ? (setShowTags(2), setDistrict(), setWardd())
                             : district !== undefined &&
-                              city !== undefined &&
-                              (setShowTags(2), setDistrict(), setWardd())
+                            city !== undefined &&
+                            (setShowTags(2), setDistrict(), setWardd())
                         }
                         className={
                           city == undefined || showTags == 1
                             ? "no-active"
                             : (district == undefined || showTags == 2) &&
-                              "active-city-district-ward"
+                            "active-city-district-ward"
                         }
                       >
                         <div className="district-name">Quận/Huyện</div>
@@ -200,7 +197,7 @@ const ShowAddAddress = (props) => {
                           district == undefined
                             ? "no-active"
                             : (wardd == undefined || showTags == 3) &&
-                              "active-city-district-ward"
+                            "active-city-district-ward"
                         }
                       >
                         <div className="ward-name">Phường/Xã</div>
@@ -214,10 +211,10 @@ const ShowAddAddress = (props) => {
                           {(city == undefined || showTags == 1
                             ? dataUrlCity
                             : district == undefined || showTags == 2
-                            ? city?.districts
-                            : wardd == undefined || showTags == 3
-                            ? district?.wards
-                            : ""
+                              ? city?.districts
+                              : wardd == undefined || showTags == 3
+                                ? district?.wards
+                                : ""
                           )?.map((item, index) => {
                             return (
                               <li
@@ -226,10 +223,10 @@ const ShowAddAddress = (props) => {
                                   city == undefined || showTags == 1
                                     ? (setCity(item), setShowTags(2))
                                     : district == undefined || showTags == 2
-                                    ? (setDistrict(item), setShowTags(3))
-                                    : (wardd == undefined || showTags == 3) &&
+                                      ? (setDistrict(item), setShowTags(3))
+                                      : (wardd == undefined || showTags == 3) &&
                                       (setWardd(item),
-                                      setShowAddAddress(!showAddAddress))
+                                        setShowAddAddress(!showAddAddress))
                                 }
                                 style={{
                                   margin: index >= 1 ? "10px 0" : "0 10px 0 0",
@@ -255,11 +252,7 @@ const ShowAddAddress = (props) => {
                 <span>địa chỉ cụ thể</span>
               </div>
             </Form.Item>
-            <Form.Item>
-              <Form.Item name="status" valuePropName="checked" noStyle>
-                <Checkbox>Mặc định</Checkbox>
-              </Form.Item>
-            </Form.Item>
+  
 
             <Form.Item
               wrapperCol={{

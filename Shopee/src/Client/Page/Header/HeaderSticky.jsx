@@ -6,15 +6,15 @@ import { $ } from "../../../Unti";
 import { useDispatch, useSelector } from "react-redux";
 import { getSaveOrder } from "../../../reducers/SaveOrderSlice";
 export const HeaderSticky = (props) => {
-  const user = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
   const dispatch = useDispatch();
-  const saveorder = useSelector((data) => data.saveorder.value);
-  const saveorderOfUser = saveorder?.filter(
-    (item) => item.user_id == user?._id
-  );
-  useEffect(() => {
+  const saveorders = useSelector((data) => data.saveorders.value);
+  const user = useSelector((data) => data.users.value);
+
+  useEffect(async () => {
     dispatch(getSaveOrder());
+    dispatch(getUser());
   }, []);
+
 
   useEffect(() => {
     // var sticky = $("#navbar").offsetTop;

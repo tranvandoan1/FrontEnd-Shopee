@@ -1,5 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -7,15 +8,18 @@ import { getStorage } from "firebase/storage";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDRpK6muEEi8m_GfH1QWVobaODBC3mClQ4",
-  authDomain: "imageshopee-e80ee.firebaseapp.com",
-  projectId: "imageshopee-e80ee",
-  storageBucket: "imageshopee-e80ee.appspot.com",
-  messagingSenderId: "713596942057",
-  appId: "1:713596942057:web:acd4464ddb253e72622278",
-  measurementId: "G-19CFMZN16T",
+  apiKey: "AIzaSyCB2MQoFTE__gIuOeFC0S_IrZ4mYhbXWJ8",
+  authDomain: "nrc-sankhau.firebaseapp.com",
+  projectId: "nrc-sankhau",
+  storageBucket: "nrc-sankhau.appspot.com",
+  messagingSenderId: "809435750224",
+  appId: "1:809435750224:web:d8ac4991540f7d74159655",
+  measurementId: "G-244CMQT5W8"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+export const auth = getAuth(app);
 export const storage = getStorage(app);
+  

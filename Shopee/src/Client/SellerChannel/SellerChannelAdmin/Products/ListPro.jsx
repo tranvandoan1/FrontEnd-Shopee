@@ -9,28 +9,24 @@ import { getCate, uploadCheckList } from "../../../../reducers/DataAddProSlice";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { SizeScale } from "../../../../actions/Size/Size";
 import { getProductAll, removeProduct, removeProducts } from "../../../../reducers/Products";
-import { getAllClassifies } from "../../../../reducers/Classifies";
-import { removes } from "../../../../API/ClassifyAPI";
 
 const ListPro = () => {
   const size = SizeScale();
   const dispatch = useDispatch();
   const [dataDeletePro, setDataDeletePro] = useState()
   const products = useSelector((data) => data.products.value);
+  console.log(products,'products')
   const categoris = useSelector((data) => data.categoris.value);
-  const classifies = useSelector((data) => data.classifies.value);
   const dataProducts = products?.map(item => {
     return { ...item, key: item?._id }
   })
   useEffect(() => {
     dispatch(getProductAll());
-    dispatch(getAllClassifies());
     dispatch(getCate());
   }, []);
 
 
   const deletet = async (id) => {
-    const newko=[]
     if (id == undefined) {
       await dispatch(removeProducts(dataDeletePro))
       message.success("Xóa thành công  ");
@@ -321,7 +317,7 @@ const ListPro = () => {
               );
             },
           }}
-          dataSource={dataProducts}
+          dataSource={dataProducts?.slice().reverse()}
         />
       </div>
 

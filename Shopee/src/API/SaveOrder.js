@@ -29,6 +29,11 @@ export const upload = (data) => {
   return axiosClient.post(url, data);
 };
 
+export const uploadSaveoderCart= (data) => {
+  const url = `/upload-saveoderCart`;
+  return axiosClient.post(url, data);
+};
+
 export const uploadSaveOrders = (data) => {
   const url = `/saveoders/check`;
   return axiosClient.patch(url, data);

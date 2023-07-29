@@ -10,7 +10,7 @@
 .quantity,
 .page-products_shop,
 .d-products-title_show,
-.productss>.products-title_show>ul,
+/* .productss>.products-title_show>ul, */
 .cart-page-pr_header,
 .cart-page_pr-show,
 .pr-info,
@@ -54,11 +54,11 @@
 
 
 /* products showw */
-
+/* 
 .products-title_show ul {
     grid-template-columns: repeat(6, 1fr);
     grid-gap: 5px;
-}
+} */
 
 
 /* footer */

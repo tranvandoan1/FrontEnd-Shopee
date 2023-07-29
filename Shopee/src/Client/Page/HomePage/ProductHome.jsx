@@ -1,45 +1,37 @@
 import React, { useEffect, useState } from "react";
-import ProAPI from "../../../API/ProAPI";
-import CommodityValueAPI from "../../../API/CommodityValueAPI";
-import { $ } from "../../../Unti";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { getProduct } from "../../../reducers/Products";
 import { Col, Row, Tabs } from "antd";
 import { getAllData } from "../../../reducers/AllData";
+import { getProductAll } from "../../../reducers/Products";
 const { TabPane } = Tabs;
 const ProductHome = () => {
-  const [commodityvalue, setCommodityvalue] = useState([]);
-  const [products, setProduct] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate()
   const data = useSelector((data) => data.dataAll.value);
+  const products = useSelector((data) => data.products.value);
   useEffect(() => {
     dispatch(getAllData());
+    dispatch(getProductAll());
   }, []);
 
-  //   useEffect(async () => {
-  //     const { data: products } = await ProAPI.getAll();
-  //     console.log(products);
-  //     const { data: commodityvalue } = await CommodityValueAPI.getAll();
-  //     setCommodityvalue(commodityvalue);
-  //     setProduct(products);
-  //     dispatch(getProduct());
-  //   }, []);
-  const onChange = (key) => {
-    console.log(key);
-  };
   const ShowHtml = (product, classify) => {
     const proPrice = []
+
     product?.map((itemPro) => {
-      const classifyPrice = []
+      const classifyPrice1 = []
+      const classifyPrice2 = []
       classify?.map(itemData => {
         if (itemData?.linked == itemPro.linked) {
-          itemData.values.map((itemPrice) => classifyPrice.push(itemPrice.price))
+          if (itemData?.values == undefined && itemData?.values == null) {
+            classifyPrice2.push(itemData.price)
+          } else {
+            itemData?.values?.map((itemPrice) => classifyPrice1.push(itemPrice.price),
+            )
+          }
         }
       })
-
-      proPrice.push({ ...itemPro, values: classifyPrice })
+      proPrice.push({ ...itemPro, values: itemPro?.name_commodityvalue == undefined ? classifyPrice2 : classifyPrice1 })
     })
 
 
@@ -48,9 +40,10 @@ const ProductHome = () => {
       const maxPrice = Math.max.apply(Math, proPrice[i].values);
       proPrice[i].values = [minPrice, maxPrice]
     }
+
     return proPrice.map(pro => {
       return (
-        <Col xs={12} sm={4} md={8} lg={6} xl={4}>
+        <Col xs={12} sm={4} md={6} lg={6} xl={4} style={{marginTop:10}}>
           <li key={pro._id} onClick={() => navigate(`/detail/product=${pro._id}`)}>
             <div>
               <div className="products-img">
@@ -85,7 +78,7 @@ const ProductHome = () => {
 
   return (
     <div className="products-wrapper">
-      <Tabs defaultActiveKey="1" onChange={onChange}>
+      <Tabs defaultActiveKey="1" >
         <TabPane tab="Gợi ý hôm nay" key="1">
           <div className="products-title_show">
             <ul>

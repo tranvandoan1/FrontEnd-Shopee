@@ -4,34 +4,27 @@ import { HeaderSticky } from "./../Header/HeaderSticky";
 import TotalPrice from "./TotalPrice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { Button, Checkbox, Input, Radio, Spin } from "antd";
-import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import ShowAddAddress from "./ShowAddAdress";
-import {
-  getInfoUser,
-  removeInfoUser,
-  uploadInfoUser,
-} from "../../../reducers/InfoUserSlice";
-import { openNotificationWithIcon } from "../../../Notification";
+import { Input } from "antd";
+
 import ListAddress from "./ListAddress";
-import { getAllData } from "../../../reducers/AllData";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Footer } from "./../Header/Footer";
+import { getSaveOrder } from "../../../reducers/SaveOrderSlice";
+import { getShopOwner } from "../../../reducers/ShopOwner";
 
 const Checkout = () => {
-  const user = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const data = useSelector((data) => data.dataAll.value);
-  const [sum, setSum] = useState();
-
+  const saveorders = useSelector((data) => data.saveorders.value);
+  const shopowners = useSelector((data) => data.shopowners.value);
+  const dataSelect = saveorders?.filter((item) => item.check == true);
   useEffect(() => {
-    dispatch(getAllData());
+    dispatch(getSaveOrder());
+    dispatch(getShopOwner());
   }, []);
 
-  const dataSelect = data.saveorder?.filter((item) => item.check == true);
+  // lấy ra tên danh mục của shop bán sản phẩm đó
   const shopowner = [];
-  data.shopowner?.filter((item) => {
+  shopowners?.filter((item) => {
     dataSelect.map((data) => {
       if (item._id == data.shop_id) {
         shopowner.push(item);
@@ -50,14 +43,21 @@ const Checkout = () => {
     return newData;
   };
 
-  // lấy ra những order thuộc của user đang đăng nhập
-  const dataSaveOrder = [];
-  data.saveorder?.filter(
-    (item) =>
-      item.user_id == user?._id &&
-      item.check == true &&
-      dataSaveOrder.push(item)
-  );
+  // tính tổng tiền của sp từng shop
+
+  const dataPrice = [];
+  shopowners?.filter((item) => {
+    const dataSaveOrder = [];
+    dataSelect.map((data) => {
+      if (item._id == data.shop_id) {
+        dataSaveOrder.push(
+          Math.ceil(data.price * ((100 - data.sale) / 100)) * data.amount
+        );
+      }
+    });
+    dataPrice.push({ _id: item._id, data: dataSaveOrder });
+  });
+
   // (
   //   <div className="loading">
   //     <Spin
@@ -107,7 +107,7 @@ const Checkout = () => {
           <div className="cart-pr_shop">
             <i className="fas fa-house-user"></i> {item.name}
           </div>
-          {dataSaveOrder?.map((saveorder, index) => {
+          {dataSelect?.map((saveorder, index) => {
             if (saveorder.shop_id == item._id) {
               return (
                 <div className="cart-pr_show-pr" key={index}>
@@ -184,22 +184,16 @@ const Checkout = () => {
               <span>
                 Tổng tiền :{" "}
                 <span className="price">
-                  {dataSaveOrder?.map((saveorder, index) => {
-                    if (saveorder.shop_id == item._id) {
+                  {dataPrice?.map((saveorder, index) => {
+                    if (saveorder._id == item._id) {
+                      let sum = 0;
+                      for (let i = 0; i < saveorder?.data.length; i++) {
+                        sum += saveorder?.data[i];
+                      }
                       return (
                         <React.Fragment>
                           ₫
-                          {
-                            (
-                      
-                              Math.ceil(
-                                saveorder.price * ((100 - saveorder.sale) / 100)
-                              ) *
-                                saveorder.amount
-                            )
-                              .toString()
-                              .replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-                          }
+                          {sum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
                         </React.Fragment>
                       );
                     }

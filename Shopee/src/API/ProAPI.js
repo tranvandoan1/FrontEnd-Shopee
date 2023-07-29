@@ -2,7 +2,7 @@ import { axiosClient } from "./API";
 
 const ProAPI = {
   getAll() {
-    const url = `/products`;
+    const url = `/get-products`;
     return axiosClient.get(url);
   },
   get(id) {
@@ -24,7 +24,6 @@ const ProAPI = {
 };
 export default ProAPI;
 export const add = (data) => {
-  console.log(data,'e3wds13223')
   const url = `/products`;
   return axiosClient.post(url, data);
 };
@@ -33,7 +32,6 @@ export const remove = (id) => {
   const url = `/product/${id}`;
     return axiosClient.delete(url);
 };
-
 
 export const removes = (dataId) => {
   const url = `/remove-products`;

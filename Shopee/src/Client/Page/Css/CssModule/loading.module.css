@@ -1,0 +1,18 @@
+.loading {
+    font-size: 18px;
+    color: #fff;
+    font-weight: 600;
+    animation: blink-animation 1s ease-in-out infinite;
+    margin-top: 10px;
+}
+@keyframes blink-animation {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }

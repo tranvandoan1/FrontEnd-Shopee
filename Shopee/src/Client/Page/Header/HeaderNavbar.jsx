@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from "react";
 import "../Css/Css/Header.css";
-import SaveOrderAPI from "../../../API/SaveOrder";
 import { Link } from "react-router-dom";
 import { $ } from "../../../Unti";
 import { useDispatch, useSelector } from "react-redux";
 import { getSaveOrder } from "../../../reducers/SaveOrderSlice";
-import { getProduct } from "./../../../reducers/Products";
+import { getUser } from './../../../reducers/UserSlice';
+import ModalComfimLogout from "../../../components/ModalComfimLogout";
+import UserAPI from "../../../API/Users";
 export const HeaderNavbar = (props) => {
-  const user = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
+  const userLoca = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
   const dispatch = useDispatch();
-  const saveorder = useSelector((data) => data.saveorder.value);
-  const saveorderOfUser = saveorder?.filter(
-    (item) => item.user_id == user?._id
-  );
-
-  const saveordes = saveorderOfUser?.slice().reverse();
-
+  const saveorders = useSelector((data) => data.saveorders.value);
+  const user = useSelector((data) => data.users.value);
+  const [loading, setLoading] = useState(false)
+  const [comfim, setComfim] = useState(false)
   useEffect(async () => {
     dispatch(getSaveOrder());
+    dispatch(getUser(userLoca?._id));
   }, []);
 
   useEffect(() => {
@@ -32,23 +31,25 @@ export const HeaderNavbar = (props) => {
   }, []);
 
   const logOut = () => {
-    if (confirm("Bạn có muốn đăng xuất không ?")) {
+    setLoading(true)
+    setTimeout(() => {
+      setLoading(false)
       localStorage.removeItem("user");
       window.location.href = "/";
-    }
+      dispatch(UserAPI.signOut())
+    }, 1000);
   };
-
   function checkLognIn(user) {
-    if (user == null) {
+    if (user == null || user == undefined || user?.length == 0) {
       return (
         <React.Fragment>
-          <Link to="">đăng ký</Link> <Link to="/login">đăng nhập</Link>
+          <Link to="/signup">đăng ký</Link> <Link to="/login">đăng nhập</Link>
         </React.Fragment>
       );
     } else {
       return (
         <span>
-          <Link to="/#/user-overview">{user.name}</Link>
+          <Link to="/purchase/">{user?.name}</Link>
           <ul>
             <li>
               <Link to="/admin/categoris">
@@ -56,7 +57,7 @@ export const HeaderNavbar = (props) => {
               </Link>
             </li>
             <li id="signout">
-              <a onClick={logOut}>
+              <a onClick={() => setComfim(true)}>
                 <i className="fas fa-sign-out-alt"></i> Đăng xuất
               </a>
             </li>
@@ -68,6 +69,19 @@ export const HeaderNavbar = (props) => {
 
   return (
     <React.Fragment>
+      <ModalComfimLogout
+        comfim={comfim}
+        loading={loading}
+        title={'Bạn có muốn đăng xuất không ?'}
+        callBack={(e) => {
+          if (e == 'close') {
+            setComfim(false)
+          } else {
+            logOut()
+          }
+        }}
+
+      />
       <div className="header">
         <div className="header__main-navbar-wrapper">
           <div className="flex">
@@ -85,10 +99,7 @@ export const HeaderNavbar = (props) => {
               <li>
                 <span>Kết nối</span>{" "}
                 <Link to="">
-                  <i
-                    className="fab
-                                        fa-facebook"
-                  ></i>
+                  <i className="fab fa-facebook"></i>
                 </Link>
                 <Link to="">
                   <i className="fab fa-instagram"></i>
@@ -155,12 +166,12 @@ export const HeaderNavbar = (props) => {
               ) : (
                 <div className="shopping-cart">
                   <div className="shopee-cart-number-badge">
-                    {saveorderOfUser.length}
+                    {saveorders?.length}
                   </div>
                   <Link to="/cart">
                     <i className="fas fa-shopping-cart"></i>
                   </Link>
-                  {saveordes.length == 0 ? (
+                  {saveorders?.length == 0 ? (
                     <div className="show-cart">
                       <div className="cart__produtcs-news">
                         Chưa có sản phẩm
@@ -173,7 +184,7 @@ export const HeaderNavbar = (props) => {
                       </div>
                       <hr />
                       <div className="list_show-cart">
-                        {saveorderOfUser.map((item, index) => {
+                        {saveorders?.map((item, index) => {
                           if (index < 5) {
                             return (
                               <Link to="" key={index}>

@@ -3,13 +3,7 @@ import ProAPI, { add, remove, removes } from "../API/ProAPI";
 async function getAll() {
   const { data: products } = await ProAPI.getAll();
   const user = JSON.parse(localStorage.getItem("user"));
-  const dataProducts = [];
-  products?.filter((item) => {
-    if (item.user_id == user._id) {
-      dataProducts.push(item);
-    }
-  });
-
+  const dataProducts = products?.filter((item) =>item.user_id == user._id)
   return dataProducts;
 }
 export const getProduct = createAsyncThunk(

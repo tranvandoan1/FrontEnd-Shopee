@@ -1,12 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../Css/Css/Purchase.css";
 import { HeaderNavbar } from "../Header/HeaderNavbar";
 import { Footer } from "./../Header/Footer";
 import MyAccount from "./MyAccount";
 import PurchaseOrder from "./PurchaseOrder";
 import ShopeeCoin from "./ShopeeCoin";
+import { getUser } from "../../../reducers/UserSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { Avatar } from "antd";
 const PurchaseIndex = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const dispatch = useDispatch();
+  const userLoca = JSON.parse(localStorage.getItem("user"));
+  const user = useSelector((data) => data.users.value);
+
+  useEffect(() => {
+    dispatch(getUser(userLoca._id));
+  }, []);
   const [check, setCheck] = useState(1);
   return (
     <div style={{ background: "#f7f7f7" }}>
@@ -14,9 +23,7 @@ const PurchaseIndex = () => {
       <div className="users-purchase">
         <div className="user">
           <div className="user-header">
-            <a href="">
-              <img src={user.avatar} alt="" />
-            </a>
+            <Avatar src={user.avatar} size={50}/>
             <a href="">
               <span>{user.name}</span>
               <span>
@@ -33,7 +40,7 @@ const PurchaseIndex = () => {
                 className={
                   check == 1 || check == 4
                     ? "user-account_child active-user-account"
-                    : "user-account_child "
+                    : "user-account_child"
                 }
               >
                 <li

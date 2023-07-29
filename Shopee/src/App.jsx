@@ -23,6 +23,8 @@ import ListCart from './Client/Page/Cart/ListCart';
 import Checkout from './Client/Page/PayMent/Checkout';
 import PurchaseIndex from './Client/Page/Purchase/PurchaseIndex';
 import EditSlider from "./Server/Slider/EditSlider";
+import OtpPhone from "./components/OtpPhone";
+import SignUpScreen from "./Client/Page/User/SignUpScreen";
 
 const App = () => {
   return (
@@ -31,9 +33,11 @@ const App = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/detail/product=:id" element={<DetailPage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signUp" element={<SignUpScreen />} />
         <Route path="/cart" element={<ListCart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/purchase" element={<PurchaseIndex />} />
+        <Route path="test/" element={<OtpPhone />} />
         <Route
           path="/seller-channel/check_signup"
           element={<SellerChannel />}
@@ -45,13 +49,14 @@ const App = () => {
           <Route path="categoris/add" element={<AddCateShop />} />
           <Route path="products" element={<ListPro />} />
           <Route path="products/add" element={<AddPro />} />
+          <Route path="purchase/" element={<PurchaseIndex />} />
         </Route>
         <Route path="/admin/" element={<Admin />}>
-       
+
           <Route path="slider" element={<Slider />} />
           <Route path="slider/add" element={<AddSlider />} />
           <Route path="slider/edit=:id" element={<EditSlider />} />
-          </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   );
