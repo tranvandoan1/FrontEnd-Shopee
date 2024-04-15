@@ -4,7 +4,7 @@ import { Button, Form, Input } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { openNotificationWithIcon } from "../../Notification";
 import { useDispatch, useSelector } from "react-redux";
-import { getCate, uploadCate } from "../../reducers/CategoriSlice";
+import { getAllCate, uploadCate } from "../../reducers/CategoriSlice";
 import { upload } from "../../API/Categoris";
 import { UploadOutlined } from "@ant-design/icons";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -17,7 +17,7 @@ const EditCate = () => {
   const { id } = useParams();
   const categoris = useSelector((data) => data.categori.value);
   useEffect(() => {
-    dispatch(getCate());
+    dispatch(getAllCate());
   }, []);
   const onFinish = async (values) => {
     let cateUploadt = {};

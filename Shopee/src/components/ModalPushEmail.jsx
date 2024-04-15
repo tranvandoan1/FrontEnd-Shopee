@@ -1,11 +1,11 @@
-import { Button, Input, message, Spin } from "antd";
+import { Button, Input, message, Spin, Statistic } from "antd";
 import React, { useState, startTransition, useEffect } from "react";
 import "react-phone-input-2/lib/style.css";
 import OtpEmail from "./OtpEmail";
 import { useDispatch, useSelector } from "react-redux";
-import { uploadEmailUser } from "../reducers/UserSlice";
-import { uploadEmail } from "../API/Users";
+import { checkEmailUpload } from "../API/Users";
 
+const { Countdown } = Statistic;
 
 const ModalPushEmail = React.memo(
     ({ title, checkEmail, status, callBack, email, otpEmail, user }) => {
@@ -21,14 +21,10 @@ const ModalPushEmail = React.memo(
 
         const [valueEmail, setValueEmail] = useState();//email muốn thay đổi
         const [comfimError, setComfimError] = useState(0);//trạng thái dữ liệu
-        const [checkCountDown1, setCheckCountDown1] = useState(false);//check trạng thái countdown hết hạn
+        const [timeOut, settimeOut] = useState(false);//check trạng thái countdown hết hạn
         const [loading, setLoading] = useState(false);
         const [checkSuccessful, setCheckSuccessful] = useState(false);//check trạng thái thay đổi thành công
-        const [countDown, setCountDown] = useState({
-            seconds: "01",
-            minutes: 30,
-        });
-        const comfomOtpEmail = useSelector(data => data.users.email)
+        const [countDown, setCountDown] = useState(false);
 
         const comfim = async () => {
             // setLoading(true);
@@ -40,7 +36,7 @@ const ModalPushEmail = React.memo(
                 if (validateEmail.test(valueEmail) == false) {
                     setComfimError(2);
                 } else {
-                    const { data } = await uploadEmail({ _id: user._id, email: valueEmail })
+                    const { data } = await checkEmailUpload({ _id: user._id, email: valueEmail })
                     if (data.status == true) {
                         message.open({
                             type: "warning",
@@ -58,7 +54,7 @@ const ModalPushEmail = React.memo(
                                 duration: 2,
                             });
                         }, 1000);
-                      
+
                     }
 
 
@@ -69,25 +65,13 @@ const ModalPushEmail = React.memo(
         };
         const [chec, setch] = useState(false);
 
-        useEffect(() => {
-            if (chec == true) {
-                if (countDown.seconds <= 0 && countDown.minutes <= 0) {
-                    setCheckCountDown1(false)
-                    return
-                };
-                if (countDown.minutes < 0) {
-                    setCountDown({ seconds: "00", minutes: 10 });
-                }
-                const interval = setInterval(() => {
-                    setCountDown({
-                        seconds: countDown.seconds,
-                        minutes: Number(countDown.minutes) - 1,
-                    });
-                }, 1000);
-
-                return () => clearInterval(interval);
+        const deadline = Date.now() + 1000 * 1 * 6 * 15;
+        const onChange = (val) => {
+            if (val <= 3) {
+                settimeOut(false)
+                setCountDown(true)
             }
-        }, [countDown, chec]);
+        };
         return (
             <div
                 className={`shopee-popup-form__header-email-comfim ${status == true ? "active-shopee-popup-form__header-email-comfim" : ""
@@ -99,7 +83,7 @@ const ModalPushEmail = React.memo(
                         {checkSuccessful == false &&
                             (countDown.seconds == 0 &&
                                 countDown.minutes == 0 &&
-                                checkCountDown1 == false ? (
+                                timeOut == false ? (
                                 <p>Mã hết hạn hãy gửi lại</p>
                             ) : (
                                 <p>
@@ -108,10 +92,8 @@ const ModalPushEmail = React.memo(
                                         <div className="otp-title">
                                             <p className="otp-time">Mã sẽ hết trong </p>
                                             <p className="otp-number">
-                                                {countDown.seconds}:
-                                                {String(countDown.minutes).length <= 1
-                                                    ? `0${countDown.minutes}`
-                                                    : countDown.minutes}
+                                                <Countdown value={countDown == false && deadline} format="mm:ss" onChange={onChange} />
+
                                             </p>
                                         </div>
                                     )}
@@ -145,10 +127,10 @@ const ModalPushEmail = React.memo(
                                 callBack("close"), setValueEmail(), setComfimError(false)
                             )}
                             next={(e) => (
-                                setCountDown({ seconds: "01", minutes: 30 }), callBack(e)
+                                setCountDown(false), callBack(e)
                             )}
                             countDownStart={() => setch(true)}
-                            checkCountDown1={(e) => setCheckCountDown1(e)}
+                            timeOut={(e) => settimeOut(e)}
                             setCheckSuccessful={(e) => setCheckSuccessful(e)}
                             countDown={countDown}
                             valueEmailUpload={valueEmail}

@@ -6,31 +6,46 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import AddCateShop from "./AddCateShop";
-import CateShopeeAPI, { upload } from "./../../../../API/CateShopeeAPI";
+import CateShopeeAPI, { upload } from "../../../../API/CateShopAPI";
 import { openNotificationWithIcon } from "../../../../Notification";
 import {
-  getCateShopee,
-  removeCateShop,
-  uploadCateShop,
-  uploadCateShopee,
-} from "../../../../reducers/CateShopee";
-import { getAllData } from "./../../../../reducers/AllData";
+  getCateShop, removeCateShop,
+} from "../../../../reducers/CateShop";
+import { getShopOwner } from "../../../../reducers/ShopOwner";
+import { getAllCate } from "../../../../reducers/CategoriSlice";
+import EditCateShop from "./EditCateShop";
+import Loading from "../../../../components/Loading";
+import ModalComfim from "../../../../components/ModalComfim";
+import { useParams } from "react-router-dom";
 const List = () => {
   const dispatch = useDispatch();
-  const cateshop = useSelector((data) => data.cateshop.value);
-  const data = useSelector((data) => data.dataAll.value);
-  const [dataEdit, setDataEdit] = useState();
-  const [cate, setCate] = useState();
+  const { id } = useParams()
+  const shopowners = useSelector((data) => data.shopowners.value);
+  const cateshops = useSelector((data) => data.cateshops.value);
+  const categories = useSelector((data) => data.categoris.value);
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState(false);
+  const [statusEdit, setStatusEdit] = useState({ data: undefined, status: false });
+  const [statusEditDelete, setStatusDelete] = useState({ id: undefined, status: false });
+  const dataCategoris = cateshops?.filter((item) => item.shopowner_id == atob(id))
+
   useEffect(() => {
-    dispatch(getCateShopee());
-    dispatch(getAllData());
+    dispatch(getShopOwner());
+    dispatch(getCateShop());
+    dispatch(getAllCate());
+   
   }, []);
   const deleteCate = async (id) => {
-    if (confirm("Bạn có muốn xóa không ?")) {
-      await CateShopeeAPI.remove(id);
-      dispatch(removeCateShop({ id: id, data: cateshop }));
-      openNotificationWithIcon("success", "Xóa thành công");
-    }
+    setLoading(true)
+    setStatusDelete({ id: undefined, status: false })
+    // console.log(id, '2ewds')
+    await dispatch(removeCateShop(statusEditDelete.id));
+    setLoading(false)
+    message.open({
+      type: "success",
+      content: 'Cập nhật thành công',
+      duration: 1,
+    });
   };
   const columns = [
     {
@@ -40,12 +55,12 @@ const List = () => {
     },
     {
       title: "Danh mục quản lý",
-      dataIndex: "cateShope_id",
+      dataIndex: "categorie_id",
       key: "age",
-      render: (cateShope_id) =>
-        data.categori?.map(
+      render: (categorie_id) =>
+        categories?.map(
           (item) =>
-            item._id == cateShope_id && (
+            item._id == categorie_id && (
               <span style={{ textTransform: "capitalize" }}>{item.name}</span>
             )
         ),
@@ -55,64 +70,30 @@ const List = () => {
       title: "Thao tác",
       dataIndex: "_id",
       key: "_id",
-      render: (_id) => (
+      render: (_id, data) => (
         <>
           <Space size="middle" style={{ marginRight: 10 }}>
-            <div style={{ cursor: "pointer" }} onClick={() => showModal(_id)}>
+            <div style={{ cursor: "pointer" }} onClick={() => setStatusEdit({ data: data, status: true })}>
               <EditOutlined />
             </div>
           </Space>
           <Space size="middle">
-            <DeleteOutlined onClick={() => deleteCate(_id)} />
+            <DeleteOutlined onClick={() => setStatusDelete({ id: _id, status: true })} />
           </Space>
         </>
       ),
     },
   ];
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const showModal = (id) => {
-    const cateshopee = data.cateshopee.find((item) => item._id == id);
-    setDataEdit(data.cateshopee.find((item) => item._id == id));
-    setCate(data.categori.find((item) => item._id == cateshopee.cateShope_id));
-    setIsModalVisible(true);
-  };
-  const handleOk = () => {
-    setIsModalVisible(false);
-  };
-  const upload = async (values) => {
-    const cateshopee = data.cateshopee;
-    const newData = [];
-    let dataUpload = {};
-    for (let i = 0; i < cateshopee.length; i++) {
-      if (cateshopee[i]._id == dataEdit._id) {
-        const data = {
-          name: values.name == undefined ? dataEdit.name : values.name,
-          cateShope_id:
-            values.cateShope_id == undefined
-              ? dataEdit.cateShope_id
-              : values.cateShope_id,
-          shopowner_id: dataEdit.shopowner_id,
-          _id: dataEdit._id,
-        };
-        newData.push(data);
-        dataUpload = data;
-      } else {
-        newData.push(cateshopee[i]);
-      }
-    }
-    dispatch(
-      uploadCateShopee({
-        data: newData,
-        dataUpload: dataUpload,
-      })
-    );
-    setIsModalVisible(false);
-    openNotificationWithIcon("success", "Sửa thành công thành công ");
-  };
+
   return (
     <div style={{ background: "#fff", height: "100vh", padding: 20 }}>
+      {
+        loading == true &&
+        <Loading />
+
+      }
       <div className={styles.header}>
         <h3 style={{ fontWeight: 600, display: "flex", alignItems: "center" }}>
           <FaCertificate
@@ -120,86 +101,27 @@ const List = () => {
           />
           Danh mục
         </h3>
-        <AddCateShop />
+        <Button type="primary" onClick={() => setStatus(true)}>
+          Thêm danh mục
+        </Button>
+
       </div>
-      {cateshop.length > 0 && (
+      {dataCategoris.length > 0 && (
         <Table
-          dataSource={cateshop}
+          dataSource={dataCategoris}
           columns={columns}
           rowKey={(item) => item._id}
         />
       )}
-      {dataEdit !== undefined && (
-        <Modal
-          title="Sửa danh mục"
-          visible={isModalVisible}
-          onOk={handleOk}
-          onCancel={handleOk}
-        >
-          <Form
-            name="basic"
-            labelCol={{
-              span: 8,
-            }}
-            wrapperCol={{
-              span: 16,
-            }}
-            initialValues={{
-              remember: true,
-            }}
-            onFinish={upload}
-            autoComplete="off"
-          >
-            <Form.Item label="Tên danh mục" name="name" labelAlign="left">
-              <Input placeholder="Tên danh mục" defaultValue={dataEdit.name} />
-            </Form.Item>
-
-            <Form.Item
-              label="Danh mục shopee"
-              name="cateShope_id"
-              labelAlign="left"
-            >
-              {Object.keys(data).length > 0 && (
-                <Select
-                  placeholder="Danh mục của shop"
-                  defaultValue={cate?.name}
-                >
-                  {data.categori.map((item) => {
-                    return (
-                      <Select.Option value={item._id}>
-                        <span
-                          style={{
-                            textTransform: "capitalize",
-                            fontSize: 13,
-                          }}
-                        >
-                          {item.name}
-                        </span>
-                      </Select.Option>
-                    );
-                  })}
-                </Select>
-              )}
-            </Form.Item>
-            <Form.Item
-              wrapperCol={{
-                offset: 4,
-                span: 24,
-              }}
-            >
-              <Button type="primary" htmlType="submit">
-                Sửa
-              </Button>
-              <Button
-                onClick={() => setIsModalVisible(false)}
-                style={{ marginLeft: 10 }}
-              >
-                Hủy
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
-      )}
+      {
+        status == true &&
+        <AddCateShop status={status} callBack={() => setStatus(false)} shopowners={shopowners} callLoading={(e) => setLoading(e)} />
+      }
+      {
+        statusEdit.status == true &&
+        <EditCateShop status={statusEdit.status} callBack={() => setStatusEdit({ data: undefined, status: false })} dataEdit={statusEdit.data} callLoading={(e) => setLoading(e)} />
+      }
+      <ModalComfim title={'Xóa danh mục của Shop'} content={'Bạn có muốn xóa không ?'} status={statusEditDelete.status} callBack={() => deleteCate()} />
     </div>
   );
 };

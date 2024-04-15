@@ -1,18 +1,30 @@
 import { Link, Outlet } from "react-router-dom";
 import "../../Page/Css/Css/AdminLayout.css";
 import {
+  CommentOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  RollbackOutlined,
+  ShoppingCartOutlined,
   UploadOutlined,
   UserOutlined,
   VideoCameraOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, Button } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 const { Header, Sider, Content } = Layout;
-import { FaProductHunt,FaClipboardList ,FaDumbbell} from "react-icons/fa";
+import { FaProductHunt, FaClipboardList, FaDumbbell } from "react-icons/fa";
 const AdminLayout = () => {
+  const getKeyLoca = localStorage.getItem('keyLoca')
   const [collapsed, setCollapsed] = useState(false);
+  const [keyLoca, setKeyLoca] = useState(getKeyLoca == undefined ? 1 : getKeyLoca);
+
+
+  useEffect(() => {
+    const getKeyLoca = localStorage.getItem('keyLoca')
+    setKeyLoca(getKeyLoca == undefined ? 1 : getKeyLoca)
+  }, [keyLoca])
+  console.log(keyLoca, 'keyLoca')
   return (
     <div className="layout-admin">
       <div className="header-admin">
@@ -40,7 +52,7 @@ const AdminLayout = () => {
           <Menu
             theme="#fff"
             mode="inline"
-            defaultSelectedKeys={["1"]}
+            defaultSelectedKeys={`${keyLoca}`}
             style={{ height: "100vh" }}
             items={[
               {
@@ -48,35 +60,59 @@ const AdminLayout = () => {
                 icon: <FaDumbbell />,
                 label: "Thống kê",
                 itemIcon: <Link to="statistical" />,
+                onClick: () => {
+                  localStorage.removeItem("keyLoca");
+                  localStorage.setItem("keyLoca", 1);
+                },
               },
               {
                 key: "2",
                 icon: <FaClipboardList />,
                 label: "Danh mục",
                 itemIcon: <Link to="categoris" />,
+                onClick: () => {
+                  localStorage.removeItem("keyLoca");
+                  localStorage.setItem("keyLoca", 2);
+                },
               },
               {
                 key: "3",
                 icon: <FaProductHunt />,
                 label: "Sản phẩm",
                 itemIcon: <Link to="products" />,
+                onClick: () => {
+                  localStorage.removeItem("keyLoca");
+                  localStorage.setItem("keyLoca", 3);
+                },
               },
               {
                 key: "4",
-                icon: <UploadOutlined />,
+                icon: <ShoppingCartOutlined />,
                 label: "Đơn hàng",
+                onClick: () => {
+                  localStorage.removeItem("keyLoca");
+                  localStorage.setItem("keyLoca", 4);
+                },
               },
 
               {
                 key: "5",
-                icon: <UploadOutlined />,
+                icon: <CommentOutlined />,
                 label: "Bình luận",
+                onClick: () => {
+                  localStorage.removeItem("keyLoca");
+                  localStorage.setItem("keyLoca", 5);
+                },
               },
               {
                 key: "6",
-                icon: <UploadOutlined />,
+                icon: <RollbackOutlined />,
                 label: "Quay lại",
                 itemIcon: <Link to="/" />,
+                onClick: () => {
+                  localStorage.removeItem("keyLoca");
+                  localStorage.setItem("keyLoca", 6);
+                },
               },
             ]}
           />

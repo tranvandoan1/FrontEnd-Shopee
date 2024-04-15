@@ -24,6 +24,7 @@
 }
 .add_pro {
   overflow: auto;
+  background-color: #fff;
   height: 100%;
 }
 .add_pro::-webkit-scrollbar {

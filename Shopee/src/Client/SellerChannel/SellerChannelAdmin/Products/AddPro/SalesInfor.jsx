@@ -23,21 +23,22 @@ import {
   Table,
 } from "antd";
 import styles from "../../../../Page/Css/CssModule/SalesInfor.module.css";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import "../../../../Page/Css/Css/SalesInfor.css";
 import { useDispatch, useSelector } from "react-redux";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../../../../firebase";
 import { addProduct } from "./../../../../../reducers/Products";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, useParams } from "react-router-dom";
+import { add } from "../../../../../API/ProAPI";
 const { Option } = Select;
 const SalesInfor = ({ state, callBack, data }) => {
   const user = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [checkPl1, setCheckPl1] = useState(false);//thêm phân loại 1
-  const [checkPl2, setCheckPl2] = useState(false);//thêm phân loại 2
+  const { id } = useParams()
+  const [checkPl1, setCheckPl1] = useState(false); //thêm phân loại 1
+  const [checkPl2, setCheckPl2] = useState(false); //thêm phân loại 2
   const [classify1, setClassify1] = useState();
   const [classify2, setClassify2] = useState();
   const [classifyValue, setClassifyValue] = useState();
@@ -74,91 +75,78 @@ const SalesInfor = ({ state, callBack, data }) => {
   };
 
   const confirm = async (values) => {
+    const shopowners = data?.shopowner?.find(
+      (item) => item.user_id == user._id
+    );
+    // callBack({
+    //   loading: true,
+    //   state: {},
+    // });
 
-    const shopowners = data?.shopowner?.find(item => item.user_id == user._id)
-
-    callBack({
-      loading: true,
-      state: {},
-    });
-
-
+    const linkedPro = Math.random();
     if (checkPl2 == false) {
-
       // lưu dữ liệu vào mảng mới trong đó có ảnh đại diện sản phẩm
       const newPro = [
         { name: "test", file: state?.imageUrlAvatar?.file },
         ...dataClassify,
       ];
 
-      const newArrayy = [];
-      newPro.filter((item, index) => {
-        const imageRef = ref(storage, `images/${item.file.name}`);
-        uploadBytes(imageRef, item.file).then(() => {
-          getDownloadURL(imageRef).then(async (url, indec) => {
-
-            await newArrayy.push({ ...item, photo: url });
-            if (newArrayy?.length == newPro?.length) {
-              const linkedPro = Math.random();
-              // linked dùng để liên kết với bảng thể loại với giá trị thể loại
-              const dataProduct = [];
-              const classifies = [];
-              newArrayy?.map((item) => {
-                if (item.name !== "test") {
-                  classifies.push({
-                    linked: linkedPro,
-                    name: item?.name,
-                    photo: item.photo,
-                    values: undefined,
-                    indexNumber: item.indexNumber,
-                    price: item.price,
-                    quantity: item.quantity
-                  });
-                } else {
-                  dataProduct.push({
-                    warehouse: state?.dataDetailedInfo.warehouse,
-                    trademark: state?.dataDetailedInfo.trademark,
-                    sent_from: state?.dataDetailedInfo.sent_from,
-                    origin: state?.dataDetailedInfo.origin,
-                    name: state?.dataBasicInfo.name,
-                    description: state?.dataBasicInfo.description,
-                    shop_id: shopowners?._id,
-                    cate_id: state?.dataBasicInfo.cate_id,
-                    linked: linkedPro,
-                    name_commodityvalue: undefined,
-                    name_classification: dataClassification.name_classify1,
-                    photo: item.photo,
-                    review: 0,
-                    view: 0,
-                    sold: 0,
-                    sale: state?.dataBasicInfo.sale,
-                    user_id: user._id,
-
-                  });
-                }
-              });
-              await dispatch(
-                addProduct({ product: dataProduct, classifies: classifies })
-              );
-              callBack({
-                loading: false,
-                state: {
-                  dataBasicInfo: undefined,
-                  dataDetailedInfo: undefined,
-                  check: 1,
-                  imageUrlAvatar: undefined,
-                },
-              });
-              navigate("/seller-channel/admin/products");
-              message.success("Thêm thành công  ");
-            }
+      // linked dùng để liên kết với bảng thể loại với giá trị thể loại
+      const dataProduct = [];
+      const classifies = [];
+      newPro?.map((item) => {
+        if (item.name !== "test") {
+          classifies.push({
+            linked: linkedPro,
+            name: item?.name,
+            photo: item.photo,
+            values: undefined,
+            indexNumber: item.indexNumber,
+            price: item.price,
+            quantity: item.quantity,
           });
-        });
+        } else {
+          dataProduct.push({
+            warehouse: state?.dataDetailedInfo.warehouse,
+            trademark: state?.dataDetailedInfo.trademark,
+            sent_from: state?.dataDetailedInfo.sent_from,
+            origin: state?.dataDetailedInfo.origin,
+            name: state?.dataBasicInfo.name,
+            description: state?.dataBasicInfo.description,
+            shop_id: shopowners?._id,
+            cate_id: state?.dataBasicInfo.cate_id,
+            linked: linkedPro,
+            name_commodityvalue: undefined,
+            name_classification: dataClassification.name_classify1,
+            photo: item.photo,
+            review: 0,
+            view: 0,
+            sold: 0,
+            sale: state?.dataBasicInfo.sale,
+            user_id: user._id,
+          });
+        }
       });
-      // setTimeout(async () => {
 
 
-      // }, 10000);
+      const formData = new FormData();
+      formData.append("data", JSON.stringify({ product: dataProduct, classifies: classifies }));
+      for (let i = 0; i < newPro.length; i++) {
+        formData.append("files", newPro[i].file);
+      }
+      await dispatch(addProduct(formData));
+      callBack({
+        loading: false,
+        state: {
+          dataBasicInfo: undefined,
+          dataDetailedInfo: undefined,
+          check: 1,
+          imageUrlAvatar: undefined,
+        },
+      });
+      navigate(`/seller-channel&&${btoa(id)}/admin/products`);
+      message.success("Thêm thành công  ");
+
     } else {
       const newArray = [];
       // chuyển dạng object có key là tên giá trị phân loại thành mảng thành value
@@ -204,73 +192,63 @@ const SalesInfor = ({ state, callBack, data }) => {
         { name: "test", photo: state?.imageUrlAvatar?.file },
         ...dataSuccessful,
       ];
-      const newArrayy = [];
-      newPro.filter((item, index) => {
-        const imageRef = ref(storage, `images/${item.photo.name}`);
-        uploadBytes(imageRef, item.photo).then(() => {
-          getDownloadURL(imageRef).then(async (url, indec) => {
-            await newArrayy.push({ ...item, photo: url });
-          });
-        });
-      });
-      setTimeout(async () => {
-        const linkedPro = Math.random();
-        // linked dùng để liên kết với bảng thể loại với giá trị thể loại
-        const dataProduct = [];
-        const classifies = [];
-        newArrayy?.map((item) => {
-          if (item.name !== "test") {
-            classifies.push({
-              linked: linkedPro,
-              name: item?.name,
-              photo: item.photo,
-              values: item.value,
-              indexNumber: undefined,
-              price: undefined,
-              quantity: undefined
-            });
-          } else {
-            dataProduct.push({
-              warehouse: state?.dataDetailedInfo.warehouse,
-              trademark: state?.dataDetailedInfo.trademark,
-              sent_from: state?.dataDetailedInfo.sent_from,
-              origin: state?.dataDetailedInfo.origin,
-              name: state?.dataBasicInfo.name,
-              description: state?.dataBasicInfo.description,
-              shop_id: shopowners?._id,
-              cate_id: state?.dataBasicInfo.cate_id,
-              linked: linkedPro,
-              name_commodityvalue: classifyValue.name_classify2,
-              name_classification: classifyValue.name_classify1,
-              photo: item.photo,
-              review: 0,
-              view: 0,
-              sold: 0,
-              sale: state?.dataBasicInfo.sale,
-              user_id: user._id,
 
-            });
-          }
-        });
-        await dispatch(
-          addProduct({ product: dataProduct, classifies: classifies })
-        );
-        callBack({
-          loading: false,
-          state: {
-            dataBasicInfo: undefined,
-            dataDetailedInfo: undefined,
-            check: 1,
-            imageUrlAvatar: undefined,
-          },
-        });
-        navigate("/seller-channel/admin/products");
-        message.success("Thêm thành công  ");
-      }, 10000);
+      // linked dùng để liên kết với bảng thể loại với giá trị thể loại
+      const dataProduct = [];
+      const classifies = [];
+      newPro?.map((item) => {
+        if (item.name !== "test") {
+          classifies.push({
+            linked: linkedPro,
+            name: item?.name,
+            photo: item.photo,
+            values: item.value,
+            indexNumber: undefined,
+            price: undefined,
+            quantity: undefined,
+          });
+        } else {
+          dataProduct.push({
+            warehouse: state?.dataDetailedInfo.warehouse,
+            trademark: state?.dataDetailedInfo.trademark,
+            sent_from: state?.dataDetailedInfo.sent_from,
+            origin: state?.dataDetailedInfo.origin,
+            name: state?.dataBasicInfo.name,
+            description: state?.dataBasicInfo.description,
+            shop_id: shopowners?._id,
+            cate_id: state?.dataBasicInfo.cate_id,
+            linked: linkedPro,
+            name_commodityvalue: classifyValue.name_classify2,
+            name_classification: classifyValue.name_classify1,
+            photo: item.photo,
+            review: 0,
+            view: 0,
+            sold: 0,
+            sale: state?.dataBasicInfo.sale,
+            user_id: user._id,
+          });
+        }
+      });
+
+      const formData = new FormData();
+      formData.append("data", JSON.stringify({ product: dataProduct, classifies: classifies }));
+      for (let i = 0; i < newPro.length; i++) {
+        formData.append("files", newPro[i].photo);
+      }
+      await dispatch(addProduct(formData));
+      callBack({
+        loading: false,
+        state: {
+          dataBasicInfo: undefined,
+          dataDetailedInfo: undefined,
+          check: 1,
+          imageUrlAvatar: undefined,
+        },
+      });
+      navigate(`/seller-channel&&${btoa(id)}/admin/products`);
+      message.success("Thêm thành công  ");
     }
   };
-
-
 
   const dataCheck =
     dataClassify?.length <= 0
@@ -430,50 +408,58 @@ const SalesInfor = ({ state, callBack, data }) => {
                                   )}
                                 </Form.Item>
                               </Col>
-                              <Col xs={12} sm={4} md={12} lg={12} xl={12}>
-                                {" "}
-                                <Form.Item
-                                  {...field}
-                                  label="Giá Tiền"
-                                  name={[field.name, "price1"]}
-                                  rules={[
-                                    {
-                                      required: checkPl2 == true ? false : true,
-                                      message: "Bạn chưa nhập giá tiền !",
-                                    },
-                                  ]}
-                                  style={{
-                                    display: checkPl2 == true ? "none" : "flex",
-                                  }}
-                                >
-                                  <Input placeholder="Giá tiền" />
-                                </Form.Item>
-                              </Col>
-                              <Col xs={12} sm={4} md={12} lg={12} xl={12}>
-                                <Form.Item
-                                  {...field}
-                                  label="Số lượng"
-                                  name={[field.name, "quantity"]}
-                                  rules={[
-                                    {
-                                      required: checkPl2 == true ? false : true,
-                                      message: "Bạn chưa nhập số lượng !",
-                                    },
-                                  ]}
-                                  style={{
-                                    display: checkPl2 == true ? "none" : "flex",
-                                  }}
-                                >
-                                  <Input placeholder="Số lượng" />
-                                </Form.Item>
-                              </Col>
+                              {
+                                checkPl2 == false &&
+                                <React.Fragment>
+                                  <Col xs={12} sm={4} md={12} lg={12} xl={12}>
+                                    {" "}
+                                    <Form.Item
+                                      {...field}
+                                      label="Giá Tiền"
+                                      name={[field.name, "price1"]}
+                                      rules={[
+                                        {
+                                          required: checkPl2 == true ? false : true,
+                                          message: "Bạn chưa nhập giá tiền !",
+                                        },
+                                      ]}
+                                      style={{
+                                        display: checkPl2 == true ? "none" : "flex",
+                                      }}
+                                    >
+                                      <Input placeholder="Giá tiền" />
+                                    </Form.Item>
+                                  </Col>
+                                  <Col xs={12} sm={4} md={12} lg={12} xl={12}>
+                                    <Form.Item
+                                      {...field}
+                                      label="Số lượng"
+                                      name={[field.name, "quantity"]}
+                                      rules={[
+                                        {
+                                          required: checkPl2 == true ? false : true,
+                                          message: "Bạn chưa nhập số lượng !",
+                                        },
+                                      ]}
+                                      style={{
+                                        display: checkPl2 == true ? "none" : "flex",
+                                      }}
+                                    >
+                                      <Input placeholder="Số lượng" />
+                                    </Form.Item>
+                                  </Col>
+                                </React.Fragment>
+                              }
                               <Col xs={12} sm={4} md={12} lg={12} xl={12}>
                                 <Form.Item
                                   {...field}
                                   label="STT"
                                   name={[field.name, "indexNumber"]}
                                 >
-                                  <Input placeholder="Số thứ tự" type="number" />
+                                  <Input
+                                    placeholder="Số thứ tự"
+                                    type="number"
+                                  />
                                 </Form.Item>
                               </Col>
                             </Row>
@@ -680,7 +666,9 @@ const SalesInfor = ({ state, callBack, data }) => {
             </Button>
             <br />
             <span style={{ fontSize: 14, opacity: 0.5, color: "black" }}>
-              {checkPl1 == false ? '(Hãy tích vào giá trị phân loại của loại hàng nếu có )' : '(Xem lại dữ liệu sản phẩm)'}
+              {checkPl1 == false
+                ? "(Hãy tích vào giá trị phân loại của loại hàng nếu có )"
+                : "(Xem lại dữ liệu sản phẩm)"}
             </span>
           </h4>
         </Form>
@@ -809,7 +797,7 @@ const SalesInfor = ({ state, callBack, data }) => {
           dataClassification?.classify1 !== undefined) && (
             <React.Fragment>
               <hr style={{ margin: "30px 0" }} />
-              <div style={{ display: "flex", width: "100%" }}>
+              <div style={{ display: "flex", width: "100%" }} className="add-image">
                 <span
                   style={{
                     color: "#ee4d2d",
@@ -820,85 +808,87 @@ const SalesInfor = ({ state, callBack, data }) => {
                 >
                   Chọn ảnh cho từng mẫu hàng
                 </span>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    width: "70%",
-                  }}
-                >
+
+                <Row style={{
+                  display: "flex",
+                  alignItems: "center",
+                  width: "70%",
+                }}>
                   {dataCheck?.map((item) => {
                     return (
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          flexDirection: "column",
-                          marginLeft: 10,
-                          position: "relative",
-                        }}
-                        key={item}
-                      >
-                        <Upload
-                          listType="picture-card"
-                          showUploadList={false}
-                          beforeUpload={Upload1}
-                          onClick={() => setSelectImage(item)}
+                      <Col xs={12} sm={4} md={12} lg={6} xl={6}>
+
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            flexDirection: "column",
+                            marginLeft: 10,
+                            position: "relative",
+                          }}
+                          key={item}
                         >
-                          {item.url !== undefined ? (
-                            <div className="box-image">
-                              <img src={item.url} className="image" />
-                            </div>
-                          ) : (
-                            <div>
-                              <div
-                                style={{
-                                  marginTop: 8,
-                                }}
-                              >
-                                {loading1 == true ? (
-                                  <Spin />
-                                ) : (
-                                  <PlusCircleOutlined
-                                    style={{
-                                      fontSize: 30,
-                                      opacity: 0.8,
-                                      color: "#ee4d2d",
-                                    }}
-                                  />
-                                )}
+                          <Upload
+                            listType="picture-card"
+                            showUploadList={false}
+                            beforeUpload={Upload1}
+                            onClick={() => setSelectImage(item)}
+                          >
+                            {item.url !== undefined ? (
+                              <div className="box-image">
+                                <img src={item.url} className="image" />
                               </div>
+                            ) : (
+                              <div>
+                                <div
+                                  style={{
+                                    marginTop: 8,
+                                  }}
+                                >
+                                  {loading1 == true ? (
+                                    <Spin />
+                                  ) : (
+                                    <PlusCircleOutlined
+                                      style={{
+                                        fontSize: 30,
+                                        opacity: 0.8,
+                                        color: "#ee4d2d",
+                                      }}
+                                    />
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </Upload>
+                          <span
+                            style={{
+                              color: "#ee4d2d",
+                              textTransform: "capitalize",
+                            }}
+                          >
+                            {item.name}
+                          </span>
+
+                          {item.url !== undefined && (
+                            <div
+                              style={{
+                                cursor: "pointer",
+                                position: "absolute",
+                                top: -10,
+                                right: -0,
+                                color: "#ee4d2d",
+                              }}
+                              onClick={() => removeImgae(item)}
+                            >
+                              <CloseCircleOutlined style={{ fontSize: 17 }} />
                             </div>
                           )}
-                        </Upload>
-                        <span
-                          style={{
-                            color: "#ee4d2d",
-                            textTransform: "capitalize",
-                          }}
-                        >
-                          {item.name}
-                        </span>
-
-                        {item.url !== undefined && (
-                          <div
-                            style={{
-                              cursor: "pointer",
-                              position: "absolute",
-                              top: -10,
-                              right: -0,
-                              color: "#ee4d2d",
-                            }}
-                            onClick={() => removeImgae(item)}
-                          >
-                            <CloseCircleOutlined style={{ fontSize: 17 }} />
-                          </div>
-                        )}
-                      </div>
+                        </div>
+                      </Col>
                     );
                   })}
-                </div>
+                </Row>
               </div>
             </React.Fragment>
           )}

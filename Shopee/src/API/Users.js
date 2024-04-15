@@ -1,4 +1,4 @@
-import { axiosClient } from "./API";
+import { axiosClient, axiosClientMultipart } from "./API";
 
 const UserAPI = {
     getAll() {
@@ -32,7 +32,7 @@ const UserAPI = {
 export default UserAPI;
 export const uploadInfoUser = (data) => {
     const url = `/upload-user`;
-    return axiosClient.post(url, data);
+    return axiosClientMultipart.post(url, data);
 };
 export const uploadPassword = (data) => {
     const url = `/user/upload/password`;
@@ -42,8 +42,16 @@ export const getInfoUser = (id) => {
     const url = `/get-user/${id}`;
     return axiosClient.get(url);
 };
+export const checkEmailUpload = (email) => {
+  const url = `/check-email-upload`;
+  return axiosClient.post(url, email);
+};
 export const uploadEmail = (email) => {
-  const url = `/email/upload/email`;
+  const url = `/upload/email`;
+  return axiosClient.post(url, email);
+};
+export const getOtp_Email = (email) => {
+  const url = `/get-otp-email`;
   return axiosClient.post(url, email);
 };
 

@@ -1,18 +1,29 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import ShopOwnerAPI from "./../API/ShopOwner";
-
-export const getShopOwner = createAsyncThunk(
-  "shopowner/getSlider",
-  async () => {
+async function getAll(condition) {
+  if (condition == 'user') {
     const { data: shopowners } = await ShopOwnerAPI.getAll();
-    return shopowners;
+    const user = JSON.parse(localStorage.getItem("user"));
+    const dataShopowners = shopowners?.find((item) => item.user_id == user._id)
+    return dataShopowners;
+  } else {
+    const { data: shopowners } = await ShopOwnerAPI.getAll();
+    const dataShopowners = shopowners?.find((item) => item._id == condition)
+    return dataShopowners;
+  }
+
+}
+export const getShopOwner = createAsyncThunk(
+  "shopowners/getShopOwner",
+  async (condition) => {
+    return getAll(condition);
   }
 );
 
 const shopOwnersSlice = createSlice({
-  name: "shopowner",
+  name: "shopowners",
   initialState: {
-    value: [],
+    value: {},
   },
   reducers: {
     addSlide(state, action) {

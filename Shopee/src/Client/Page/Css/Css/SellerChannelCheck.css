@@ -21,16 +21,16 @@
   align-items: flex-end;
 }
 
-.cart-page-logo > a {
+.cart-page-logo>a {
   width: 9rem;
   color: rgb(238, 77, 45);
 }
 
-.cart-page-logo > a > img {
+.cart-page-logo>a>img {
   width: 90%;
 }
 
-.cart-page-logo > span {
+.cart-page-logo>span {
   margin-left: 0.9375rem;
   border-left: 0.0625rem solid #ee4d2d;
   color: #ee4d2d;
@@ -52,7 +52,7 @@
   overflow: hidden;
 }
 
-.cart-page-search > button {
+.cart-page-search>button {
   background-color: #fff;
   border: 0;
   height: 80%;
@@ -69,7 +69,7 @@
   align-items: center;
 }
 
-.account-container > .col-8 {
+.account-container>.col-8 {
   width: 50%;
   display: flex;
   justify-content: center;
@@ -81,7 +81,7 @@
   width: 400px;
 }
 
-.account-container > .col-8 .title {
+.account-container>.col-8 .title {
   font-size: 32px;
   font-weight: 500;
   color: #ee4d2d;
@@ -89,11 +89,11 @@
   font-weight: 600;
 }
 
-.account-container > .col-8 .subtitle {
+.account-container>.col-8 .subtitle {
   margin: 10px 0;
 }
 
-.account-container > .col-8 .image {
+.account-container>.col-8 .image {
   width: 100%;
   height: 200px;
   background-size: contain;
@@ -101,7 +101,7 @@
   background-image: url(https://deo.shopeemobile.com/shopee/shopee-seller-live-sg/rootpages/static/modules/account/image/login-img.9347138.png);
 }
 
-.account-container > .col-4 {
+.account-container>.col-4 {
   width: 50%;
   display: flex;
   justify-content: center;
@@ -109,7 +109,7 @@
   height: 80vh;
 }
 
-.account-container > .col-4 > form {
+.account-container>.col-4>form {
   width: 400px;
   border-radius: 2px;
   border: 1px solid #eeeeee;
@@ -117,11 +117,11 @@
   padding: 30px 10px 30px 10px;
 }
 
-.account-container > .col-4 > form > h3 {
+.account-container>.col-4>form>h3 {
   color: #ee4d2d;
 }
 
-.account-container > .col-4 > form > button {
+.account-container>.col-4>form>button {
   color: #fff;
   background-color: #ee4d2d;
   border: 0;
@@ -130,11 +130,12 @@
   cursor: pointer;
 }
 
-.account-container > .col-4 > form > a {
+.account-container>.col-4>form>a {
   text-decoration: none;
   color: black;
   margin-left: 10px;
 }
+
 .shope_transport {
   border: 1px solid #ee4d2d;
   padding: 3px 10px;
@@ -146,6 +147,7 @@
   font-size: 11px;
   background-color: #ffc6bb;
 }
+
 .shope_transport::before {
   position: absolute;
   top: 2px;
@@ -159,6 +161,7 @@
   right: 0;
   border-right-color: inherit;
 }
+
 .shope_transport::after {
   position: absolute;
   top: 1.5px;
@@ -171,10 +174,23 @@
   right: -1px;
   border-right-color: #fff;
 }
+
 .button_save {
   position: sticky;
   bottom: 0;
   width: 100%;
   height: 100%;
   box-shadow: 0 0 10px rgb(210, 210, 210);
+}
+
+.form-item-upload-avatar {
+  position: relative;
+}
+
+.form-item-upload-avatar .close {
+  position: absolute;
+  left: 70px;
+  top: -10px;
+  color: #ee4d2d;
+  cursor: pointer;
 }

@@ -18,7 +18,7 @@ import { openNotificationWithIcon } from "../../../Notification";
 import styles from '../Css/CssModule/Detail.module.css'
 const DetailPage = () => {
   const user = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
-  const { id } = useParams();
+  const { id,name } = useParams();
   const [selectPhoto, setSelectPhoto] = useState();
   const [photoHover, setPhotoHover] = useState();
   const [price, setPrice] = useState();
@@ -27,7 +27,6 @@ const DetailPage = () => {
   const [quantity, setQuantity] = useState();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const data = useSelector((data) => data.dataAll.value);
 
   const product = useSelector((data) => data.products.value);
@@ -115,7 +114,7 @@ const DetailPage = () => {
       openNotificationWithIcon("warning", "Bạn đã chọn gì đâu");
     } else {
       // tìm xem order vừa thêm đã tồn tại chưa
-      const order = data.saveorder?.find(
+      const order = data.saveorders?.find(
         (item) =>
           item.user_id == user._id &&
           item.classification_id == classify?._id &&
@@ -144,7 +143,6 @@ const DetailPage = () => {
               classification_id: classify?._id,
               commodity_value_id:commValue?.length == 0 ? null : commodityValueSelect._id,
             };
-            console.log(order, 'order')
             await dispatch(addSaveOrder(order));
             setEmpty();
             check == "buyNow" && navigate("/cart");

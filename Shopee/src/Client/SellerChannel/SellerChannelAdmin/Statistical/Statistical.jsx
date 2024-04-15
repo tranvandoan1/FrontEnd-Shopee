@@ -24,14 +24,14 @@ const Statistical = () => {
             <Descriptions.Item>
               <div className={styles.cate}>
                 <span className={styles.listLength}>
-                  {data.cateshopee.length}
+                  {data?.cateshops?.length}
                 </span>
                 <span>Danh mục</span>
               </div>
             </Descriptions.Item>
             <Descriptions.Item>
               <div className={styles.cate}>
-                <span className={styles.listLength}>{data?.product?.length}</span>
+                <span className={styles.listLength}>{data?.products?.length}</span>
                 <span>Sản phẩm</span>
               </div>
             </Descriptions.Item>

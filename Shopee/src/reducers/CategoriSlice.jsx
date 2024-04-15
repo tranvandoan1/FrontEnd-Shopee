@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import CateAPI, { add } from "./../API/Categoris";
 
-export const getCate = createAsyncThunk("categori/getCate", async () => {
+export const getAllCate = createAsyncThunk("categori/getAllCate", async () => {
   const { data: categoris } = await CateAPI.getAll();
   return categoris;
 });
@@ -25,7 +25,7 @@ const categoriSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(getCate.fulfilled, (state, action) => {
+    builder.addCase(getAllCate.fulfilled, (state, action) => {
       console.log(action.payload,'action.payload')
       state.value = action.payload;
     });

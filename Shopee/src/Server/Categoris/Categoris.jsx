@@ -5,7 +5,7 @@ import { EditOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { getCate, removeCate } from "./../../reducers/CategoriSlice";
+import { getAllCate, removeCate } from "./../../reducers/CategoriSlice";
 import "../Css/AdminCate.css";
 import { remove } from "./../../API/Categoris";
 import { openNotificationWithIcon } from "../../Notification";
@@ -14,7 +14,7 @@ const Categoris = () => {
   const dispatch = useDispatch();
   const categoris = useSelector((data) => data.categori.value);
   useEffect(() => {
-    dispatch(getCate());
+    dispatch(getAllCate());
   }, []);
   const deleteCate = async (id) => {
     if (confirm("Bạn có muốn xóa không ?")) {

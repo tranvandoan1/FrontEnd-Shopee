@@ -1,114 +1,122 @@
 import { async } from "@firebase/util";
-import { Button, Modal, Checkbox, Form, Input, Select } from "antd";
+import { Button, Modal, Checkbox, Form, Input, Select, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { add } from "../../../../API/CateShopeeAPI";
 import { openNotificationWithIcon } from "../../../../Notification";
 import { getAllData } from "../../../../reducers/AllData";
-import { addCateShopee } from "../../../../reducers/CateShopee";
+import { addCateShop } from "../../../../reducers/CateShop";
 import "../../../Page/Css/Css/CateShop.css";
-const AddCateShop = () => {
-  const user = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
-
+import { useParams } from "react-router-dom";
+const AddCateShop = ({ status, callBack, callLoading }) => {
+  const { id } = useParams()
+  const categories = useSelector((data) => data.categoris.value);
+  console.log(categories, 'categories')
   const dispatch = useDispatch();
   const data = useSelector((data) => data.dataAll.value);
+  console.log(data, 'data')
   useEffect(() => {
     dispatch(getAllData());
   }, []);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-  const handleOk = () => {
-    setIsModalVisible(false);
-  };
 
   const onFinish = async (values) => {
-    const shopOwner = data.shopowner.find((item) => item.user_id == user._id);
+    callLoading(true)
     const newData = {
       ...values,
-      shopowner_id: shopOwner._id,
+      shopowner_id: atob(id),
     };
-    dispatch(addCateShopee(newData));
-    openNotificationWithIcon("success", "Thêm thành công");
-    setIsModalVisible(false);
+    await dispatch(addCateShop(newData));
+    callLoading(false)
+    callBack()
+    message.open({
+      type: "success",
+      content: 'Thêm thành công',
+      duration: 1,
+    });
+
+
+
   };
-
+  const shopeePopupFormHeader = document.querySelector(
+    ".form__header-add-catesShope"
+  );
+  window.addEventListener("click", function (e) {
+    if (e.target == shopeePopupFormHeader) {
+      callBack()
+    }
+  });
   return (
-    <div>
-      <Button type="primary" onClick={()=>console.log('first')}>
-        Thêm danh mục
-      </Button>
-   
-      <Form
-      name="basic"
-      labelCol={{
-        span: 8,
-      }}
-      wrapperCol={{
-        span: 16,
-      }}
-      initialValues={{
-        remember: true,
-      }}
-      onFinish={onFinish}
-      autoComplete="off"
+    <div
+      className={`form__header-add-catesShope ${status == true ? "active-form__header-add-catesShope" : ""
+        }`}
     >
-      <Form.Item
-        label="Tên danh mục"
-        name="name"
-        labelAlign="left"
-        rules={[
-          {
-            required: true,
-            message: "Bạn chưa nhập tên danh mục!",
-          },
-        ]}
-      >
-        <Input placeholder="Tên danh mục" />
-      </Form.Item>
-
-      <Form.Item
-        label="Danh mục shopee"
-        name="cateShope_id"
-        labelAlign="left"
-        rules={[
-          {
-            required: true,
-            message: "Bạn chưa chọn danh mục của web",
-          },
-        ]}
-      >
-        {Object.keys(data).length > 0 && (
-          <Select placeholder="Danh mục của shop">
-            {data.categori.map((item) => (
-              <Select.Option key={(item) => item._id} value={item._id}>
-                <span style={{ textTransform: "capitalize", fontSize: 13 }}>
-                  {item.name}
-                </span>
-              </Select.Option>
-            ))}
-          </Select>
-        )}
-      </Form.Item>
-      <Form.Item
-        wrapperCol={{
-          offset: 4,
-          span: 24,
-        }}
-      >
-        <Button type="primary" htmlType="submit">
-          Thêm
-        </Button>
-        <Button
-          onClick={() => setIsModalVisible(false)}
-          style={{ marginLeft: 10 }}
+      <div className="form__header">
+        <Form
+          name="basic"
+          labelCol={{
+            span: 8,
+          }}
+          wrapperCol={{
+            span: 16,
+          }}
+          initialValues={{
+            remember: true,
+          }}
+          onFinish={onFinish}
+          autoComplete="off"
         >
-          Hủy
-        </Button>
-      </Form.Item>
-    </Form>
+          <Form.Item
+            label="Tên danh mục"
+            name="name"
+            labelAlign="left"
+            rules={[
+              {
+                required: true,
+                message: "Bạn chưa nhập tên danh mục!",
+              },
+            ]}
+          >
+            <Input placeholder="Tên danh mục" />
+          </Form.Item>
+
+          <Form.Item
+            label="Danh mục shopee"
+            name="categorie_id"
+            labelAlign="left"
+            rules={[
+              {
+                required: true,
+                message: "Bạn chưa chọn danh mục của web",
+              },
+            ]}
+          >
+            <Select placeholder="Danh mục của shop">
+              {categories?.map((item) => (
+                <Select.Option key={(item) => item._id} value={item._id}>
+                  <span style={{ textTransform: "capitalize", fontSize: 13 }}>
+                    {item.name}
+                  </span>
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            wrapperCol={{
+              offset: 8,
+              span: 24,
+            }}
+          >
+            <Button type="primary" htmlType="submit">
+              Thêm
+            </Button>
+            <Button
+              onClick={() => setIsModalVisible(false)}
+              style={{ marginLeft: 10 }}
+            >
+              Hủy
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
     </div>
   );
 };

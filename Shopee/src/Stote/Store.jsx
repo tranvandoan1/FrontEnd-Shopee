@@ -5,14 +5,13 @@ import categorisSlice from "../reducers/CategoriSlice";
 import sliderSlice from "../reducers/SliderSlice";
 import allDataSlice from "../reducers/AllData";
 import shopOwnersSlice from "./../reducers/ShopOwner";
-import cateshopeeSlice from "./../reducers/CateShopee";
+import cateshopeeSlice from "../reducers/CateShop";
 import dataAddProSlice from "./../reducers/DataAddProSlice";
 import commentSlice from "../reducers/CommentSlice";
 import checkOutSlice from "../reducers/CheckOutSlice";
 import infoUserSlice from "../reducers/InfoUserSlice";
 import classifieSlice from "../reducers/Classifies";
 import userSlice from "../reducers/UserSlice";
-import pushEmailSlice from "../reducers/PushEmail";
 
 export const store = configureStore({
   reducer: {
@@ -29,7 +28,6 @@ export const store = configureStore({
     infoUser: infoUserSlice,
     classifies:classifieSlice,
     users:userSlice,
-    otpEmail:pushEmailSlice
 
   },
 });

@@ -3,18 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Col, Row, Tabs } from "antd";
 import { getAllData } from "../../../reducers/AllData";
-import { getProductAll } from "../../../reducers/Products";
+
 const { TabPane } = Tabs;
 const ProductHome = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate()
   const data = useSelector((data) => data.dataAll.value);
-  const products = useSelector((data) => data.products.value);
   useEffect(() => {
     dispatch(getAllData());
-    dispatch(getProductAll());
   }, []);
-
   const ShowHtml = (product, classify) => {
     const proPrice = []
 
@@ -43,8 +40,8 @@ const ProductHome = () => {
 
     return proPrice.map(pro => {
       return (
-        <Col xs={12} sm={4} md={6} lg={6} xl={4} style={{marginTop:10}}>
-          <li key={pro._id} onClick={() => navigate(`/detail/product=${pro._id}`)}>
+        <Col xs={12} sm={4} md={6} lg={6} xl={4} style={{ marginTop: 10 }}>
+          <li key={pro._id} onClick={() => navigate(`/detail/${pro.name.replace(/\s+/g, "-")}&&${pro._id}`)}>
             <div>
               <div className="products-img">
                 <img src={pro.photo} alt="" />
@@ -83,7 +80,7 @@ const ProductHome = () => {
           <div className="products-title_show">
             <ul>
               <Row gutter={8}>
-                {ShowHtml(data.product, data.classify)}
+                {ShowHtml(data.products, data.classifys)}
               </Row>
 
             </ul>

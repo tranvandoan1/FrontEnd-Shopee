@@ -1,4 +1,5 @@
 import { axiosClient } from "./API";
+import { axiosClientMultipart } from "./API";
 
 const ShopOwnerAPI = {
     getAll() {
@@ -10,8 +11,8 @@ const ShopOwnerAPI = {
         return axiosClient.get(url);
     },
     add(shopowner) {
-        const url = `/shopowner`;
-        return axiosClient.post(url, shopowner);
+        const url = `/shopowner-add`;
+        return axiosClientMultipart.post(url, shopowner);
     },
     remove(id) {
         const url = `/shopowner/${id}`;

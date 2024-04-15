@@ -25,6 +25,8 @@ const OtpPhone = ({ back, next, checkOtp, uploadCheckOtp, countDown }) => {
         "recaptcha-container",
         {
           size: "invisible",
+          appVerifier:true,
+          // appVerificationDisabledForTesting:true,
           callback: (response) => {
             console.log(response, "response");
             onSignup();
@@ -39,28 +41,40 @@ const OtpPhone = ({ back, next, checkOtp, uploadCheckOtp, countDown }) => {
     if (valuePhone == undefined || (valuePhone == "" && checkOtp == false)) {
       setComfimError(true);
     } else {
-      setLoading(true);
-      setShowOTP(false);
-      uploadCheckOtp(false);
+      // setLoading(true);
+      // setShowOTP(false);
+      // uploadCheckOtp(false);
       onCaptchVerify();
 
       const appVerifier = window.recaptchaVerifier;
 
       const formatPh = "+" + valuePhone;
+      // signInWithPhoneNumber(auth, formatPh, appVerifier)
+      //   .then((confirmationResult) => {
+      //     window.confirmationResult = confirmationResult;
+      //     console.log(confirmationResult, "confirmationResult");
+      //     // setLoading(false);
+      //     // setShowOTP(true);
+      //     // toast.success("Gửi thành công!");
+      //     // next(3);
+      //     // countDown()
+      //     // 904162524790-he29rp2dr24vn24gue6oe94bhm4ve0e0.apps.googleusercontent.com
+      //     // AIzaSyABXUxGmQXGotLi8F38qM3YWMRxU4VvQHc
+      //   })
+      //   .catch((error) => {
+      //     console.log(error, "đã xảy ra lỗi");
+      //     setLoading(false);
+      //   });
       signInWithPhoneNumber(auth, formatPh, appVerifier)
         .then((confirmationResult) => {
-          console.log(confirmationResult, "confirmationResult");
+          // SMS sent. Prompt user to type the code from the message, then sign the
+          // user in with confirmationResult.confirm(code).
           window.confirmationResult = confirmationResult;
-          setLoading(false);
-          setShowOTP(true);
-          toast.success("Gửi thành công!");
-          next(3);
-          countDown()
-
-        })
-        .catch((error) => {
-          console.log(error, "đã xảy ra lỗi");
-          setLoading(false);
+          console.log('cón')
+          // ...
+        }).catch((error) => {
+          // Error; SMS not sent
+          // ...
         });
     }
   }

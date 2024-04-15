@@ -1,21 +1,26 @@
 import React, { useEffect, useState } from "react";
 import "../Css/Css/Header.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { $ } from "../../../Unti";
 import { useDispatch, useSelector } from "react-redux";
 import { getSaveOrder } from "../../../reducers/SaveOrderSlice";
 import { getUser } from './../../../reducers/UserSlice';
 import ModalComfimLogout from "../../../components/ModalComfimLogout";
 import UserAPI from "../../../API/Users";
+import { getShopOwner } from "../../../reducers/ShopOwner";
 export const HeaderNavbar = (props) => {
   const userLoca = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const saveorders = useSelector((data) => data.saveorders.value);
+  const shopowner = useSelector((data) => data.shopowners.value);
+
   const user = useSelector((data) => data.users.value);
   const [loading, setLoading] = useState(false)
   const [comfim, setComfim] = useState(false)
   useEffect(async () => {
     dispatch(getSaveOrder());
+    dispatch(getShopOwner('user'))
     dispatch(getUser(userLoca?._id));
   }, []);
 
@@ -35,12 +40,16 @@ export const HeaderNavbar = (props) => {
     setTimeout(() => {
       setLoading(false)
       localStorage.removeItem("user");
+      localStorage.removeItem("_grecaptcha");
+      localStorage.removeItem("key");
+      localStorage.removeItem("keyLoca");
+      localStorage.removeItem("token");
       window.location.href = "/";
       dispatch(UserAPI.signOut())
     }, 1000);
   };
   function checkLognIn(user) {
-    if (user == null || user == undefined || user?.length == 0) {
+    if ((user == null || user == undefined || user?.length == 0)) {
       return (
         <React.Fragment>
           <Link to="/signup">đăng ký</Link> <Link to="/login">đăng nhập</Link>
@@ -66,6 +75,14 @@ export const HeaderNavbar = (props) => {
       );
     }
   }
+  const eventLink = () => {
+    if (shopowner == undefined) {
+      navigate('/seller-channel/check_signup')
+    } else {
+      navigate(`/seller-channel&&${btoa(shopowner._id)}`);
+
+    }
+  }
 
   return (
     <React.Fragment>
@@ -86,8 +103,8 @@ export const HeaderNavbar = (props) => {
         <div className="header__main-navbar-wrapper">
           <div className="flex">
             <ul>
-              <li>
-                <Link to="/seller-channel/check_signup">kênh người bán</Link>
+              <li onClick={() => eventLink()}>
+                <a >kênh người bán</a>
               </li>
               <li>
                 <Link to="">tải ứng dụng</Link>
@@ -136,7 +153,7 @@ export const HeaderNavbar = (props) => {
                 </ul>
               </li>
             </ul>
-            <div className="login-logout">{checkLognIn(user)}</div>
+            <div className="login-logout">{checkLognIn(userLoca)}</div>
           </div>
         </div>
         <div className="header-sticky" id="navbar">

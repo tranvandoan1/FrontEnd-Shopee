@@ -2,10 +2,12 @@ import OtpInput from "otp-input-react";
 import React, { useEffect, useState } from "react";
 import "react-phone-input-2/lib/style.css";
 import { Toaster } from "react-hot-toast";
-import { Button, Input, Spin, message } from "antd";
+import { Button, Input, Spin, Statistic, message } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { uploadEmailUser } from "../reducers/UserSlice";
 import { startTransition } from "react";
+import { getOtp_Email } from "../API/Users";
+const { Countdown } = Statistic;
 const OtpEmail = React.memo(
   ({
     back,
@@ -13,12 +15,13 @@ const OtpEmail = React.memo(
     countDownStart,
     countDown,
     valueEmailUpload,
-    checkCountDown1,
+    timeOut,
     setCheckSuccessful,
     checkSuccessful,
     user,
   }) => {
     const [otp, setOtp] = useState("");
+    const [otpEmail, setOtpEmail] = useState();
     const [loading, setLoading] = useState(false);
     const [showOTP, setShowOTP] = useState(false);
     const [checkOnOTPVerify, setCheckOnOTPVerify] = useState(false);
@@ -31,20 +34,21 @@ const OtpEmail = React.memo(
     const [countDownClose, setCountDownClose] = useState(5);
     const dispatch = useDispatch();
     async function onSignup() {
-      // if (loading == false) {
-      //   if (user?.email?.toLowerCase() !== valueEmail?.toLowerCase()) {
-      //     setComfimError({ content: "Email không khớp !", status: true });
-      //   } else {
-      //     setCheckOnOTPVerify(false);
-      //     setOtp()
-      //     setLoading(true);
-      //     await dispatch(pushEmail({ email: valueEmail }));
-      //     setShowOTP(true);
-      //     setLoading(false);
-      //     next(3);
-      //     countDownStart();
-      //   }
-      // }
+      if (loading == false) {
+        if (user?.email?.toLowerCase() !== valueEmail?.toLowerCase()) {
+          setComfimError({ content: "Email không khớp !", status: true });
+        } else {
+          setCheckOnOTPVerify(false);
+          setOtp()
+          setLoading(true);
+          const { data: otp } = await getOtp_Email({ email: valueEmail });
+          setOtpEmail(otp)
+          setShowOTP(true);
+          setLoading(false);
+          next(3);
+          countDownStart();
+        }
+      }
 
     }
     async function onOTPVerify() {
@@ -64,19 +68,13 @@ const OtpEmail = React.memo(
       }
     }
 
-    useEffect(() => {
-      if (checkSuccessful == true) {
-        if (countDownClose <= 0) {
-          back()
-          return
-        }
-        const interval = setInterval(() => {
-          setCountDownClose(countDownClose - 1);
-        }, 1000);
-
-        return () => clearInterval(interval);
+    const deadline = Date.now() + 1000 * 1 * 1 * 5;
+    const onChange = (val) => {
+      if (val <= 1) {
+        back()
       }
-    }, [countDownClose, checkSuccessful]);
+    };
+    console.log(countDown, 'countDown')
     return (
       <section className="bg-emerald-500 flex items-center justify-center h-screen otp-phone">
         <div>
@@ -84,13 +82,12 @@ const OtpEmail = React.memo(
           <div id="recaptcha-container"></div>
           {checkSuccessful == true ? (
             <h2
-              className="text-center text-white font-medium  "
+              className="text-center text-white font-medium"
               style={{ color: "blue", textAlign: "center", fontSize: 16 }}
             >
-              Tự đóng sau 00:
-              {String(countDownClose).length <= 1
-                ? `0${countDownClose}`
-                : countDownClose}
+              Tự đóng sau
+              <Countdown value={countDown == false && deadline} format="mm:ss" onChange={onChange} />
+
               <div style={{ marginTop: 10 }}>
                 <Button type="primary" onClick={() => back()}>
                   Thoát
@@ -105,15 +102,12 @@ const OtpEmail = React.memo(
                     value={otp}
                     onChange={(e) => (
                       setOtp(e),
-                      checkCountDown1(true),
                       checkOnOTPVerify == true && setCheckOnOTPVerify(false)
                     )}
                     OTPLength={6}
                     otpType="number"
                     disabled={
-                      countDown.seconds == 0 && countDown.minutes == 0
-                        ? true
-                        : false
+                      countDown
                     }
                     autoFocus
                     className="opt-container"
@@ -141,8 +135,7 @@ const OtpEmail = React.memo(
                       type="primary"
                       danger
                       onClick={() => {
-                        ((countDown.seconds == 0 && countDown.minutes == 0) ||
-                          (countDown.seconds > 0 && countDown.minutes > 0)) &&
+                        countDown == true &&
                           (otp == undefined || otp == "" || String(otp).length < 6)
                           ? onSignup()
                           : onOTPVerify();
@@ -150,9 +143,7 @@ const OtpEmail = React.memo(
                     >
                       {loading == true ? (
                         <Spin />
-                      ) : countDown.seconds == 0 &&
-                        countDown.minutes == 0 &&
-                        (otp == undefined || otp == "" || String(otp).length < 6) ? (
+                      ) : countDown == true ? (
                         "Gửi lại"
                       ) : (
                         "Xác nhận"

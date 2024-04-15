@@ -16,3 +16,6 @@
 .pro-detail ul li{
     list-style: none;
 }
+.pro-detail  img{
+    width: 40% !important;
+  }

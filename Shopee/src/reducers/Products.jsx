@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import ProAPI, { add, remove, removes } from "../API/ProAPI";
+import ProAPI, { add, remove, removes, upload } from "../API/ProAPI";
+import axios from 'axios';
+
 async function getAll() {
   const { data: products } = await ProAPI.getAll();
   const user = JSON.parse(localStorage.getItem("user"));
@@ -22,7 +24,16 @@ export const getProductAll = createAsyncThunk(
 export const addProduct = createAsyncThunk(
   "products/addProduct",
   async (data) => {
+    console.log(data,'test xem')
     await add(data);
+    return getAll();
+  }
+);
+export const uploadProduct = createAsyncThunk(
+  "products/uploadProduct",
+  async (data) => {
+    console.log(data,'test xem')
+    await upload(data);
     return getAll();
   }
 );
@@ -73,6 +84,12 @@ const productSlice = createSlice({
       state.value = action.payload;
       console.log('2e312')
     });
+    builder.addCase(uploadProduct.fulfilled, (state, action) => {
+      state.loading = false;
+      state.value = action.payload;
+      console.log('2e312')
+    });
   },
 });
 export default productSlice.reducer;
+

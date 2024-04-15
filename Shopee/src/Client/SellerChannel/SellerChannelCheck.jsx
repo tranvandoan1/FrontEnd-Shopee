@@ -1,32 +1,66 @@
 import { Button } from "antd";
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import "../Page/Css/Css/SellerChannelCheck.css";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { openNotificationWithIcon } from "../../Notification";
+import { useDispatch, useSelector } from "react-redux";
+import { getShopOwner } from "../../reducers/ShopOwner";
+import Loading from "../../components/Loading";
+import ModalComfim from './../../components/ModalComfim';
+import ModalShopownerAdd from "../../components/ModalShopownerAdd";
 const SellerChannelCheck = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const shopowners = useSelector(data => data.shopowners.value)
+  console.log(shopowners, 'shopowners')
+  useEffect(() => {
+    dispatch(getShopOwner('user'))
+  }, [])
+
+  const [loading, setLoading] = useState(false)
+  const [status, setStatus] = useState(false)
+  const [shopownerAdd, setShopownerAdd] = useState(false)
+  const logOut = () => {
+    setLoading(true)
+    setStatus(false)
+    setTimeout(() => {
+      setLoading(false)
+      localStorage.removeItem("user");
+      window.location.href = "/";
+      dispatch(UserAPI.signOut())
+    }, 1000);
+  };
+
   const click = () => {
-    navigate("/seller-channel");
-    openNotificationWithIcon("success", "Chào mừng bàn đến kênh bán hàng");
+    if (shopowners == undefined) {
+      setShopownerAdd(true)
+    } else {
+
+    }
   };
 
   return (
     <div className="seller-channel">
+      {
+        loading == true &&
+        <Loading />
+
+      }
       <div className="seller-channel-header">
         <div className="wapper">
           <div className="cart-page-header">
             <div className="cart-page-logo">
-              <a href="Index.html">
+              <Link to="/">
                 <img
                   src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Shopee.svg/2560px-Shopee.svg.png"
                   alt=""
                 />
-              </a>
+              </Link>
               <span>Kênh bán hàng</span>
             </div>
             <div className="cart-page-search">
-              <button>
+              <button onClick={() => setStatus(true)}>
                 <i className="fas fa-sign-out-alt"></i> Đăng xuất
               </button>
             </div>
@@ -55,6 +89,22 @@ const SellerChannelCheck = () => {
           </form>
         </div>
       </div>
+      <ModalComfim
+        content={'Bạn có muốn đăng xuất không?'}
+        title={'Thoát'}
+        status={status}
+        callBack={() => logOut()}
+        btnAcc={'Đăng xuất'}
+        btnClose={'Hủy'}
+      />
+      <ModalShopownerAdd
+        content={'Thêm thông tin'}
+        title={'Mở bán hàng'}
+        status={shopownerAdd}
+        callBack={() => null}
+        btnAcc={'Hoàn tất'}
+        btnClose={'Hủy'}
+      />
     </div>
   );
 };

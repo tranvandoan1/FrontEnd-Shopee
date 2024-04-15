@@ -1,4 +1,5 @@
 import { axiosClient } from "./API";
+import { axiosClientMultipart } from "./API";
 
 const ProAPI = {
   getAll() {
@@ -9,28 +10,26 @@ const ProAPI = {
     const url = `/products/${id}`;
     return axiosClient.get(url);
   },
-  add(pro) {
-    const url = `/products`;
-    return axiosClient.post(url, pro);
-  },
-  remove(id) {
-    const url = `/products/${id}`;
-    return axiosClient.delete(url);
-  },
-  upload(id, data) {
-    const url = `/products/${id}`;
-    return axiosClient.put(url, data);
-  },
+
+  // remove(id) {
+  //   const url = `/products/${id}`;
+  //   return axiosClient.delete(url);
+  // },
+
 };
 export default ProAPI;
 export const add = (data) => {
   const url = `/products`;
-  return axiosClient.post(url, data);
+  return axiosClientMultipart.post(url, data);
 };
 
+export const upload = (data) => {
+  const url = `/product-upload`;
+  return axiosClientMultipart.post(url, data);
+};
 export const remove = (id) => {
   const url = `/product/${id}`;
-    return axiosClient.delete(url);
+  return axiosClient.delete(url);
 };
 
 export const removes = (dataId) => {

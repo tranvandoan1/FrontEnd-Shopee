@@ -19,9 +19,9 @@ const ProductShop = () => {
       <div className="products-title_show detail-pro">
         <span>sản phẩm khác của shop</span>
         <ul>
-          {data.product?.map((pro, index) => {
+          {data.products?.map((pro, index) => {
             return (
-              <li key={pro._id} onClick={() => navigate(`/detail/product=${pro._id}`)}>
+              <li key={pro._id} onClick={() =>navigate(`/detail/${pro.name.replace(/\s+/g, "-")}&&${pro._id}`)}>
                 <div>
                   <div className="products-img">
                     <img src={pro.photo} alt="" />

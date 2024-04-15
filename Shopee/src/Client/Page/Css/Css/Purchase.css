@@ -802,10 +802,12 @@
   font-size: 15px;
 }
 
-.form__header .otp-number {
+.form__header .otp-number .ant-statistic-content {
   font-style: italic;
   color: blue;
   margin-left: 5px;
+  font-size: 15px;
+
 }
 
 .otp-title {
@@ -849,4 +851,10 @@
 
 .form-upload-password .ant-form {
   width: 60%;
+}
+
+.font-medium .ant-statistic-content {
+  font-style: italic;
+  color: blue;
+  font-size: 15px;
 }

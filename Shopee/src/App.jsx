@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 // import ProAPI from "./API/ProductsAPI"
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DetailPage from "./Client/Page/DetailPage/DetailPage";
-import Admin from "./Server/Admin";
 import Login from "./Client/Page/User/Login";
 import Categoris from "./Server/Categoris/Categoris";
 import AddCate from "./Server/Categoris/AddCate";
@@ -25,13 +24,16 @@ import PurchaseIndex from './Client/Page/Purchase/PurchaseIndex';
 import EditSlider from "./Server/Slider/EditSlider";
 import OtpPhone from "./components/OtpPhone";
 import SignUpScreen from "./Client/Page/User/SignUpScreen";
+import EditPro from "./Client/SellerChannel/SellerChannelAdmin/Products/EditPro/EditPro";
+import ShowValue from "./Admin/Product/ShowValue";
+import Admin from "./Admin/Admin";
 
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/detail/product=:id" element={<DetailPage />} />
+        <Route path="/detail/:name&&:id" element={<DetailPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signUp" element={<SignUpScreen />} />
         <Route path="/cart" element={<ListCart />} />
@@ -42,16 +44,18 @@ const App = () => {
           path="/seller-channel/check_signup"
           element={<SellerChannel />}
         />
-        <Route path="/seller-channel" element={<Sales />} />
-        <Route path="/seller-channel/admin/" element={<AdminLayout />}>
+        <Route path="/seller-channel&&:id" element={<Sales />} />
+        <Route path="/seller-channel&&:id/admin/" element={<AdminLayout />}>
           <Route path="statistical" element={<Statistical />} />
           <Route path="categoris" element={<List />} />
           <Route path="categoris/add" element={<AddCateShop />} />
           <Route path="products" element={<ListPro />} />
           <Route path="products/add" element={<AddPro />} />
+          <Route path="products/edit=:idPro" element={<EditPro />} />
           <Route path="purchase/" element={<PurchaseIndex />} />
         </Route>
         <Route path="/admin/" element={<Admin />}>
+        <Route path="products" element={<ShowValue />} />
 
           <Route path="slider" element={<Slider />} />
           <Route path="slider/add" element={<AddSlider />} />

@@ -2,18 +2,16 @@ import React, { useEffect, useState } from 'react'
 import CateAPI from '../../../API/Categoris'
 import { $ } from '../../../Unti'
 import { useDispatch, useSelector } from 'react-redux';
-import { getCate } from '../../../reducers/CategoriSlice';
+import { getAllCate } from '../../../reducers/CategoriSlice';
 
 const Categoris = () => {
     const [count, setCount] = useState(0)
     const dispatch = useDispatch()
     useEffect(() => {
-        dispatch(getCate())
+        dispatch(getAllCate())
     }, [])
     const categories = useSelector(data => data.categoris.value)
-    useEffect(async () => {
-        dispatch(getCate())
-    }, [])
+
 
     const next = () => {
 

@@ -1,14 +1,19 @@
 import { CloseCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import { Button, Spin, Upload, message } from "antd";
-import React, { useEffect, useState } from "react";
+import { Button, Input, Spin, Upload, message } from "antd";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { startTransition } from "react";
 import { storage } from "../../../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useDispatch, useSelector } from "react-redux";
-import { getUser, uploadUser } from "../../../reducers/UserSlice";
+import {
+  getUser,
+  uploadEmailUser,
+  uploadUser,
+} from "../../../reducers/UserSlice";
 import ModalUploadInfoUser from "../../../components/ModalUploadInfoUser";
 import ModalPushEmail from "../../../components/ModalPushEmail";
 import UploadPassword from "./UploadPassword";
+import { uploadInfoUser } from "../../../API/Users";
 
 const MyAccount = (props) => {
   const dispatch = useDispatch();
@@ -27,6 +32,7 @@ const MyAccount = (props) => {
   });
   const [name, setName] = useState();
   const [loading, setLoading] = useState(false);
+  const userValue = userLoca?.providerId == undefined ? user : userLoca;
   const [checkEmail, setCheckEmail] = useState({
     status: false,
     otp: 1,
@@ -35,11 +41,11 @@ const MyAccount = (props) => {
     email: undefined,
   });
   useEffect(() => {
-    dispatch(getUser(userLoca._id));
+    userLoca?.providerId == undefined && dispatch(getUser(userLoca?._id));
   }, []);
 
   useEffect(() => {
-    setImageUrlAvatar({ url: user?.avatar, file: undefined });
+    setImageUrlAvatar({ url: userValue?.avatar, file: undefined });
   }, [user]);
 
   const UploadAvatatr = (file) => {
@@ -50,68 +56,159 @@ const MyAccount = (props) => {
   };
   const save = async () => {
     setLoading(true);
-    if (name == undefined && imageUrlAvatar?.file !== undefined) {
-      const imageRef = ref(storage, `images/${imageUrlAvatar.file.name}`);
-      uploadBytes(imageRef, imageUrlAvatar.file).then(() => {
-        getDownloadURL(imageRef).then(async (url, indec) => {
-          await dispatch(uploadUser({ ...user, avatar: url }));
+    const formData = new FormData();
+    formData.append("files", imageUrlAvatar.file);
+    formData.append("_id", userValue._id);
+    formData.append("image_id", userValue.image_id);
+    formData.append("name", name);
+    await dispatch(uploadUser(formData));
+    setLoading(false);
 
-          setLoading(false);
-          // await di
-          message.open({
-            type: "success",
-            content: "Cập nhật thành công",
-            duration: 1,
-          });
-        });
-      });
-    } else if (name !== undefined && imageUrlAvatar?.file !== undefined) {
-      const imageRef = ref(storage, `images/${imageUrlAvatar.file.name}`);
-      uploadBytes(imageRef, imageUrlAvatar.file).then(() => {
-        getDownloadURL(imageRef).then(async (url, indec) => {
-          await dispatch(
-            uploadUser({
-              ...user,
-              avatar: url,
-              name: name == undefined ? user.name : name,
-            })
-          );
-
-          setLoading(false);
-          // await di
-          message.open({
-            type: "success",
-            content: "Cập nhật thành công",
-            duration: 1,
-          });
-        });
-      });
-    } else {
-      await dispatch(uploadUser({ ...user, name: name }));
-
-      setLoading(false);
-      // await di
-      message.open({
-        type: "success",
-        content: "Cập nhật thành công",
-        duration: 1,
-      });
-    }
-    setImageUrlAvatar({ url: user?.avatar, file: undefined });
-    setName();
+    setImageUrlAvatar({ url: userValue?.avatar, file: undefined });
   };
   // ẩn số điện thoại
   const numberOfDigitsToHidePhone = 8;
   const hiddenPhoneNumberPhone =
     "*".repeat(numberOfDigitsToHidePhone) +
-    user?.phone?.slice(numberOfDigitsToHidePhone);
+    userValue?.phone?.slice(numberOfDigitsToHidePhone);
   // ẩn email
-  const emailEnd = user?.email?.split("@")[1]
-  const emailStart = user?.email?.split("@")[0]
+  const emailEnd = userValue?.email?.split("@")[1];
+  const emailStart = userValue?.email?.split("@")[0];
   let hidden = "*".repeat(emailStart?.length - 6);
   let result = emailStart?.slice(0, 2) + hidden + emailStart?.slice(-2);
 
   const hiddenPhoneNumberEmail = `${result}@${emailEnd}`;
+
+  const RenderInfoUser = () => {
+    return (
+      <div className="user-form">
+        <div className="user-form_info">
+          <div className="user-form_info-name">
+            <span>Tên đăng nhập</span>
+            <div className="user-form_info-name-list">{userValue?.name}</div>
+          </div>
+          <div className="user-form_info-email">
+            <span>Email</span>
+            <div className="user-form_info-email-list">
+              {hiddenPhoneNumberEmail}{" "}
+              {userLoca?.providerId == undefined && (
+                <button
+                  onClick={() =>
+                    setCheckEmail({
+                      status: true,
+                      otp: 1,
+                      content: "Nhập email muốn thay đổi",
+                      title: "Thay đổi email",
+                      email: hiddenPhoneNumberEmail,
+                    })
+                  }
+                >
+                  Thay đổi
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="user-form_number-phone">
+            <span>Số điện thoại</span>
+            <div className="user-form_number-phone-list">
+              {hiddenPhoneNumberPhone}{" "}
+              {userLoca?.providerId == undefined && (
+                <button
+                  onClick={() =>
+                    setContent({
+                      status: true,
+                      otp: 1,
+                      content: "Nhập điện thoại muốn thay đổi",
+                      title: "Thay đổi số điện thoại",
+                      phone: hiddenPhoneNumberPhone,
+                    })
+                  }
+                >
+                  Thay đổi
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="user-form_name-shop">
+            <span>Tên shope</span>
+            <div className="user-form_name-shop-list">
+              <Input
+                // disabled={userLoca?.providerId == undefined ? false : true}
+                // defaultValue={name == undefined ? userValue?.name : name}
+                // placeholder="Nhập tên shope..."
+                onChange={(e) =>
+                  // startTransition(() => {
+                  //   setName(e.target.value);
+                  // })
+                  console.log(e.target.value,'e.target.value')
+                }
+              />
+            </div>
+          </div>
+          {userLoca?.providerId == undefined && (
+            <div className="button-save">
+              {loading == true ? (
+                <Spin style={{ marginBottom: 20 }} />
+              ) : (
+                (imageUrlAvatar.file !== undefined ||
+                  String(name)?.length > 0) && (
+                  <Button type="primary" danger onClick={() => save()}>
+                    Lưu
+                  </Button>
+                )
+              )}
+            </div>
+          )}
+        </div>
+        <div className="user-image">
+          <div className={"uploadImage"} style={{ marginLeft: 12 }}>
+            <Upload
+              listType="picture-card"
+              showUploadList={false}
+              disabled={userLoca?.providerId == undefined ? false : true}
+              beforeUpload={UploadAvatatr}
+            >
+              {imageUrlAvatar?.url !== undefined ? (
+                <div className="box-image">
+                  <img src={imageUrlAvatar?.url} className="image" />
+                </div>
+              ) : (
+                <div>
+                  <div
+                    style={{
+                      marginTop: 8,
+                    }}
+                  >
+                    {loading == true ? (
+                      <Spin />
+                    ) : (
+                      <PlusCircleOutlined
+                        style={{
+                          fontSize: 30,
+                          opacity: 0.8,
+                          color: "#ee4d2d",
+                        }}
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
+            </Upload>
+            {imageUrlAvatar?.file !== undefined && (
+              <div
+                className={"close"}
+                onClick={() =>
+                  setImageUrlAvatar({ url: userValue?.avatar, file: undefined })
+                }
+              >
+                <CloseCircleOutlined style={{ fontSize: 17 }} />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="purchase-list">
@@ -121,122 +218,9 @@ const MyAccount = (props) => {
             <h3>Hồ Sơ Của Tôi</h3>
             <span>Quản lý thông tin hồ sơ để bảo mật tài khoản</span>
           </div>
-          <div className="user-form">
-            <div className="user-form_info">
-              <div className="user-form_info-name">
-                <span>Tên đăng nhập</span>
-                <div className="user-form_info-name-list">{user.name}</div>
-              </div>
-              <div className="user-form_info-email">
-                <span>Email</span>
-                <div className="user-form_info-email-list">
-                  {hiddenPhoneNumberEmail}{" "}
-                  <button
-                    onClick={() =>
-                      setCheckEmail({
-                        status: true,
-                        otp: 1,
-                        content: "Nhập email muốn thay đổi",
-                        title: "Thay đổi email",
-                        email: hiddenPhoneNumberEmail,
-                      })
-                    }
-                  >
-                    Thay đổi
-                  </button>
-                </div>
-              </div>
-              <div className="user-form_number-phone">
-                <span>Số điện thoại</span>
-                <div className="user-form_number-phone-list">
-                  {hiddenPhoneNumberPhone}{" "}
-                  <button
-                    onClick={() =>
-                      setContent({
-                        status: true,
-                        otp: 1,
-                        content: "Nhập điện thoại muốn thay đổi",
-                        title: "Thay đổi số điện thoại",
-                        phone: hiddenPhoneNumberPhone,
-                      })
-                    }
-                  >
-                    Thay đổi
-                  </button>
-                </div>
-              </div>
-              <div className="user-form_name-shop">
-                <span>Tên shope</span>
-                <div className="user-form_name-shop-list">
-                  <input
-                    type="text"
-                    value={name == undefined ? user?.name : name}
-                    placeholder="Nhập tên shope..."
-                    onChange={(e) =>
-                      startTransition(() => {
-                        setName(e.target.value);
-                      })
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="button-save">
-                {loading == true ? (
-                  <Spin style={{ marginBottom: 20 }} />
-                ) : (
-                  <Button type="primary" danger onClick={() => save()}>
-                    Lưu
-                  </Button>
-                )}
-              </div>
-            </div>
-            <div className="user-image">
-              <div className={"uploadImage"} style={{ marginLeft: 12 }}>
-                <Upload
-                  listType="picture-card"
-                  showUploadList={false}
-                  beforeUpload={UploadAvatatr}
-                >
-                  {imageUrlAvatar?.url !== undefined ? (
-                    <div className="box-image">
-                      <img src={imageUrlAvatar?.url} className="image" />
-                    </div>
-                  ) : (
-                    <div>
-                      <div
-                        style={{
-                          marginTop: 8,
-                        }}
-                      >
-                        {loading == true ? (
-                          <Spin />
-                        ) : (
-                          <PlusCircleOutlined
-                            style={{
-                              fontSize: 30,
-                              opacity: 0.8,
-                              color: "#ee4d2d",
-                            }}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </Upload>
-                {imageUrlAvatar?.file !== undefined && (
-                  <div
-                    className={"close"}
-                    onClick={() =>
-                      setImageUrlAvatar({ url: user?.avatar, file: undefined })
-                    }
-                  >
-                    <CloseCircleOutlined style={{ fontSize: 17 }} />
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+          <Suspense fallback={"Loading..."}>
+            <RenderInfoUser />
+          </Suspense>
         </li>
       ) : (
         <li className="active-purchase-list">
@@ -340,7 +324,6 @@ const MyAccount = (props) => {
           }}
         />
       )}
-
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import CateShopeeAPI from "../API/CateShopeeAPI";
+import CateShopeeAPI from "../API/CateShopAPI";
 import ShopOwnerAPI from "../API/ShopOwner";
 import CateAPI from "./../API/Categoris";
 import ProAPI from "./../API/ProAPI";
@@ -16,7 +16,7 @@ export const getAllData = createAsyncThunk("allData/getAllData", async () => {
   const { data: products } = await ProAPI.getAll();
   const { data: categoris } = await CateAPI.getAll();
   const { data: slides } = await SliderAPI.getAll();
-  const { data: cateshopee } = await CateShopeeAPI.getAll();
+  const { data: cateshop } = await CateShopeeAPI.getAll();
   const { data: shopowners } = await ShopOwnerAPI.getAll();
   const { data: imagepros } = await ImageProAPI.getAll();
   const { data: classifies } = await ClassifyAPI.getAll();
@@ -26,17 +26,17 @@ export const getAllData = createAsyncThunk("allData/getAllData", async () => {
   const { data: info_user } = await InfoUserAPI.getAll();
 
   const dataAll = {
-    categori: categoris,
-    product: products,
+    categories: categoris,
+    products: products,
     slide: slides,
-    shopowner: shopowners,
-    cateshopee: cateshopee,
+    shopowners: shopowners,
+    cateshops: cateshop,
     imagepros: imagepros,
-    classify: classifies,
+    classifys: classifies,
     commodityvalue: commodityvalues,
-    comment: comments,
-    saveorder: saveorders,
-    info_user: info_user,
+    comments: comments,
+    saveorders: saveorders,
+    info_users: info_user,
   };
   return dataAll;
 });

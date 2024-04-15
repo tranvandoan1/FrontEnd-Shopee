@@ -1,10 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { Suspense, lazy, useEffect, useState } from "react";
 import "../../Page/Css/Css/SellerChannel.css";
 import { HeaderNavbar } from "../../Page/Header/HeaderNavbar";
 import { Footer } from "../../Page/Header/Footer";
-import { Button, Carousel, Col, Dropdown, Row, Space, Menu } from "antd";
+import {
+  Button,
+  Carousel,
+  Col,
+  Dropdown,
+  Row,
+  Space,
+  Menu,
+  Skeleton,
+} from "antd";
 import styles from "../../Page/Css/CssModule/SellerChannel.module.css";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import stylesPro from "../../Page/Css/CssModule/Product.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllData } from "./../../../reducers/AllData";
@@ -12,14 +21,16 @@ import ShopOwnerAPI from "../../../API/ShopOwner";
 import { DownOutlined, SmileOutlined } from "@ant-design/icons";
 const SellerChannel = () => {
   const dispatch = useDispatch();
-  const user = JSON.parse(localStorage.getItem("user")); //lấy user đang đăng nhập ở localStorage
+  const { id } = useParams();
   const data = useSelector((data) => data.dataAll.value);
-
   // lấy thông tin shop của người đang đăng nhập
-  let shopowner = [];
-  Object.keys(data).length > 0 &&
-    shopowner.push(data.shopowner.find((item) => item.user_id == user._id));
-  console.log(shopowner);
+  let shopowner = data.shopowners?.find((item) => item._id == atob(id));
+
+  const products = data?.products?.filter((item) => item.shop_id == atob(id));
+  const cateShop = data?.cateshops?.filter(
+    (item) => item.shopowner_id == atob(id)
+  );
+
   useEffect(() => {
     dispatch(getAllData());
   }, []);
@@ -32,82 +43,198 @@ const SellerChannel = () => {
     </div>
   );
 
+  const infoShop = () => {
+    return (
+      <div className="shop-page_info">
+        <div className="section-salesman">
+          <img
+            src="https://1.bp.blogspot.com/-fJOYWF8sRcc/XqPMUl5F0uI/AAAAAAAAipA/FOrgLq4mcqQ23Lp_hA4_QPcjGym-ez4agCLcBGAsYHQ/s1600/Hinh-anh-dep-nhat-the-gioi%2B%25281%2529.jpg"
+            alt=""
+          />
+          <div className="section-salesman_background">
+            <div className="section-salesman_name">
+              <div className="section-salesman_portrait">
+                <div className="section-salesman_avatar">
+                  <img src={shopowner?.photo} alt="" />
+                </div>
+
+                <div className="section-salesman_info">
+                  <h3>{shopowner?.name}</h3>
+                  <p>online 1 giờ trước</p>
+                </div>
+              </div>
+
+              <div className="section-salesman_buttons">
+                <Button className={styles.flow}>
+                  <i className="fas fa-plus" style={{ marginRight: 10 }}></i>{" "}
+                  theo dõi
+                </Button>
+                <Button className={styles.chat}>
+                  <i
+                    className="far fa-comments"
+                    style={{ marginRight: 10 }}
+                  ></i>{" "}
+                  chat
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="section-salesman_info-list">
+          <div className="section-salesman_info-list_r1">
+            <div className="section-salesman_name-shop">
+              <i className="far fa-user"></i> tên shop :
+              <span> {shopowner?.name}</span>
+            </div>
+            <div className="section-salesman_category">
+              <i className="fas fa-boxes"></i> danh mục:{" "}
+              <span>{cateShop?.length}</span>
+            </div>
+            <div className="section-salesman_products-list">
+              <i className="fas fa-box"></i> sản phẩm:{" "}
+              <span>{products?.length}</span>
+            </div>
+          </div>
+          <div className="section-salesman_info-list_r2">
+            <div className="section-salesman_user-follow">
+              <i className="fas fa-user-tie"></i> người theo dõi: <span>1</span>
+            </div>
+            <div className="section-salesman_valuable">
+              <i className="fas fa-user-check"></i> đánh giá:
+              <span>32</span>
+            </div>
+            <div className="admin-shop">
+              <i className="fas fa-user-cog"></i>
+              <Link to={`/seller-channel&&${btoa(shopowner?._id)}/admin/statistical`} onClick={() => {
+                localStorage.removeItem("keyLoca");
+                localStorage.setItem("keyLoca", 1);
+              }}>Quản Lý Shop</Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  const sleep = (ms) => {
+    return new Promise((res) => setTimeout(res, ms));
+  };
+  const RenderInfoShop = lazy(async () => {
+    await sleep(2000);
+    return { default: infoShop };
+  });
+  const Render = () => (
+    <div
+      style={{
+        maxWidth: 1200,
+        display: "flex",
+        justifyContent: "center",
+        margin: "0 auto",
+      }}
+    >
+      <Skeleton />
+    </div>
+  );
+
+  // format số
+  function formatNumber(num) {
+    if (num >= 1000000000) {
+      return (num / 1000000000).toFixed(1) + "B";
+    }
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1) + "M";
+    }
+    if (num >= 1000) {
+      return (num / 1000).toFixed(1) + "K";
+    }
+    return num;
+  }
+
+  const ShowHtml = (product, classify) => {
+    const proPrice = [];
+
+    product?.map((itemPro) => {
+      const classifyPrice1 = [];
+      const classifyPrice2 = [];
+      classify?.map((itemData) => {
+        if (itemData?.linked == itemPro.linked) {
+          if (itemData?.values == undefined && itemData?.values == null) {
+            classifyPrice2.push(itemData.price);
+          } else {
+            itemData?.values?.map((itemPrice) =>
+              classifyPrice1.push(itemPrice.price)
+            );
+          }
+        }
+      });
+      proPrice.push({
+        ...itemPro,
+        values:
+          itemPro?.name_commodityvalue == undefined
+            ? classifyPrice2
+            : classifyPrice1,
+      });
+    });
+
+    for (let i = 0; i < proPrice.length; i++) {
+      const minPrice = Math.min.apply(Math, proPrice[i].values);
+      const maxPrice = Math.max.apply(Math, proPrice[i].values);
+      proPrice[i].values = [minPrice, maxPrice];
+    }
+    return proPrice?.map((item, index) => {
+      if (index < 4) {
+        return (
+          <Col
+            xs={12}
+            sm={8}
+            md={6}
+            lg={4}
+            xl={4}
+            style={{ padding: "0 5px", marginTop: 10 }}
+          >
+            <div
+              className={stylesPro.box}
+              onClick={() =>
+                navigate(`/detail/${pro.name.replace(/\s+/g, "-")}&&${pro._id}`)
+              }
+            >
+              <div className={stylesPro.avatar}>
+                <img src={item?.photo} alt="" />
+              </div>
+              {(item?.sale > 0 || item?.sale !== undefined) && (
+                <div className={stylesPro.sale}>
+                  <span>{item?.sale}%</span>
+                </div>
+              )}
+
+              <div className="list_info_pro">
+                <span className={stylesPro.name}>{item?.name}</span>
+              </div>
+              <div className={stylesPro.list_price_pro}>
+                <span className={stylesPro.price}>
+                  đ
+                  {item?.values[0]
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                </span>
+                <span className={stylesPro.upl8wJ_82UoSS}>
+                  Đã bán {formatNumber(item.sold)}
+                </span>
+              </div>
+            </div>
+          </Col>
+        );
+      }
+    });
+  };
+
   return (
     <div>
       <HeaderNavbar />
       <div className="main">
         <div className="shop-page">
-          {shopowner.length > 0 && (
-            <div className="shop-page_info">
-              <div className="section-salesman">
-                <img
-                  src="https://1.bp.blogspot.com/-fJOYWF8sRcc/XqPMUl5F0uI/AAAAAAAAipA/FOrgLq4mcqQ23Lp_hA4_QPcjGym-ez4agCLcBGAsYHQ/s1600/Hinh-anh-dep-nhat-the-gioi%2B%25281%2529.jpg"
-                  alt=""
-                />
-                <div className="section-salesman_background">
-                  <div className="section-salesman_name">
-                    <div className="section-salesman_portrait">
-                      <div className="section-salesman_avatar">
-                        <img src={shopowner[0].photo} alt="" />
-                      </div>
-
-                      <div className="section-salesman_info">
-                        <h3>{shopowner[0].name}</h3>
-                        <p>online 1 giờ trước</p>
-                      </div>
-                    </div>
-
-                    <div className="section-salesman_buttons">
-                      <Button className={styles.flow}>
-                        <i
-                          className="fas fa-plus"
-                          style={{ marginRight: 10 }}
-                        ></i>{" "}
-                        theo dõi
-                      </Button>
-                      <Button className={styles.chat}>
-                        <i
-                          className="far fa-comments"
-                          style={{ marginRight: 10 }}
-                        ></i>{" "}
-                        chat
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="section-salesman_info-list">
-                <div className="section-salesman_info-list_r1">
-                  <div className="section-salesman_name-shop">
-                    <i className="far fa-user"></i> tên shop :
-                    <span> {shopowner[0].name}</span>
-                  </div>
-                  <div className="section-salesman_category">
-                    <i className="fas fa-boxes"></i> danh mục: <span>1</span>
-                  </div>
-                  <div className="section-salesman_products-list">
-                    <i className="fas fa-box"></i> sản phẩm: <span>1</span>
-                  </div>
-                </div>
-                <div className="section-salesman_info-list_r2">
-                  <div className="section-salesman_user-follow">
-                    <i className="fas fa-user-tie"></i> người theo dõi:{" "}
-                    <span>1</span>
-                  </div>
-                  <div className="section-salesman_valuable">
-                    <i className="fas fa-user-check"></i> đánh giá:
-                    <span>32</span>
-                  </div>
-                  <div className="admin-shop">
-                    <i className="fas fa-user-cog"></i>
-                    <Link to="/seller-channel/admin/statistical">
-                      Quản Lý Shop
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+          <Suspense fallback={<Render />}>
+            <RenderInfoShop />
+          </Suspense>
         </div>
         <div className="shope-page-menu">
           <div className="navbar">
@@ -115,15 +242,15 @@ const SellerChannel = () => {
               <li>
                 <a href=""> tổng quát</a>
               </li>
-              {data.cateshopee?.map((item, index) => {
-                if (item.shopowner_id == shopowner[0]?._id) {
-                  if (index < 3) {
-                    return (
-                      <li>
-                        <a href="">{item.name}</a>
-                      </li>
-                    );
-                  }
+              {cateShop?.map((item, index) => {
+                if (item.shopowner_id == shopowner?._id) {
+                  // if (index < 3) {
+                  return (
+                    <li>
+                      <a href="">{item.name}</a>
+                    </li>
+                  );
+                  // }
                 }
               })}
               {data.cateshopee?.length > 4 && (
@@ -190,211 +317,7 @@ const SellerChannel = () => {
             <i className="fas fa-box"></i> sản phẩm của shop
           </h4>
           <div className="products-title_show">
-            <Row>
-              <Col
-                xs={12}
-                sm={8}
-                md={6}
-                lg={4}
-                xl={4}
-                style={{ padding: "0 5px", marginTop: 10 }}
-              >
-                <div className={stylesPro.box}>
-                  <div className={stylesPro.avatar}>
-                    <img
-                      src="https://naidecor.vn/wp-content/uploads/2020/01/ct00192-549k.jpg"
-                      alt=""
-                    />
-                  </div>
-                  <div className={stylesPro.sale}>
-                    <span>40%</span>
-                  </div>
-                  <div className="list_info_pro">
-                    <span className={stylesPro.name}>
-                      áo phông trơn tay dài phom rộng dáng unisex trend 2021
-                    </span>
-                  </div>
-                  <div className={stylesPro.list_price_pro}>
-                    <span className={stylesPro.price}>₫45.000</span>
-                    <span className={stylesPro.upl8wJ_82UoSS}>Đã bán 7,6k</span>
-                  </div>
-                </div>
-              </Col>
-              <Col
-                xs={12}
-                sm={8}
-                md={6}
-                lg={4}
-                xl={4}
-                style={{ padding: "0 5px", marginTop: 10 }}
-              >
-                <div className={stylesPro.box}>
-                  <div className={stylesPro.avatar}>
-                    <img
-                      src="https://naidecor.vn/wp-content/uploads/2020/01/ct00192-549k.jpg"
-                      alt=""
-                    />
-                  </div>
-                  <div className={stylesPro.sale}>
-                    <span>40%</span>
-                  </div>
-                  <div className="list_info_pro">
-                    <span className={stylesPro.name}>
-                      áo phông trơn tay dài phom rộng dáng unisex trend 2021
-                    </span>
-                  </div>
-                  <div className={stylesPro.list_price_pro}>
-                    <span className={stylesPro.price}>₫45.000</span>
-                    <span className={stylesPro.upl8wJ_82UoSS}>Đã bán 7,6k</span>
-                  </div>
-                </div>
-              </Col>
-              <Col
-                xs={12}
-                sm={8}
-                md={6}
-                lg={4}
-                xl={4}
-                style={{ padding: "0 5px", marginTop: 10 }}
-              >
-                <div className={stylesPro.box}>
-                  <div className={stylesPro.avatar}>
-                    <img
-                      src="https://naidecor.vn/wp-content/uploads/2020/01/ct00192-549k.jpg"
-                      alt=""
-                    />
-                  </div>
-                  <div className={stylesPro.sale}>
-                    <span>40%</span>
-                  </div>
-                  <div className="list_info_pro">
-                    <span className={stylesPro.name}>
-                      áo phông trơn tay dài phom rộng dáng unisex trend 2021
-                    </span>
-                  </div>
-                  <div className={stylesPro.list_price_pro}>
-                    <span className={stylesPro.price}>₫45.000</span>
-                    <span className={stylesPro.upl8wJ_82UoSS}>Đã bán 7,6k</span>
-                  </div>
-                </div>
-              </Col>
-              <Col
-                xs={12}
-                sm={8}
-                md={6}
-                lg={4}
-                xl={4}
-                style={{ padding: "0 5px", marginTop: 10 }}
-              >
-                <div className={stylesPro.box}>
-                  <div className={stylesPro.avatar}>
-                    <img
-                      src="https://naidecor.vn/wp-content/uploads/2020/01/ct00192-549k.jpg"
-                      alt=""
-                    />
-                  </div>
-                  <div className={stylesPro.sale}>
-                    <span>40%</span>
-                  </div>
-                  <div className="list_info_pro">
-                    <span className={stylesPro.name}>
-                      áo phông trơn tay dài phom rộng dáng unisex trend 2021
-                    </span>
-                  </div>
-                  <div className={stylesPro.list_price_pro}>
-                    <span className={stylesPro.price}>₫45.000</span>
-                    <span className={stylesPro.upl8wJ_82UoSS}>Đã bán 7,6k</span>
-                  </div>
-                </div>
-              </Col>
-              <Col
-                xs={12}
-                sm={8}
-                md={6}
-                lg={4}
-                xl={4}
-                style={{ padding: "0 5px", marginTop: 10 }}
-              >
-                <div className={stylesPro.box}>
-                  <div className={stylesPro.avatar}>
-                    <img
-                      src="https://naidecor.vn/wp-content/uploads/2020/01/ct00192-549k.jpg"
-                      alt=""
-                    />
-                  </div>
-                  <div className={stylesPro.sale}>
-                    <span>40%</span>
-                  </div>
-                  <div className="list_info_pro">
-                    <span className={stylesPro.name}>
-                      áo phông trơn tay dài phom rộng dáng unisex trend 2021
-                    </span>
-                  </div>
-                  <div className={stylesPro.list_price_pro}>
-                    <span className={stylesPro.price}>₫45.000</span>
-                    <span className={stylesPro.upl8wJ_82UoSS}>Đã bán 7,6k</span>
-                  </div>
-                </div>
-              </Col>
-              <Col
-                xs={12}
-                sm={8}
-                md={6}
-                lg={4}
-                xl={4}
-                style={{ padding: "0 5px", marginTop: 10 }}
-              >
-                <div className={stylesPro.box}>
-                  <div className={stylesPro.avatar}>
-                    <img
-                      src="https://naidecor.vn/wp-content/uploads/2020/01/ct00192-549k.jpg"
-                      alt=""
-                    />
-                  </div>
-                  <div className={stylesPro.sale}>
-                    <span>40%</span>
-                  </div>
-                  <div className="list_info_pro">
-                    <span className={stylesPro.name}>
-                      áo phông trơn tay dài phom rộng dáng unisex trend 2021
-                    </span>
-                  </div>
-                  <div className={stylesPro.list_price_pro}>
-                    <span className={stylesPro.price}>₫45.000</span>
-                    <span className={stylesPro.upl8wJ_82UoSS}>Đã bán 7,6k</span>
-                  </div>
-                </div>
-              </Col>
-              <Col
-                xs={12}
-                sm={8}
-                md={6}
-                lg={4}
-                xl={4}
-                style={{ padding: "0 5px", marginTop: 10 }}
-              >
-                <div className={stylesPro.box}>
-                  <div className={stylesPro.avatar}>
-                    <img
-                      src="https://naidecor.vn/wp-content/uploads/2020/01/ct00192-549k.jpg"
-                      alt=""
-                    />
-                  </div>
-                  <div className={stylesPro.sale}>
-                    <span>40%</span>
-                  </div>
-                  <div className="list_info_pro">
-                    <span className={stylesPro.name}>
-                      áo phông trơn tay dài phom rộng dáng unisex trend 2021
-                    </span>
-                  </div>
-                  <div className={stylesPro.list_price_pro}>
-                    <span className={stylesPro.price}>₫45.000</span>
-                    <span className={stylesPro.upl8wJ_82UoSS}>Đã bán 7,6k</span>
-                  </div>
-                </div>
-              </Col>
-            </Row>
+            <Row>{ShowHtml(products, data.classifys)}</Row>
             <div className="btn-seemore">
               <button>xem thêm</button>
             </div>

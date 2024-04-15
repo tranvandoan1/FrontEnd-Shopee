@@ -17,7 +17,7 @@ const PageProductShop = () => {
   let dataShopOwners = {};
   if (data?.cateshopee !== undefined) {
     data?.cateshopee.map((item) => {
-      data.shopowner?.map((shop) => {
+      data.shopowners?.map((shop) => {
         if (item._id == product?.cate_id) {
           if (shop._id == item.shopowner_id) {
             dataShopOwners = shop;

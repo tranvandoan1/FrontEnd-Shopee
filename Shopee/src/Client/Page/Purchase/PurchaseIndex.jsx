@@ -14,8 +14,9 @@ const PurchaseIndex = () => {
   const user = useSelector((data) => data.users.value);
 
   useEffect(() => {
-    dispatch(getUser(userLoca._id));
+    dispatch(getUser(userLoca?._id));
   }, []);
+  const userValue = userLoca?.providerId == undefined ? user : userLoca
   const [check, setCheck] = useState(1);
   return (
     <div style={{ background: "#f7f7f7" }}>
@@ -23,9 +24,9 @@ const PurchaseIndex = () => {
       <div className="users-purchase">
         <div className="user">
           <div className="user-header">
-            <Avatar src={user.avatar} size={50}/>
+            <Avatar src={userValue.avatar} size={50} />
             <a href="">
-              <span>{user.name}</span>
+              <span>{userValue.name}</span>
               <span>
                 <i className="fas fa-pencil-alt"></i> sửa hồ sơ
               </span>
@@ -49,12 +50,15 @@ const PurchaseIndex = () => {
                 >
                   hồ sơ
                 </li>
-                <li
-                  style={{ color: check == 4 ? "rgb(238, 77, 45)" : "" }}
-                  onClick={() => setCheck(4)}
-                >
-                  đổi mật khẩu
-                </li>
+                {
+                  userLoca?.providerId == undefined &&
+                  <li
+                    style={{ color: check == 4 ? "rgb(238, 77, 45)" : "" }}
+                    onClick={() => setCheck(4)}
+                  >
+                    đổi mật khẩu
+                  </li>
+                }
               </div>
               <li
                 onClick={() => setCheck(2)}

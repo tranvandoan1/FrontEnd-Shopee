@@ -152,11 +152,11 @@
 .icon-menu{
   cursor: pointer;
 }
-.navbar > ul {
+.navbar  ul {
   display: flex;
   align-items: center;
 }
-.navbar > ul > li {
+.navbar  ul  li {
   padding: 0px 25px 15px 25px;
   text-transform: capitalize;
   cursor: pointer;
@@ -164,7 +164,7 @@
   position: relative;
   list-style: none;
 }
-.navbar > ul > li > a {
+.navbar  ul  li > a {
   text-decoration: none;
   font-size: 0.9rem;
   color: black;
@@ -175,15 +175,15 @@
   overflow: hidden;
 }
 
-.navbar > ul > li > a:hover {
+.navbar  ul > li > a:hover {
   color: rgb(238, 77, 45);
 }
 
-.navbar > ul > li:nth-child(-n + 3) {
+.navbar  ul > li:nth-child(-n + 3) {
   text-transform: uppercase;
 }
 
-.navbar > ul > li:nth-child(1)::before {
+.navbar  ul > li:nth-child(1)::before {
   content: " ";
   background-color: rgb(238, 77, 45);
   width: 100%;

@@ -6,7 +6,11 @@ import "../Css/Css/Login.css";
 import { Button, Checkbox, Form, Input, Spin, message } from "antd";
 import Loading from "../../../components/Loading";
 import { FcGoogle } from 'react-icons/fc'
-import GoogleLogin from 'react-google-login';
+import { BsFacebook } from 'react-icons/bs'
+import { FacebookAuthProvider, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+
+import { auth, providerFacebook, providerGoogle } from '../../../firebase/index'
+import { tokenLoca } from "../../../actions/token";
 const Login = () => {
   const {
     register,
@@ -19,37 +23,75 @@ const Login = () => {
   const onFinish = async (values) => {
     try {
       setLoading(true)
-      console.log(values,'values')
+      console.log(values, 'values')
       const { data } = await UserAPI.signin(values);
       setLoading(false)
       localStorage.setItem("user", JSON.stringify(data.user));
-      return navigate("/");
+      navigate("/");
     } catch (error) {
       setLoading(false)
       message.error(error.response.data.error)
     }
   };
 
-  const handleFailure = (result) => {
+  const loginGoogle = () => {
+    setLoading(true)
+    signInWithPopup(auth, providerGoogle)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        const user = result.user;
+        const userLoca = {
+          name: user.displayName,
+          email: user.email,
+          _id: user.uid,
+          providerId: user.providerId,
+          avatar: user.photoURL,
+          phoneNumber: user.phoneNumber
+        }
+        setLoading(false)
+        localStorage.setItem("user", JSON.stringify(userLoca));
+        localStorage.setItem("token", JSON.stringify(token));
+        navigate("/");
+      }).catch((error) => {
+        console.log('first')
+      });
+
   };
-  const handleLogin = (googleData) => {
-    // dispatch(
-    //   defaultTime({
-    //     filter: { campus_id: cumpus },
-    //     callback: (data) => {
-    //       if (data.status === 'ok') {
-    //         const dataForm = {
-    //           token: googleData.tokenId,
-    //           cumpusId: cumpus,
-    //           smester_id: data?.result?._id,
-    //         };
-    //         dispatch(loginGoogle({ val: dataForm, callback: cbMessage }));
-    //       }
-    //     },
-    //   }),
-    // );
-    console.log(googleData, 'googleData')
-  };
+
+
+  const loginFacebook = async () => {
+    try {
+      console.log('vào1')
+      signInWithPopup(auth, providerFacebook)
+        .then((result) => {
+          console.log('vào2')
+          const credential = FacebookAuthProvider.credentialFromResult(result);
+          const token = credential.accessToken;
+          const user = result.user;
+          const userLoca = {
+            name: user.displayName,
+            email: user.email,
+            _id: user.uid,
+            providerId: user.providerId,
+            avatar: user.photoURL,
+            phoneNumber: user.phoneNumber
+          }
+          setLoading(false)
+          localStorage.setItem("token", JSON.stringify(token));
+
+          localStorage.setItem("user", JSON.stringify(userLoca));
+          navigate("/");
+        }).catch((error) => {
+          message.error('Lỗi. Xin hãy thử lại !')
+        });
+    } catch (error) {
+      message.error('Lỗi. Xin hãy thử lại !')
+    }
+
+  }
+
   return (
     <div className="shopee__shop">
       {
@@ -122,14 +164,14 @@ const Login = () => {
                 <Button htmlType="submit" className="button-signup" onClick={() => navigate('/signup')}>
                   Tạo tài khoản mới
                 </Button>
-                <GoogleLogin
-                  clientId="116205081385-umqm7s5qlspf4s0tc4jke7tafpvgj2k7.apps.googleusercontent.com"
-                  buttonText="Login With Google"
-                  onSuccess={handleLogin}
-                  onFailure={handleFailure}
-                  disabled={false}
-                />
-                <br />
+
+                <Button htmlType="submit" className="button-signup-google" onClick={() => loginGoogle()}>
+                  <FcGoogle style={{ fontSize: 25, marginRight: 10 }} />  Đăng nhập bằng Google
+                </Button>
+
+                <Button htmlType="submit" className="button-signup-facebook" onClick={() => loginFacebook()}>
+                  <BsFacebook style={{ fontSize: 25, marginRight: 10, color: 'blue' }} />    Đăng nhập bằng Facebook
+                </Button>
                 <a href="">Quên mật khẩu?</a>
               </div>
             </div>

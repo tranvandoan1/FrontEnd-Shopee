@@ -1,15 +1,12 @@
 import { Button, Checkbox, Form, Input, Spin, message } from "antd";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { checkUploadPassword } from "../../../reducers/UserSlice";
 import { uploadPassword } from "../../../API/Users";
 import Loading from "../../../components/Loading";
 
 const UploadPassword = () => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
-  const checkPassword = useSelector((data) => data.users.password);
-  console.log(checkPassword, "checkPassword");
   const user = JSON.parse(localStorage.getItem("user"));
   const [loading, setLoading] = useState(false);
 
@@ -19,7 +16,6 @@ const UploadPassword = () => {
       _id: user?._id,
       ...values,
     });
-    console.log(userPassword, 'userPassword')
     if (userPassword?.error) {
       message.open({
         type: "error",

@@ -1,7 +1,7 @@
 import { Button } from 'antd'
 import React from 'react'
 
-const ModalComfim = ({ title, content, status, callBack }) => {
+const ModalComfim = ({ title, content, status, callBack,btnClose,btnAcc }) => {
     const shopeePopupFormHeader = document.querySelector(
         ".shopee-popup-form__header-comfim"
     );
@@ -20,8 +20,8 @@ const ModalComfim = ({ title, content, status, callBack }) => {
                     <p>{content}</p>
                 </div>
                 <div className='button-comfim'>
-                    <Button type="dashed" onClick={() => callBack('close')}>Hủy</Button>
-                    <Button type="primary" danger onClick={() => callBack('oke')}>Xóa</Button>
+                    <Button type="dashed" onClick={() => callBack('close')}>{btnClose}</Button>
+                    <Button type="primary" danger onClick={() => callBack('oke')}>{btnAcc}</Button>
                 </div>
             </div>
         </div>

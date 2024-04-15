@@ -3,60 +3,75 @@ import {
   PlusCircleOutlined,
   RightOutlined,
 } from "@ant-design/icons";
-import { Button, Col, Form, Input, Row, Select, Spin, Upload, notification } from "antd";
-import React, {  useState } from "react";
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  Row,
+  Select,
+  Spin,
+  Upload,
+  notification,
+} from "antd";
+import React, { useState,startTransition } from "react";
 import "../../../../Page/Css/Css/AddPro.css";
 import styles from "../../../../Page/Css/CssModule/AddPro.module.css";
-
-
+import { useParams } from "react-router-dom";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 const { TextArea } = Input;
 const BasicInfo = ({ callBack, state, setImageUrlAvatar, data }) => {
-
+  const { id } = useParams();
   const [name, setName] = useState();
   const [description, setDescription] = useState();
   const [loading, setLoading] = useState(false);
 
   const [api, contextHolder] = notification.useNotification();
 
-
+  const cateShops = data?.cateshops?.filter(
+    (item) => item.shopowner_id == atob(id)
+  );
+  console.log(data?.cateshops,'data?.cateshops')
+  console.log(atob(id),'atob(id)')
   const UploadAvatatr = (file) => {
     setLoading(true);
     const src = URL.createObjectURL(file);
     setImageUrlAvatar({ url: src, file: file });
     setLoading(false);
   };
+  const [content, setContent] = useState("");
+
+
   const onFinish = (values) => {
-    if (state?.imageUrlAvatar == undefined && (state?.dataBasicInfo?.name == undefined || state?.dataBasicInfo?.name == '')) {
-      api['error']({
-        message: 'Cảnh báo',
-        description:
-          'Chưa chọn ảnh !',
+    if (
+      state?.imageUrlAvatar == undefined &&
+      (state?.dataBasicInfo?.name == undefined ||
+        state?.dataBasicInfo?.name == "")
+    ) {
+      api["error"]({
+        message: "Cảnh báo",
+        description: "Chưa chọn ảnh !",
       });
     } else {
       const data = {
         photo: state?.imageUrlAvatar,
         name:
-          values.name == undefined
-            ? state?.dataBasicInfo?.name
-
-            : values.name,
+          values.name == undefined ? state?.dataBasicInfo?.name : values.name,
         cate_id:
           state?.dataBasicInfo?.cate_id == undefined
             ? values.cate_id
             : state?.dataBasicInfo?.cate_id,
-        description:
-          values.description == undefined
-            ? state?.dataBasicInfo?.description
-
-            : values.description,
-        sale: values.sale == undefined
-          ? state?.dataBasicInfo?.sale
-
-          : values.sale
+        description: JSON.stringify(content),
+        sale:
+          values.sale == undefined ? state?.dataBasicInfo?.sale : values.sale,
       };
-      callBack({ data: data, check: 2 })
-    };
+      callBack({ data: data, check: 2 });
+    }
   };
+
   return (
     <div style={{ background: "#fff" }}>
       {contextHolder}
@@ -113,24 +128,27 @@ const BasicInfo = ({ callBack, state, setImageUrlAvatar, data }) => {
                   </div>
                 )}
               </Upload>
-              {(state?.imageUrlAvatar !== undefined || state?.dataBasicInfo?.photo) && (
-                <div
-                  className={styles.close}
-                  onClick={() => (
-                    setImageUrlAvatar(undefined),
-                    callBack({ data: { ...state?.dataBasicInfo, photo: "" }, check: 1 })
-                  )}
-                >
-                  <CloseCircleOutlined style={{ fontSize: 17 }} />
-                </div>
-              )}
+              {(state?.imageUrlAvatar !== undefined ||
+                state?.dataBasicInfo?.photo) && (
+                  <div
+                    className={styles.close}
+                    onClick={() => (
+                      setImageUrlAvatar(undefined),
+                      callBack({
+                        data: { ...state?.dataBasicInfo, photo: "" },
+                        check: 1,
+                      })
+                    )}
+                  >
+                    <CloseCircleOutlined style={{ fontSize: 17 }} />
+                  </div>
+                )}
             </div>
           </Col>
         </Row>
       </div>
 
-      <div style={{ marginTop: 20 }}>
-      </div>
+      <div style={{ marginTop: 20 }}></div>
       <div style={{ marginTop: 20, padding: "20px" }}>
         <Form
           name="basic"
@@ -158,7 +176,6 @@ const BasicInfo = ({ callBack, state, setImageUrlAvatar, data }) => {
             ]}
           >
             <Input
-
               placeholder="Tên sản phẩm"
               defaultValue={
                 state?.dataBasicInfo?.name == undefined
@@ -179,15 +196,16 @@ const BasicInfo = ({ callBack, state, setImageUrlAvatar, data }) => {
               },
             ]}
           >
-            <TextArea
-              rows={4}
-              placeholder="Mô tả"
-              showCount
-              defaultValue={
-                state?.dataBasicInfo?.description == undefined
-                  ? ""
-                  : state?.dataBasicInfo?.description
-              }
+            <CKEditor
+              editor={ClassicEditor}
+              data=""
+              onChange={(event, editor) => {
+                const data = editor.getData();
+                startTransition(()=>{
+                  setContent(data)
+                })
+              }}
+         
             />
           </Form.Item>
           <Form.Item
@@ -200,6 +218,7 @@ const BasicInfo = ({ callBack, state, setImageUrlAvatar, data }) => {
                 message: "Bạn chưa nhập giảm giá!",
               },
             ]}
+            style={{ marginTop: 80 }}
           >
             <Input
               placeholder="Giảm giá"
@@ -229,13 +248,13 @@ const BasicInfo = ({ callBack, state, setImageUrlAvatar, data }) => {
               defaultValue={
                 state?.dataBasicInfo?.cate_id == undefined
                   ? ""
-                  : `${data.cateshopee?.find(
+                  : `${cateShops?.find(
                     (item) => item._id == state?.dataBasicInfo?.cate_id
                   ).name
                   }`
               }
             >
-              {data.cateshopee?.map((item) => (
+              {cateShops?.map((item) => (
                 <Select.Option value={item._id}>{item.name}</Select.Option>
               ))}
             </Select>

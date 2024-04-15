@@ -9,14 +9,12 @@ const OtherProducts = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch();
   const data = useSelector((data) => data.dataAll.value);
-
   useEffect(() => {
     dispatch(getAllData());
 
   }, []);
   const ShowHtml = (product, classify) => {
     const proPrice = []
-
     product?.map((itemPro) => {
       const classifyPrice1 = []
       const classifyPrice2 = []
@@ -43,7 +41,7 @@ const OtherProducts = () => {
     return proPrice.map(pro => {
       return (
         <Col xs={12} sm={4} md={8} lg={6} xl={6} >
-          <li key={pro._id} onClick={() => navigate(`/detail/product=${pro._id}`)}>
+          <li key={pro._id} onClick={() => navigate(`/detail/${pro.name.replace(/\s+/g, "-")}&&${pro._id}`)}>
             <div>
               <div className="products-img">
                 <img src={pro.photo} alt="" />
@@ -79,7 +77,7 @@ const OtherProducts = () => {
       <div className="products-title_show">
         <ul >
           <Row gutter={[8, 8]}>
-            {ShowHtml(data.product, data.classify)}
+            {ShowHtml(data.products, data.classifys)}
 
 
           </Row>
